@@ -73,12 +73,6 @@ export default function Login({ status, canResetPassword }) {
                 </p>
             </div>
 
-            {status && (
-                <div className="mb-4 text-sm text-success bg-success/10 border border-success/20 rounded p-3">
-                    {status}
-                </div>
-            )}
-
             {message && (
                 <div className="mb-6 text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 flex items-center gap-2">
                     <svg

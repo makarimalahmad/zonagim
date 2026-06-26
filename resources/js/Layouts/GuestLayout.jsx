@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import ChatWidget from "@/Components/ChatWidget";
+import FlashToaster from "@/Components/FlashToaster";
 import Footer from "@/Components/Footer";
 import ThemeToggle from "@/Components/ThemeToggle";
 
@@ -52,6 +53,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                 </main>
                 <Footer />
                 <ChatWidget />
+                <FlashToaster />
             </div>
         );
     }
@@ -114,6 +116,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                 "password.request",
                 "password.reset",
             ].includes(route().current()) && <ChatWidget />}
+            <FlashToaster />
         </>
     );
 }

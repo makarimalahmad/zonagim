@@ -27,13 +27,26 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): \Symfony\Component\HttpFoundation\Response
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('market', absolute: false));
+        $request->session()->flash('success', 'Selamat datang! Kamu berhasil masuk.');
+
+        $target = $request->session()->pull('url.intended', route('market'));
+
+        // User biasa tidak boleh diarahkan ke panel admin.
+        if (str_contains($target, '/admin')) {
+            $target = route('market');
+        }
+
+        // Full-page visit ke area terautentikasi. Ini memastikan cookie session
+        // baru (hasil regenerate) terkirim di request top-level dan menghindari
+        // glitch navigasi SPA setelah login (halaman lama "nyangkut" sampai
+        // user refresh manual).
+        return Inertia::location($target);
     }
 
     /**

@@ -2,6 +2,7 @@ import { Link, useForm, usePage } from "@inertiajs/react";
 import ThemeToggle from "@/Components/ThemeToggle";
 import Dropdown from "@/Components/Dropdown";
 import ChatWidget from "@/Components/ChatWidget";
+import FlashToaster from "@/Components/FlashToaster";
 import Footer from "@/Components/Footer";
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -114,6 +115,7 @@ export default function AuthenticatedLayout({ header, children }) {
             <main className="p-6 flex-grow">{children}</main>
             <Footer />
             <ChatWidget />
+            <FlashToaster />
         </div>
     );
 }

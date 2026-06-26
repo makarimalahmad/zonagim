@@ -36,6 +36,12 @@ class HandleInertiaRequests extends Middleware
             ],
             // Site key Turnstile diambil dari config (env), bukan di-hardcode di frontend.
             'turnstileSiteKey' => config('services.turnstile.site_key'),
+            // Flash message untuk ditampilkan sebagai toast (notif) di frontend.
+            'flash' => [
+                'status' => fn () => $request->session()->get('status'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }
