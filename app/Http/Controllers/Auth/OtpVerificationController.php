@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class OtpVerificationController extends Controller
@@ -71,8 +70,7 @@ class OtpVerificationController extends Controller
                     'otp_expires_at' => null,
                 ])->save();
 
-                Auth::login($existingUser);
-                return redirect()->route('market');
+                return redirect()->route('login')->with('status', 'Email berhasil diverifikasi. Silakan login untuk melanjutkan.');
             }
 
             return back()->withErrors(['otp' => 'Sesi verifikasi habis atau tidak ditemukan. Silakan registrasi ulang.']);
@@ -101,10 +99,9 @@ class OtpVerificationController extends Controller
         // Clear Cache
         \Illuminate\Support\Facades\Cache::forget($cacheKey);
 
-        // Login User
-        Auth::login($user);
-
-        return redirect()->route('market');
+        // Jangan auto-login. Arahkan ke halaman login dengan pesan sukses
+        // supaya user login manual dulu (sesuai alur yang diinginkan).
+        return redirect()->route('login')->with('status', 'Registrasi berhasil! Akunmu sudah aktif. Silakan login untuk masuk.');
     }
 
     public function resend(Request $request)

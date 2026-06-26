@@ -29,7 +29,7 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Kode OTP Registrasi - LapakAkunID',
+            subject: 'Kode Verifikasi Akun LapakAkunID',
         );
     }
 
@@ -40,6 +40,7 @@ class OtpMail extends Mailable
     {
         return new Content(
             view: 'emails.otp',
+            text: 'emails.otp_text',
         );
     }
 
