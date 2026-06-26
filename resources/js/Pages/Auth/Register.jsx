@@ -3,15 +3,13 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import Turnstile from "@/Components/Turnstile";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Eye, EyeOff, Check } from "lucide-react";
 import { useState } from "react";
 import Checkbox from "@/Components/Checkbox";
 
-// Turnstile Site Key
-const TURNSTILE_SITE_KEY = "0x4AAAAAACOsy3k5l-teKvm5";
-
 export default function Register() {
+    const { turnstileSiteKey } = usePage().props;
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -257,7 +255,7 @@ export default function Register() {
                 {/* TURNSTILE CAPTCHA */}
                 <div className="mt-4">
                     <Turnstile
-                        siteKey={TURNSTILE_SITE_KEY}
+                        siteKey={turnstileSiteKey}
                         onVerify={handleTurnstileVerify}
                         onError={handleTurnstileError}
                         onExpire={handleTurnstileExpire}

@@ -34,6 +34,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Site key Turnstile diambil dari config (env), bukan di-hardcode di frontend.
+            'turnstileSiteKey' => config('services.turnstile.site_key'),
         ];
     }
 }
