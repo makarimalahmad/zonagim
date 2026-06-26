@@ -34,4 +34,10 @@ return [
         env('SEO_FACEBOOK'),
         env('SEO_YOUTUBE'),
     ])),
+
+    // Kode verifikasi webmaster (opsional). Diisi dari Search Console / Bing
+    // bila memilih metode verifikasi "HTML tag". Kosongkan kalau verifikasi
+    // lewat DNS.
+    'google_site_verification' => env('GOOGLE_SITE_VERIFICATION'),
+    'bing_site_verification' => env('BING_SITE_VERIFICATION'),
 ];

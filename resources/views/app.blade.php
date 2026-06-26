@@ -128,6 +128,14 @@
         <link rel="canonical" href="{{ $canonical }}">
         <meta name="theme-color" content="#0b1221">
 
+        {{-- Verifikasi Webmaster (opsional, via HTML tag) --}}
+        @if (config('seo.google_site_verification'))
+            <meta name="google-site-verification" content="{{ config('seo.google_site_verification') }}">
+        @endif
+        @if (config('seo.bing_site_verification'))
+            <meta name="msvalidate.01" content="{{ config('seo.bing_site_verification') }}">
+        @endif
+
         {{-- Favicon --}}
         <link rel="icon" href="/images/lapakakunid.png" type="image/png">
         <link rel="apple-touch-icon" href="/images/lapakakunid.png">
