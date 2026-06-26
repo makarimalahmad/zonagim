@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* Plugins (Tailwind v4 CSS-first) */
+@plugin "@tailwindcss/forms";
+@plugin "daisyui";
+
+/* Tema navy custom — default untuk SEMUA halaman */
+@plugin "daisyui/theme" {
+    name: "dark";
+    default: true;
+    prefersdark: true;
+    color-scheme: dark;
+
+    --color-base-100: #0e1629;
+    --color-base-200: #0b1221;
+    --color-base-300: #1b2740;
+    --color-base-content: #dbe4f0;
+
+    --color-primary: #eab308;
+    --color-primary-content: #0b1221;
+
+    --color-secondary: #8b5cf6;
+    --color-secondary-content: #ffffff;
+
+    --color-accent: #06b6d4;
+    --color-accent-content: #0b1221;
+
+    --color-neutral: #0e1629;
+    --color-neutral-content: #dbe4f0;
+
+    --color-info: #38bdf8;
+    --color-info-content: #0b1221;
+
+    --color-success: #34d399;
+    --color-success-content: #0b1221;
+
+    --color-warning: #f59e0b;
+    --color-warning-content: #0b1221;
+
+    --color-error: #f87171;
+    --color-error-content: #0b1221;
+
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 1rem;
+    --border: 1px;
+}
+
+/* Tema light custom — clean, senada dengan brand navy */
+@plugin "daisyui/theme" {
+    name: "light";
+    default: false;
+    prefersdark: false;
+    color-scheme: light;
+
+    --color-base-100: #ffffff;
+    --color-base-200: #f4f6fa;
+    --color-base-300: #e2e8f0;
+    --color-base-content: #0b1221;
+
+    --color-primary: #eab308;
+    --color-primary-content: #0b1221;
+
+    --color-secondary: #7c3aed;
+    --color-secondary-content: #ffffff;
+
+    --color-accent: #0891b2;
+    --color-accent-content: #ffffff;
+
+    --color-neutral: #0b1221;
+    --color-neutral-content: #ffffff;
+
+    --color-info: #0284c7;
+    --color-info-content: #ffffff;
+
+    --color-success: #059669;
+    --color-success-content: #ffffff;
+
+    --color-warning: #d97706;
+    --color-warning-content: #ffffff;
+
+    --color-error: #dc2626;
+    --color-error-content: #ffffff;
+
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 1rem;
+    --border: 1px;
+}
+
+/* Sumber tambahan yang berada di luar deteksi otomatis (folder vendor di-gitignore) */
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views";
+
+/* Kustomisasi tema (migrasi dari tailwind.config.js) */
+@theme {
+    --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+
+    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    --breakpoint-xs: 475px;
+}
+
+/* ===== Marquee logo wall (hero "Game Terpopuler") ===== */
+@keyframes marquee-ltr {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes marquee-rtl {
+    from {
+        transform: translateX(-50%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.marquee-track {
+    width: max-content;
+    will-change: transform;
+}
+
+/* Jeda animasi saat kursor di atas wall */
+.marquee-track:hover {
+    animation-play-state: paused;
+}
