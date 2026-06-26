@@ -12,7 +12,9 @@ class TurnstileService
 
     public function __construct()
     {
-        $this->secretKey = config('services.turnstile.secret_key');
+        // Cast ke string supaya tidak TypeError saat secret belum di-set
+        // (mis. di environment testing).
+        $this->secretKey = (string) config('services.turnstile.secret_key');
     }
 
     /**
@@ -24,6 +26,11 @@ class TurnstileService
      */
     public function verify(string $token, ?string $remoteIp = null): bool
     {
+        // Lewati verifikasi bila Turnstile dimatikan (testing/local).
+        if (! config('services.turnstile.enabled', true)) {
+            return true;
+        }
+
         if (empty($token)) {
             Log::warning('Turnstile: Empty token received');
             return false;
