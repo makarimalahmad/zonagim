@@ -191,12 +191,12 @@ export default function Landing({ gameLogos = [] }) {
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center gap-3">
                             <img
-                                src="/images/lapakakunid.png"
+                                src="/images/lapakgimid.png"
                                 alt="Logo"
                                 className="w-9 h-9 sm:w-10 sm:h-10"
                             />
                             <span className="text-lg sm:text-xl font-bold text-base-content">
-                                LapakAkunID
+                                LapakGimID
                             </span>
                         </div>
 
@@ -411,7 +411,7 @@ export default function Landing({ gameLogos = [] }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="text-center max-w-2xl mx-auto mb-14">
                         <h2 className="text-3xl sm:text-4xl font-bold text-base-content mb-4">
-                            Kenapa Harus LapakAkunID?
+                            Kenapa Harus LapakGimID?
                         </h2>
                         <p className="text-base-content/60 text-lg">
                             Platform kami dirancang khusus untuk kenyamanan dan
@@ -510,7 +510,7 @@ export default function Landing({ gameLogos = [] }) {
                         <p className="text-base-content/60 text-lg font-medium mb-10 max-w-2xl mx-auto relative z-10">
                             Jangan ambil risiko. Gunakan layanan Rekber kami untuk
                             menjamin transaksi 100% aman dan segera titip jual akun
-                            game kamu di LapakAkunID.
+                            game kamu di LapakGimID.
                         </p>
                         <a
                             href="https://wa.me/6281234567890"
@@ -538,17 +538,17 @@ export default function Landing({ gameLogos = [] }) {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/images/lapakakunid.png"
+                                src="/images/lapakgimid.png"
                                 alt="Logo"
                                 className="w-8 h-8"
                             />
                             <span className="font-bold text-base-content">
-                                LapakAkunID
+                                LapakGimID
                             </span>
                         </div>
                         <div className="text-base-content/50 text-center md:text-right">
                             <p>
-                                &copy; {new Date().getFullYear()} LapakAkunID. All
+                                &copy; {new Date().getFullYear()} LapakGimID. All
                                 rights reserved.
                             </p>
                             <div className="flex gap-4 justify-center md:justify-end mt-2">

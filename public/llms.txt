@@ -1,9 +1,9 @@
-# LapakAkunID
+# LapakGimID
 
-> LapakAkunID (lapakgim.my.id) adalah marketplace jual beli akun game di Indonesia dengan sistem Rekber (rekening bersama) otomatis untuk transaksi yang lebih aman dan bergaransi. Tersedia akun untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game populer lainnya.
+> LapakGimID (lapakgim.my.id) adalah marketplace jual beli akun game di Indonesia dengan sistem Rekber (rekening bersama) otomatis untuk transaksi yang lebih aman dan bergaransi. Tersedia akun untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game populer lainnya.
 
 ## Halaman Utama
-- [Beranda](https://lapakgim.my.id/): Ringkasan layanan, keunggulan, dan cara kerja LapakAkunID.
+- [Beranda](https://lapakgim.my.id/): Ringkasan layanan, keunggulan, dan cara kerja LapakGimID.
 - [Market Akun Game](https://lapakgim.my.id/market): Katalog game yang tersedia untuk dibeli akunnya.
 
 ## Cara Kerja
@@ -17,7 +17,7 @@
 - Komunitas Verified: penjual wajib verifikasi identitas (KYC).
 
 ## Disclaimer Penting
-- LapakAkunID berperan sebagai penyedia platform (perantara) jual beli akun game.
+- LapakGimID berperan sebagai penyedia platform (perantara) jual beli akun game.
 - Layanan Rekber hanya mengamankan proses serah terima uang & data saat transaksi berlangsung, BUKAN garansi atau asuransi terhadap hack back maupun banned setelah transaksi selesai.
 - Segala risiko pasca-transaksi sepenuhnya menjadi tanggung jawab pembeli.
 

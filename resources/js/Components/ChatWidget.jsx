@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 const WELCOME = {
     role: "assistant",
     content:
-        "Halo! Saya Assistant AI LapakAkunID. Saya bisa bantu cek stok & harga akun, jelaskan Rekber, garansi, dan cara transaksi. Ada yang bisa dibantu?",
+        "Halo! Saya Assistant AI LapakGimID. Saya bisa bantu cek stok & harga akun, jelaskan Rekber, garansi, dan cara transaksi. Ada yang bisa dibantu?",
 };
 
 const QUICK_REPLIES = [
@@ -155,7 +155,7 @@ export default function ChatWidget() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-black text-lg leading-tight">
-                                        LapakAkun AI
+                                        LapakGim AI
                                     </h3>
                                     <div className="flex items-center gap-1.5">
                                         <span className="w-2 h-2 bg-emerald-600 rounded-full animate-pulse" />
@@ -283,7 +283,7 @@ export default function ChatWidget() {
                             </form>
                             <div className="text-center mt-2">
                                 <p className="text-[10px] text-base-content/40">
-                                    Powered by AI · LapakAkunID Assistant
+                                    Powered by AI · LapakGimID Assistant
                                 </p>
                             </div>
                         </div>

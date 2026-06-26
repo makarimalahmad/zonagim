@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Auth\Login::class)
             ->authGuard('admin')
-            ->brandName('LapakAkunID')
+            ->brandName('LapakGimID')
             ->font('Outfit')
 
             ->colors([

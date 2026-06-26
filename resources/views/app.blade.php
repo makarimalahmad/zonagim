@@ -68,11 +68,11 @@
 
             if (request()->routeIs('landing')) {
                 $faqs = [
-                    ['Apa itu LapakAkunID?', 'LapakAkunID adalah marketplace jual beli akun game di Indonesia dengan sistem Rekber (rekening bersama) otomatis untuk membuat transaksi lebih aman.'],
-                    ['Apakah transaksi di LapakAkunID aman?', 'Transaksi memakai sistem Rekber yang menahan dana sampai pembeli menerima data akun. Risiko pasca-transaksi seperti hack back tetap menjadi tanggung jawab pembeli.'],
+                    ['Apa itu LapakGimID?', 'LapakGimID adalah marketplace jual beli akun game di Indonesia dengan sistem Rekber (rekening bersama) otomatis untuk membuat transaksi lebih aman.'],
+                    ['Apakah transaksi di LapakGimID aman?', 'Transaksi memakai sistem Rekber yang menahan dana sampai pembeli menerima data akun. Risiko pasca-transaksi seperti hack back tetap menjadi tanggung jawab pembeli.'],
                     ['Apa itu sistem Rekber?', 'Rekber (Rekening Bersama) adalah layanan perantara yang menahan pembayaran hingga pembeli menerima data akun, sehingga mengurangi risiko penipuan saat transaksi berlangsung.'],
                     ['Game apa saja yang akunnya bisa dibeli?', 'Tersedia akun untuk berbagai game populer seperti Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan lainnya.'],
-                    ['Bagaimana cara membeli akun game di LapakAkunID?', 'Daftar akun gratis, pilih akun yang diinginkan di halaman Market, lalu lakukan pembayaran dengan aman menggunakan Rekber.'],
+                    ['Bagaimana cara membeli akun game di LapakGimID?', 'Daftar akun gratis, pilih akun yang diinginkan di halaman Market, lalu lakukan pembayaran dengan aman menggunakan Rekber.'],
                 ];
                 $graph[] = [
                     '@type' => 'FAQPage',
@@ -137,8 +137,8 @@
         @endif
 
         {{-- Favicon --}}
-        <link rel="icon" href="/images/lapakakunid.png" type="image/png">
-        <link rel="apple-touch-icon" href="/images/lapakakunid.png">
+        <link rel="icon" href="/images/lapakgimid.png" type="image/png">
+        <link rel="apple-touch-icon" href="/images/lapakgimid.png">
 
         {{-- Open Graph --}}
         <meta property="og:type" content="website">

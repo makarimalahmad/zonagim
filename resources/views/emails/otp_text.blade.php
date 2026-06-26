@@ -1,11 +1,11 @@
-LapakAkunID - Kode Verifikasi Akun
+LapakGimID - Kode Verifikasi Akun
 
-Masukkan kode berikut untuk menyelesaikan pendaftaran akunmu di LapakAkunID:
+Masukkan kode berikut untuk menyelesaikan pendaftaran akunmu di LapakGimID:
 
     {{ $otp }}
 
 Kode ini berlaku selama 10 menit. Demi keamanan, jangan bagikan kode ini kepada siapa pun.
 
-Jika kamu tidak merasa mendaftar di LapakAkunID, abaikan email ini.
+Jika kamu tidak merasa mendaftar di LapakGimID, abaikan email ini.
 
-(c) {{ date('Y') }} LapakAkunID - lapakgim.my.id
+(c) {{ date('Y') }} LapakGimID - lapakgim.my.id

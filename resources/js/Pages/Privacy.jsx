@@ -26,7 +26,7 @@ export default function Privacy() {
             <div className="mt-8">
                 <Section title="Informasi yang Kami Kumpulkan" icon={Database}>
                     <p>
-                        LapakAkunID menghargai privasi Anda. Informasi yang kami kumpulkan terbatas pada data yang diperlukan untuk menyediakan layanan kami:
+                        LapakGimID menghargai privasi Anda. Informasi yang kami kumpulkan terbatas pada data yang diperlukan untuk menyediakan layanan kami:
                     </p>
                     <div className="grid gap-4 mt-4 sm:grid-cols-2">
                         <div className="bg-base-200 p-5 rounded-xl border border-base-300">

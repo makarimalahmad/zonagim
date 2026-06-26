@@ -253,7 +253,7 @@ export default function Register() {
                                 href={route("terms")}
                                 className="underline text-sm text-yellow-500 hover:text-yellow-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
-                                Lapakakunid Terms of Service
+                                LapakGimID Terms of Service
                             </a>
                         </span>
                     </label>

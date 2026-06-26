@@ -19,12 +19,12 @@ export default function GuestLayout({ children, withNavbar = false }) {
                                 className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
                             >
                                 <img
-                                    src="/images/lapakakunid.png"
-                                    alt="LapakAkunID"
+                                    src="/images/lapakgimid.png"
+                                    alt="LapakGimID"
                                     className="w-8 h-8 sm:w-10 sm:h-10"
                                 />
                                 <span className="text-lg sm:text-xl font-bold text-yellow-500 hidden xs:inline">
-                                    LapakAkunID
+                                    LapakGimID
                                 </span>
                             </Link>
 
@@ -68,13 +68,13 @@ export default function GuestLayout({ children, withNavbar = false }) {
                     <div className="flex flex-col items-center text-center px-10">
                         <Link href="/">
                             <img
-                                src="/images/lapakakunid.png"
-                                alt="LapakAkunID"
+                                src="/images/lapakgimid.png"
+                                alt="LapakGimID"
                                 className="w-52 mb-8 mx-auto"
                             />
 
                             <h1 className="text-3xl font-extrabold text-yellow-500 tracking-wide mb-3">
-                                LapakAkunID
+                                LapakGimID
                             </h1>
                         </Link>
 
@@ -84,7 +84,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                         </p>
 
                         <span className="mt-10 text-xs text-base-content/50">
-                            © {new Date().getFullYear()} LapakAkunID
+                            © {new Date().getFullYear()} LapakGimID
                         </span>
                     </div>
                 </div>
@@ -96,12 +96,12 @@ export default function GuestLayout({ children, withNavbar = false }) {
                         <div className="flex flex-col items-center mb-6 lg:hidden">
                             <Link href="/">
                                 <img
-                                    src="/images/lapakakunid.png"
-                                    alt="LapakAkunID"
+                                    src="/images/lapakgimid.png"
+                                    alt="LapakGimID"
                                     className="w-32 mb-3 mx-auto"
                                 />
                                 <h1 className="text-xl font-bold text-yellow-500 text-center">
-                                    LapakAkunID
+                                    LapakGimID
                                 </h1>
                             </Link>
                         </div>

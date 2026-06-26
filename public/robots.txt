@@ -1,4 +1,4 @@
-# robots.txt — LapakAkunID (https://lapakgim.my.id)
+# robots.txt — LapakGimID (https://lapakgim.my.id)
 
 # ------------------------------------------------------------------
 # Semua crawler mesin pencari
@@ -17,7 +17,7 @@ Disallow: /verify-email
 Disallow: /confirm-password
 
 # ------------------------------------------------------------------
-# Crawler AI / LLM (GEO) — SENGAJA DIIZINKAN agar konten LapakAkunID
+# Crawler AI / LLM (GEO) — SENGAJA DIIZINKAN agar konten LapakGimID
 # bisa muncul & direkomendasikan di jawaban AI (ChatGPT, Perplexity,
 # Claude, Gemini, Copilot, dll).
 # PENTING: setelan Cloudflare "Block AI bots" harus DIMATIKAN, kalau

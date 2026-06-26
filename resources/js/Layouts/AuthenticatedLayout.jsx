@@ -22,13 +22,13 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                     <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center group-hover:bg-base-300 transition-colors">
                         <img
-                            src="/images/lapakakunid.png"
-                            alt="LapakAkunID Logo"
+                            src="/images/lapakgimid.png"
+                            alt="LapakGimID Logo"
                             className="w-8 h-8 object-contain"
                         />
                     </div>
                     <span className="text-xl font-bold text-base-content group-hover:text-yellow-500 transition-colors">
-                        LapakAkunID
+                        LapakGimID
                     </span>
                 </Link>
 

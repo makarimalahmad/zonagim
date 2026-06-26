@@ -12,10 +12,10 @@ export default function LegalLayout({ title, children }) {
                     <div className="flex items-center justify-between h-20">
                         <Link href="/" className="flex items-center gap-3 group">
                             <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center group-hover:bg-base-300 transition-colors">
-                                <img src="/images/lapakakunid.png" alt="Logo" className="w-8 h-8 object-contain" />
+                                <img src="/images/lapakgimid.png" alt="Logo" className="w-8 h-8 object-contain" />
                             </div>
                             <span className="text-xl font-bold text-base-content group-hover:text-yellow-500 transition-colors">
-                                LapakAkunID
+                                LapakGimID
                             </span>
                         </Link>
 
@@ -44,7 +44,7 @@ export default function LegalLayout({ title, children }) {
             {/* Footer */}
             <footer className="border-t border-base-300 bg-base-100 py-12 text-sm">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-base-content/50">
-                    <p>&copy; {new Date().getFullYear()} LapakAkunID. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} LapakGimID. All rights reserved.</p>
                 </div>
             </footer>
         </div>

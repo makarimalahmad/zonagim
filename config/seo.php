@@ -8,22 +8,22 @@ return [
     | URL produksi dipisah dari APP_URL agar canonical/sitemap/JSON-LD selalu
     | memakai domain asli meskipun APP_URL lokal saat development.
     */
-    'brand' => env('APP_NAME', 'LapakAkunID'),
+    'brand' => env('APP_NAME', 'LapakGimID'),
 
     'url' => rtrim(env('SEO_URL', 'https://lapakgim.my.id'), '/'),
 
-    'title' => 'LapakAkunID — Jual Beli Akun Game Aman & Terpercaya',
+    'title' => 'LapakGimID — Jual Beli Akun Game Aman & Terpercaya',
 
-    'description' => 'LapakAkunID adalah marketplace jual beli akun game terpercaya di Indonesia. Sistem Rekber otomatis, transaksi cepat & bergaransi untuk akun Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game populer lainnya.',
+    'description' => 'LapakGimID adalah marketplace jual beli akun game terpercaya di Indonesia. Sistem Rekber otomatis, transaksi cepat & bergaransi untuk akun Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game populer lainnya.',
 
     'keywords' => 'jual beli akun game, marketplace akun game, jual akun game, beli akun game, rekber akun game, akun mobile legends, akun free fire, akun valorant, akun pubg mobile, akun genshin impact, jual akun ml murah',
 
     'locale' => 'id_ID',
 
     // Path gambar untuk Open Graph / Twitter (diubah jadi URL absolut otomatis).
-    'image' => '/images/lapakakunid.png',
+    'image' => '/images/lapakgimid.png',
 
-    'twitter' => '@lapakakunid',
+    'twitter' => '@lapakgimid',
 
     'whatsapp' => '6281234567890',
 

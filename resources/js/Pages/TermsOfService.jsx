@@ -27,14 +27,14 @@ export default function TermsOfService() {
             <div className="mt-8">
                 <Section number="1" title="Pendahuluan" icon={ScrollText}>
                     <p>
-                        Selamat datang di <strong className="text-base-content">LapakAkunID</strong>. Dengan mengakses dan menggunakan layanan kami, Anda menyetujui syarat dan ketentuan yang tertulis di halaman ini.
-                        LapakAkunID bertindak sebagai <strong className="text-base-content">platform penyedia layanan marketplace (perantara)</strong> yang mempertemukan Penjual dan Pembeli akun game.
+                        Selamat datang di <strong className="text-base-content">LapakGimID</strong>. Dengan mengakses dan menggunakan layanan kami, Anda menyetujui syarat dan ketentuan yang tertulis di halaman ini.
+                        LapakGimID bertindak sebagai <strong className="text-base-content">platform penyedia layanan marketplace (perantara)</strong> yang mempertemukan Penjual dan Pembeli akun game.
                     </p>
                 </Section>
 
-                <Section number="2" title="Peran LapakAkunID" icon={Scale}>
+                <Section number="2" title="Peran LapakGimID" icon={Scale}>
                     <p>
-                        Harap dipahami bahwa posisi LapakAkunID adalah sebagai <strong className="text-base-content">Penyedia Platform</strong>. Kami menyediakan wadah untuk listing akun game dan memfasilitasi transaksi yang aman.
+                        Harap dipahami bahwa posisi LapakGimID adalah sebagai <strong className="text-base-content">Penyedia Platform</strong>. Kami menyediakan wadah untuk listing akun game dan memfasilitasi transaksi yang aman.
                     </p>
                     <ul className="list-disc pl-5 space-y-2 mt-4 marker:text-yellow-500">
                         <li>Kami memegang kendali penuh atas pengelolaan website dan konten yang ditampilkan.</li>
@@ -53,7 +53,7 @@ export default function TermsOfService() {
                             <div>
                                 <h4 className="text-error font-bold text-lg mb-2">DISCLAIMER PENTING</h4>
                                 <p className="text-base-content/80 text-base leading-relaxed">
-                                    LapakAkunID <strong>MUTLAK TIDAK BERTANGGUNG JAWAB</strong> atas kejadian <strong>Hack Back</strong> (pengambilan kembali akun oleh pemilik asli), <i>banned</i>, atau masalah teknis lainnya yang terjadi setelah transaksi selesai. Ketentuan ini berlaku <strong>BAIK</strong> untuk transaksi langsung <strong>MAUPUN</strong> transaksi yang menggunakan Jasa Rekber kami.
+                                    LapakGimID <strong>MUTLAK TIDAK BERTANGGUNG JAWAB</strong> atas kejadian <strong>Hack Back</strong> (pengambilan kembali akun oleh pemilik asli), <i>banned</i>, atau masalah teknis lainnya yang terjadi setelah transaksi selesai. Ketentuan ini berlaku <strong>BAIK</strong> untuk transaksi langsung <strong>MAUPUN</strong> transaksi yang menggunakan Jasa Rekber kami.
                                 </p>
                             </div>
                         </div>

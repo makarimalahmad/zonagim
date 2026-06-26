@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
     {
         // Admin — bisa akses panel /admin (role 'admin').
         User::updateOrCreate(
-            ['email' => 'admin@lapakakunid.com'],
+            ['email' => 'admin@lapakgimid.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),

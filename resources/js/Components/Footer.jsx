@@ -10,19 +10,19 @@ export default function Footer() {
                     {/* Logo & Brand */}
                     <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity">
                         <img
-                            src="/images/lapakakunid.png"
+                            src="/images/lapakgimid.png"
                             alt="Logo"
                             className="w-8 h-8"
                         />
                         <span className="font-bold text-base-content">
-                            LapakAkunID
+                            LapakGimID
                         </span>
                     </div>
 
                     {/* Copyright & Links */}
                     <div className="text-base-content/60 text-center md:text-right">
                         <p>
-                            &copy; {currentYear} LapakAkunID. All rights
+                            &copy; {currentYear} LapakGimID. All rights
                             reserved.
                         </p>
                         <div className="flex gap-4 justify-center md:justify-end mt-2">
