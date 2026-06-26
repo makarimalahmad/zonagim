@@ -1,4 +1,9 @@
-import { useEffect, useRef } from "react";
+import {
+    useEffect,
+    useRef,
+    forwardRef,
+    useImperativeHandle,
+} from "react";
 
 /**
  * Cloudflare Turnstile Component - Stable version
@@ -7,15 +12,15 @@ import { useEffect, useRef } from "react";
  * @param {function} onError - Callback when verification fails
  * @param {function} onExpire - Callback when token expires
  * @param {string} theme - 'light', 'dark', or 'auto'
+ *
+ * Exposes an imperative `reset()` via ref so parent forms can request a fresh
+ * token. Turnstile tokens are single-use; after a failed form submit the old
+ * token is consumed, so the widget must be reset to issue a new one.
  */
-export default function Turnstile({
-    siteKey,
-    onVerify,
-    onError,
-    onExpire,
-    theme = "dark",
-    className = "",
-}) {
+const Turnstile = forwardRef(function Turnstile(
+    { siteKey, onVerify, onError, onExpire, theme = "dark", className = "" },
+    ref,
+) {
     const containerRef = useRef(null);
     const widgetIdRef = useRef(null);
     const isRenderedRef = useRef(false);
@@ -31,6 +36,20 @@ export default function Turnstile({
         onErrorRef.current = onError;
         onExpireRef.current = onExpire;
     }, [onVerify, onError, onExpire]);
+
+    // Allow the parent to reset the widget (e.g. after a failed submit) so a
+    // fresh token is generated and the submit button becomes usable again.
+    useImperativeHandle(ref, () => ({
+        reset: () => {
+            if (widgetIdRef.current && window.turnstile) {
+                try {
+                    window.turnstile.reset(widgetIdRef.current);
+                } catch (e) {
+                    // ignore reset errors
+                }
+            }
+        },
+    }));
 
     useEffect(() => {
         // Prevent multiple renders
@@ -105,4 +124,6 @@ export default function Turnstile({
     }, [siteKey, theme]); // Only re-run if siteKey or theme changes
 
     return <div ref={containerRef} className={`cf-turnstile ${className}`} />;
-}
+});
+
+export default Turnstile;

@@ -6,7 +6,7 @@ import Turnstile from "@/Components/Turnstile";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Eye, EyeOff } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Login({ status, canResetPassword }) {
     const { turnstileSiteKey } = usePage().props;
@@ -19,6 +19,7 @@ export default function Login({ status, canResetPassword }) {
     }, []);
 
     const [turnstileToken, setTurnstileToken] = useState(null);
+    const turnstileRef = useRef(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
@@ -46,9 +47,14 @@ export default function Login({ status, canResetPassword }) {
         e.preventDefault();
 
         post(route("login"), {
+            onError: () => {
+                // Token Turnstile sekali pakai; reset widget agar dapat token baru.
+                setTurnstileToken(null);
+                setData("cf_turnstile_response", "");
+                turnstileRef.current?.reset();
+            },
             onFinish: () => {
                 reset("password");
-                setTurnstileToken(null);
             },
         });
     };
@@ -180,6 +186,7 @@ export default function Login({ status, canResetPassword }) {
                 {/* TURNSTILE CAPTCHA */}
                 <div className="mt-4">
                     <Turnstile
+                        ref={turnstileRef}
                         siteKey={turnstileSiteKey}
                         onVerify={handleTurnstileVerify}
                         onError={handleTurnstileError}

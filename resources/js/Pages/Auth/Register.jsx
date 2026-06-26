@@ -5,23 +5,25 @@ import Turnstile from "@/Components/Turnstile";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { Eye, EyeOff, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Checkbox from "@/Components/Checkbox";
 
 export default function Register() {
     const { turnstileSiteKey } = usePage().props;
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-        cf_turnstile_response: "",
-    });
+    const { data, setData, post, processing, errors, reset, clearErrors } =
+        useForm({
+            name: "",
+            email: "",
+            password: "",
+            password_confirmation: "",
+            cf_turnstile_response: "",
+        });
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [agreed, setAgreed] = useState(false);
     const [turnstileToken, setTurnstileToken] = useState(null);
+    const turnstileRef = useRef(null);
 
     const strength = {
         length: data.password.length >= 8,
@@ -48,9 +50,12 @@ export default function Register() {
     const submit = (e) => {
         e.preventDefault();
         post(route("register"), {
-            onFinish: () => {
-                reset("password", "password_confirmation");
+            onError: () => {
+                // Token Turnstile sekali pakai & hangus setelah submit.
+                // Reset widget supaya menerbitkan token baru → tombol aktif lagi.
                 setTurnstileToken(null);
+                setData("cf_turnstile_response", "");
+                turnstileRef.current?.reset();
             },
         });
     };
@@ -145,9 +150,10 @@ export default function Register() {
                             value={data.password}
                             className="pr-12 !mt-0"
                             autoComplete="new-password"
-                            onChange={(e) =>
-                                setData("password", e.target.value)
-                            }
+                            onChange={(e) => {
+                                setData("password", e.target.value);
+                                clearErrors("password");
+                            }}
                             placeholder="Masukan Password"
                             required
                         />
@@ -203,9 +209,10 @@ export default function Register() {
                             value={data.password_confirmation}
                             className="pr-12 !mt-0"
                             autoComplete="new-password"
-                            onChange={(e) =>
-                                setData("password_confirmation", e.target.value)
-                            }
+                            onChange={(e) => {
+                                setData("password_confirmation", e.target.value);
+                                clearErrors("password_confirmation");
+                            }}
                             placeholder="Ulangi password"
                             required
                         />
@@ -255,6 +262,7 @@ export default function Register() {
                 {/* TURNSTILE CAPTCHA */}
                 <div className="mt-4">
                     <Turnstile
+                        ref={turnstileRef}
                         siteKey={turnstileSiteKey}
                         onVerify={handleTurnstileVerify}
                         onError={handleTurnstileError}
