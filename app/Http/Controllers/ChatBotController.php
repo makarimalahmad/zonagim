@@ -81,22 +81,37 @@ TITIP JUAL / JUAL AKUN:
             'content' => $userMessage
         ];
 
-        try {
-            $apiKey = env('GROQ_API_KEY');
+        $apiKey = config('services.groq.key');
+        $model = config('services.groq.model');
 
+        // Guard: kalau API key kosong, jangan panggil Groq (hindari 401 yang membingungkan)
+        if (empty($apiKey)) {
+            Log::error('ChatBot: GROQ_API_KEY kosong/null. Pastikan key (gsk_...) ada di .env, lalu jalankan "php artisan config:clear" (atau config:cache di produksi).');
+
+            return response()->json([
+                'reply' => "⚠️ Maaf, asisten AI sedang sibuk dan belum bisa menjawab. Coba lagi sebentar lagi ya, atau hubungi Admin via WhatsApp untuk bantuan cepat. 🙏"
+            ]);
+        }
+
+        try {
             /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $apiKey,
             ])->timeout(30)->post("https://api.groq.com/openai/v1/chat/completions", [
-                'model' => 'llama-3.3-70b-versatile',
+                'model' => $model,
                 'messages' => $messages,
                 'temperature' => 0.4,
                 'max_tokens' => 300,
             ]);
 
             if ($response->failed()) {
-                throw new \Exception('Groq API Error: ' . $response->body());
+                // Catat status + body asli dari Groq supaya gampang didiagnosis
+                Log::error('ChatBot Groq API gagal', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+                throw new \Exception('Groq API Error (HTTP ' . $response->status() . ')');
             }
 
             $data = $response->json();
