@@ -81,18 +81,19 @@ class FrontendImagePerformanceTest extends TestCase
         );
     }
 
-    public function test_landing_marquee_logos_load_eagerly_without_shimmer(): void
+    public function test_landing_game_wall_uses_text_and_generic_icons_without_third_party_assets(): void
     {
+        $root = dirname(__DIR__, 2);
         $landing = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Landing.jsx');
-        $styles = file_get_contents(dirname(__DIR__, 2).DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $controller = file_get_contents($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR.'PageController.php');
 
-        $this->assertMatchesRegularExpression(
-            '/className="game-logo-image object-contain"[\s\S]*?loading="eager"|loading="eager"[\s\S]*?className="game-logo-image object-contain"/',
-            $landing,
-        );
-        $this->assertStringContainsString('.game-logo-tile .progressive-image__skeleton', $styles);
-        $this->assertStringContainsString('background: transparent;', $styles);
-        $this->assertStringContainsString('animation: none;', $styles);
+        $this->assertStringContainsString('{game.name}', $landing);
+        $this->assertStringContainsString('<Gamepad2', $landing);
+        $this->assertStringNotContainsString('images/games', $landing);
+        $this->assertStringNotContainsString('cdn.simpleicons.org', $landing);
+        $this->assertStringNotContainsString('api.iconify.design', $landing);
+        $this->assertStringNotContainsString('gameLogos', $controller);
+        $this->assertDirectoryDoesNotExist($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'games');
     }
 
     public function test_auth_scroll_container_ignores_landing_smooth_scroll_and_landing_cleans_up(): void

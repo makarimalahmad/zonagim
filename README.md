@@ -367,4 +367,4 @@ tests/
 
 Kode sumber proyek dirilis menggunakan lisensi MIT yang tersedia di `LICENSE`.
 
-Nama game, logo, gambar, dan merek pihak ketiga tetap menjadi hak pemilik masing-masing. Pengguna repository wajib memastikan izin penggunaan aset untuk konteks dan wilayah penerapannya. Aset pihak ketiga tidak tercakup oleh lisensi MIT proyek dan tidak boleh dianggap sebagai dukungan resmi dari pemilik merek.
+Nama game dan merek pihak ketiga tetap menjadi hak pemilik masing-masing. Repository tidak menyertakan logo atau gambar game pihak ketiga. Gambar kategori yang diunggah oleh operator deployment tidak tercakup oleh lisensi MIT proyek; operator wajib memastikan hak penggunaannya dan tidak boleh menganggap aplikasi mendapat dukungan resmi dari pemilik merek.

@@ -20,7 +20,7 @@ import Footer from "@/Components/Footer";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Landing({ gameLogos = [], contactUrl = null }) {
+export default function Landing({ contactUrl = null }) {
     const containerRef = useRef(null);
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
@@ -110,93 +110,32 @@ export default function Landing({ gameLogos = [], contactUrl = null }) {
         };
     }, []);
 
-    const normalizeGameName = (name) =>
-        name.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-    const localLogoByName = new Map(
-        gameLogos.map((game) => [normalizeGameName(game.name), game.src]),
-    );
-
-    const localLogo = (name, fallback) =>
-        localLogoByName.get(normalizeGameName(name)) || fallback;
-
-    // Versi query memaksa browser mengambil ulang logo setelah aset diberi warna.
-    const steamLogo = (appId) => `/images/games/steam/${appId}.png?v=2`;
-
-    // Urutan Steam mengikuti hasil resmi Steam Most Played API saat diperiksa.
-    // Judul non-Steam melengkapi daftar populer lintas PC dan mobile.
-    // Seluruh 24 judul unik dan dibagi menjadi empat baris berbeda.
     const popularGames = [
-        {
-            name: "Counter-Strike 2",
-            src: localLogo("Counter Strike", steamLogo(730)),
-        },
-        {
-            name: "PUBG: Battlegrounds",
-            src: localLogo("PUBG", steamLogo(578080)),
-        },
-        {
-            name: "Dota 2",
-            src: localLogo("Dota 2", steamLogo(570)),
-        },
-        { name: "Apex Legends", src: steamLogo(1172470) },
-        { name: "Grand Theft Auto V", src: steamLogo(271590) },
-        { name: "War Thunder", src: steamLogo(236390) },
-        { name: "Rainbow Six Siege", src: steamLogo(359550) },
-        { name: "ARC Raiders", src: steamLogo(1808500) },
-        { name: "Delta Force", src: steamLogo(2507950) },
-        { name: "Overwatch 2", src: steamLogo(2357570) },
-        { name: "Marvel Rivals", src: steamLogo(2767030) },
-        { name: "Rust", src: steamLogo(252490) },
-        { name: "Dead by Daylight", src: steamLogo(381210) },
-        { name: "Deadlock", src: steamLogo(1422450) },
-        { name: "Warframe", src: steamLogo(230410) },
-        {
-            name: "Valorant",
-            src: localLogo(
-                "Valorant",
-                "https://cdn.simpleicons.org/valorant/FF4655",
-            ),
-        },
-        {
-            name: "Fortnite",
-            src: localLogo(
-                "Fortnite",
-                "https://cdn.simpleicons.org/fortnite/2F8EE5",
-            ),
-        },
-        {
-            name: "League of Legends",
-            src: localLogo(
-                "League Of Legends",
-                "https://cdn.simpleicons.org/leagueoflegends/C89B3C",
-            ),
-        },
-        {
-            name: "Minecraft",
-            src: "https://api.iconify.design/mdi/minecraft.svg?color=%2362B47A",
-        },
-        {
-            name: "Roblox",
-            src: "https://cdn.simpleicons.org/roblox/E2231A",
-        },
-        {
-            name: "Mobile Legends",
-            src: "https://api.iconify.design/arcticons/mobile-legends-bang-bang.svg?color=%232A86FF",
-        },
-        {
-            name: "Free Fire",
-            src: "https://api.iconify.design/arcticons/free-fire.svg?color=%23F59E0B",
-        },
-        {
-            name: "Genshin Impact",
-            src: "https://api.iconify.design/arcticons/genshin-impact.svg?color=%235BBAD5",
-        },
-        {
-            name: "Call of Duty: Warzone",
-            src: "https://api.iconify.design/arcticons/call-of-duty.svg?color=%2378BE20",
-        },
-    ];
+        "Counter-Strike 2",
+        "PUBG: Battlegrounds",
+        "Dota 2",
+        "Apex Legends",
+        "Grand Theft Auto V",
+        "War Thunder",
+        "Rainbow Six Siege",
+        "ARC Raiders",
+        "Delta Force",
+        "Overwatch 2",
+        "Marvel Rivals",
+        "Rust",
+        "Dead by Daylight",
+        "Deadlock",
+        "Warframe",
+        "Valorant",
+        "Fortnite",
+        "League of Legends",
+        "Minecraft",
+        "Roblox",
+        "Mobile Legends",
+        "Free Fire",
+        "Genshin Impact",
+        "Call of Duty: Warzone",
+    ].map((name) => ({ name }));
 
     const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
         popularGames.slice(rowIndex * 6, rowIndex * 6 + 6),
@@ -402,22 +341,15 @@ export default function Landing({ gameLogos = [], contactUrl = null }) {
                                                             aria-label={`Lihat akun ${game.name}`}
                                                             className="game-logo-tile group relative mr-3 flex h-[4.35rem] w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border px-3 outline-none"
                                                         >
-                                                            <ProgressiveImage
-                                                                src={game.src}
-                                                                alt=""
-                                                                width={108}
-                                                                height={40}
-                                                                loading="eager"
-                                                                fetchPriority="low"
-                                                                wrapperClassName="h-10 w-full bg-transparent"
-                                                                className="game-logo-image object-contain"
-                                                                fallback={
-                                                                    <Gamepad2
-                                                                        className="h-6 w-6"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                }
-                                                            />
+                                                            <div className="flex w-full items-center justify-center gap-2 text-center text-xs font-semibold text-base-content/75 transition-colors group-hover:text-yellow-500">
+                                                                <Gamepad2
+                                                                    className="h-5 w-5 shrink-0"
+                                                                    aria-hidden="true"
+                                                                />
+                                                                <span className="line-clamp-2">
+                                                                    {game.name}
+                                                                </span>
+                                                            </div>
                                                         </Link>
                                                     ),
                                                 )}
