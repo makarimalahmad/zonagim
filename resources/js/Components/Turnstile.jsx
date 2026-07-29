@@ -44,8 +44,8 @@ const Turnstile = forwardRef(function Turnstile(
             if (widgetIdRef.current && window.turnstile) {
                 try {
                     window.turnstile.reset(widgetIdRef.current);
-                } catch (e) {
-                    // ignore reset errors
+                } catch {
+                    return;
                 }
             }
         },
@@ -85,9 +85,9 @@ const Turnstile = forwardRef(function Turnstile(
                             },
                         },
                     );
-                } catch (e) {
-                    console.error("Turnstile render error:", e);
+                } catch {
                     isRenderedRef.current = false;
+                    onErrorRef.current?.();
                 }
             }
         };
@@ -114,8 +114,8 @@ const Turnstile = forwardRef(function Turnstile(
             if (widgetIdRef.current && window.turnstile) {
                 try {
                     window.turnstile.remove(widgetIdRef.current);
-                } catch (e) {
-                    // Ignore cleanup errors
+                } catch {
+                    widgetIdRef.current = null;
                 }
                 widgetIdRef.current = null;
                 isRenderedRef.current = false;

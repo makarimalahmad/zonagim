@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravolt\Indonesia\Models\Kabupaten;
+use Laravolt\Indonesia\Models\Kecamatan;
+use Laravolt\Indonesia\Models\Kelurahan;
+use Laravolt\Indonesia\Models\Provinsi;
 
 class ProfileController extends Controller
 {
@@ -24,20 +29,35 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function regions(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'type' => ['required', 'in:provinces,cities,districts,villages'],
+            'parent' => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $regions = match ($validated['type']) {
+            'provinces' => Provinsi::query(),
+            'cities' => Kabupaten::query()->where('province_code', $validated['parent'] ?? ''),
+            'districts' => Kecamatan::query()->where('city_code', $validated['parent'] ?? ''),
+            'villages' => Kelurahan::query()->where('district_code', $validated['parent'] ?? ''),
+        };
+
+        return response()->json($regions
+            ->orderBy('name')
+            ->get(['code', 'name']));
+    }
+
     /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
+        $request->user()->fill($request->safe()->except('email'));
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('profile.edit')
+            ->with('success', 'Informasi profil berhasil diperbarui.');
     }
 
     /**

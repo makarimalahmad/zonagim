@@ -1,3 +1,4 @@
+import { toastOptions } from "@/utils/notificationTheme";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useRef } from "react";
 import Swal from "sweetalert2";
@@ -16,28 +17,18 @@ export default function FlashToaster() {
         const message = flash.success || flash.status || flash.error;
         if (!message) return;
 
-        const isError = Boolean(flash.error);
+        const icon = flash.error
+            ? "error"
+            : flash.status
+              ? "warning"
+              : "success";
 
-        // Hindari toast ganda untuk pesan yang sama.
-        const key = (isError ? "error:" : "ok:") + message;
+        const key = flash.id || `${icon}:${message}`;
         if (lastShown.current === key) return;
         lastShown.current = key;
 
-        const isDark = (localStorage.getItem("theme") || "dark") !== "light";
-
-        Swal.fire({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3500,
-            timerProgressBar: true,
-            icon: isError ? "error" : "success",
-            iconColor: isError ? "#ef4444" : "#34d399",
-            title: message,
-            background: isDark ? "#0e1629" : "#ffffff",
-            color: isDark ? "#dbe4f0" : "#0b1221",
-        });
-    }, [flash?.success, flash?.status, flash?.error]);
+        Swal.fire(toastOptions(icon, message));
+    }, [flash?.id, flash?.success, flash?.status, flash?.error]);
 
     return null;
 }

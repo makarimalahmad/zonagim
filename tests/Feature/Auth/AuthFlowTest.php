@@ -3,8 +3,8 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Services\PendingRegistrationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -49,13 +49,17 @@ class AuthFlowTest extends TestCase
         $register->assertRedirect(route('verification.otp'));
         $this->assertDatabaseMissing('users', ['email' => 'newuser@example.com']);
 
-        $pending = Cache::get('pending_registration_newuser@example.com');
-        $this->assertNotNull($pending, 'Pending registration harus tersimpan di cache');
-        $otp = (string) $pending['otp_code'];
+        $pendingId = session('auth.verification.pending_id');
+        $this->assertIsString($pendingId, 'ID registrasi tertunda harus tersimpan di sesi');
+        $pending = app(PendingRegistrationService::class)->get($pendingId);
+        $this->assertNotNull($pending, 'Registrasi tertunda harus tersimpan di cache');
+        $this->assertArrayHasKey('otp_hash', $pending);
+        $this->assertArrayNotHasKey('otp_code', $pending);
+        $otp = app(PendingRegistrationService::class)->currentOtpForTesting($pendingId);
+        $this->assertIsString($otp);
 
         // Step 2 — verifikasi OTP: buat user, redirect ke LOGIN, JANGAN auto-login.
         $verify = $this->post('/verify-otp', [
-            'email' => 'newuser@example.com',
             'otp' => $otp,
         ]);
 

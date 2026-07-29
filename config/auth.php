@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -41,14 +43,6 @@ return [
             'provider' => 'users',
         ],
 
-        // Guard terpisah untuk panel admin (Filament).
-        // Memakai provider 'users' yang sama, tapi state login-nya
-        // disimpan terpisah dari guard 'web', sehingga sesi admin & user
-        // tidak saling memengaruhi.
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
     ],
 
     /*
@@ -71,7 +65,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
 
         // 'users' => [

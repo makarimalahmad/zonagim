@@ -35,9 +35,26 @@ class PasswordUpdateTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
+            ->assertSessionHas('success', 'Kata sandi berhasil diperbarui.')
             ->assertRedirect('/profile');
 
         $this->assertTrue(Hash::check($newPassword, $user->refresh()->password));
+    }
+
+    public function test_password_validation_messages_use_indonesian(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->from('/profile')
+            ->put('/password', [
+                'current_password' => 'password',
+                'password' => 'Ab1!',
+                'password_confirmation' => 'Ab1!',
+            ])
+            ->assertSessionHasErrors([
+                'password' => 'Kata sandi baru minimal 8 karakter.',
+            ]);
     }
 
     public function test_correct_password_must_be_provided_to_update_password(): void
@@ -54,7 +71,9 @@ class PasswordUpdateTest extends TestCase
             ]);
 
         $response
-            ->assertSessionHasErrors('current_password')
+            ->assertSessionHasErrors([
+                'current_password' => 'Kata sandi saat ini tidak sesuai.',
+            ])
             ->assertRedirect('/profile');
     }
 }

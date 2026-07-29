@@ -1,0 +1,1447 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+:root {
+    color-scheme: light;
+    --admin-page: #f6f8fc;
+    --admin-header: #ffffff;
+    --admin-surface: #ffffff;
+    --admin-surface-subtle: #f8fafc;
+    --admin-surface-hover: #f1f5f9;
+    --admin-surface-selected: #fefce8;
+    --admin-border: #e2e8f0;
+    --admin-border-strong: #cbd5e1;
+    --admin-text: #0f172a;
+    --admin-text-muted: #64748b;
+    --admin-accent: #eab308;
+    --admin-accent-hover: #ca8a04;
+    --admin-focus: rgba(234, 179, 8, 0.2);
+}
+
+html.dark {
+    color-scheme: dark;
+    --admin-page: #080f1e;
+    --admin-header: #0e1629;
+    --admin-surface: #101a2d;
+    --admin-surface-subtle: #0b1425;
+    --admin-surface-hover: #162238;
+    --admin-surface-selected: #23261f;
+    --admin-border: #26334a;
+    --admin-border-strong: #3a4861;
+    --admin-text: #f8fafc;
+    --admin-text-muted: #94a3b8;
+    --admin-accent: #facc15;
+    --admin-accent-hover: #eab308;
+    --admin-focus: rgba(250, 204, 21, 0.18);
+}
+
+a[href],
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+select:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="reset"]:not(:disabled) {
+    cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input:disabled {
+    cursor: not-allowed;
+}
+
+.fi-body {
+    background-color: var(--admin-page);
+    color: var(--admin-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.fi-logo {
+    color: var(--admin-accent);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+/* Halaman autentikasi */
+.fi-simple-layout {
+    background: var(--admin-page);
+}
+
+.fi-simple-main-ctn {
+    padding: 1.5rem;
+}
+
+.fi-simple-main {
+    position: relative;
+    width: 100%;
+    max-width: 30rem;
+    margin-block: 1.5rem;
+    padding: 2.5rem;
+    overflow: hidden;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.25rem;
+    box-shadow: none;
+}
+
+.fi-simple-page-content {
+    gap: 1.75rem;
+}
+
+.fi-simple-header {
+    gap: 0.55rem;
+}
+
+.fi-simple-header .fi-header-heading {
+    color: var(--admin-text);
+    font-size: 1.65rem;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+}
+
+.fi-simple-header .fi-header-subheading {
+    color: var(--admin-text-muted);
+    line-height: 1.6;
+}
+
+/* Field login */
+.fi-simple-main .fi-fo-field-label-content {
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.fi-simple-main .fi-input-wrp {
+    overflow: hidden;
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.75rem;
+    box-shadow: none;
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background-color 150ms ease;
+}
+
+.fi-simple-main .fi-input-wrp:hover {
+    border-color: var(--admin-border-strong);
+}
+
+.fi-simple-main .fi-input-wrp:focus-within {
+    background: var(--admin-surface);
+    border-color: var(--admin-accent);
+    outline: 3px solid var(--admin-focus);
+    outline-offset: 1px;
+}
+
+.fi-simple-main .fi-input {
+    color: var(--admin-text);
+}
+
+.fi-simple-main .fi-input::placeholder {
+    color: var(--admin-text-muted);
+}
+
+.fi-simple-main .fi-checkbox-input {
+    border-color: var(--admin-border-strong);
+    border-radius: 0.35rem;
+}
+
+.fi-simple-main .fi-btn {
+    min-height: 2.75rem;
+    border-radius: 0.75rem;
+    box-shadow: none;
+    font-weight: 650;
+    transition: background-color 150ms ease;
+}
+
+.fi-simple-main .fi-btn.fi-color-primary {
+    color: #111827;
+    box-shadow: none;
+}
+
+/* Pemilih tema pada form login */
+.admin-login-theme {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--admin-border);
+}
+
+.admin-login-theme-label {
+    color: var(--admin-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 550;
+}
+
+.admin-login-theme .fi-theme-switcher {
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.75rem;
+}
+
+.admin-login-theme .fi-theme-switcher-btn {
+    color: var(--admin-text-muted);
+    border-radius: 0.5rem;
+}
+
+.admin-login-theme .fi-theme-switcher-btn:hover {
+    color: var(--admin-text);
+    background: var(--admin-surface);
+}
+
+.admin-login-theme .fi-theme-switcher-btn.fi-active {
+    color: #111827;
+    background: var(--admin-accent);
+    box-shadow: none;
+}
+
+/* Chrome admin mengikuti palet tema, bukan gray bawaan Filament */
+.fi-topbar {
+    background-color: var(--admin-header);
+    border-bottom: 1px solid var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-sidebar,
+.fi-body-has-topbar .fi-sidebar,
+.fi-body-has-topbar .fi-sidebar-header {
+    background-color: var(--admin-page);
+}
+
+/* Permukaan widget dashboard mengikuti palet tema admin */
+.fi-account-widget .fi-section,
+.fi-wi-chart .fi-section,
+.fi-wi-table .fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-loading-section {
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-account-widget .fi-account-widget-heading,
+.fi-wi-chart .fi-section-header-heading,
+.fi-wi-table .fi-ta-header-heading,
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-value {
+    color: var(--admin-text);
+}
+
+.fi-account-widget .fi-account-widget-user-name,
+.fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-label {
+    color: var(--admin-text-muted);
+}
+
+.fi-wi-chart .fi-section-header,
+.fi-wi-table .fi-ta-header,
+.fi-wi-table .fi-ta-content,
+.fi-wi-table .fi-ta-footer {
+    background-color: transparent;
+    border-color: var(--admin-border);
+}
+
+.fi-wi-chart .fi-wi-chart-grid-color {
+    color: var(--admin-border);
+}
+
+.fi-wi-chart .fi-wi-chart-text-color {
+    color: var(--admin-text-muted);
+}
+
+/*
+ * Semua resource Filament memakai token palet admin.
+ * Override ini mencegah gray/black bawaan Filament muncul di halaman resource.
+ */
+
+/* Tabel resource: kategori, produk, dan resource berikutnya */
+.fi-body .fi-ta-ctn {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.75rem;
+    box-shadow: none;
+}
+
+/*
+ * Kartu tanpa toolbar aman dipotong mengikuti radius. Kartu dengan toolbar
+ * tetap overflow visible agar dropdown filter dan pengelola kolom tidak terpotong.
+ */
+.fi-body .fi-ta-ctn:not(.fi-ta-ctn-with-header) {
+    overflow: hidden;
+}
+
+/*
+ * Wrapper tabel adalah satu kartu. Bagian internal harus transparan supaya
+ * background kotak miliknya tidak menutupi sudut rounded pada kartu luar.
+ */
+.fi-body .fi-ta-header,
+.fi-body .fi-ta-header-toolbar,
+.fi-body .fi-ta-filters-above-content-ctn,
+.fi-body .fi-ta-filters-below-content,
+.fi-body .fi-ta-content-ctn,
+.fi-body .fi-ta-content,
+.fi-body .fi-ta-empty-state,
+.fi-body .fi-ta-ctn > .fi-pagination {
+    background-color: transparent;
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-ta-ctn > :first-child,
+.fi-body .fi-ta-ctn > :first-child > :first-child {
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+}
+
+.fi-body .fi-ta-ctn > :last-child,
+.fi-body .fi-ta-ctn > :last-child > :last-child {
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+}
+
+.fi-body .fi-ta-table,
+.fi-body .fi-ta-table > thead,
+.fi-body .fi-ta-table > tbody {
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-ta-table > thead > tr,
+.fi-body .fi-ta-table > tfoot,
+.fi-body .fi-ta-table-stacked-header-cell,
+.fi-body .fi-ta-content-header,
+.fi-body .fi-ta-reorder-indicator,
+.fi-body .fi-ta-selection-indicator,
+.fi-body .fi-ta-filter-indicators {
+    color: var(--admin-text);
+    background-color: var(--admin-surface-subtle);
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-ta-table > thead > tr.fi-ta-table-head-groups-row {
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-ta-table > tbody > tr {
+    background-color: var(--admin-surface);
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-ta-table > tbody > tr:hover {
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-ta-table > tbody > tr.fi-selected {
+    background-color: var(--admin-surface-selected);
+}
+
+.fi-body .fi-ta-header-heading,
+.fi-body .fi-ta-filters-heading,
+.fi-body .fi-ta-header-cell,
+.fi-body .fi-ta-empty-state-heading,
+.fi-body .fi-ta-cell-content {
+    color: var(--admin-text);
+}
+
+.fi-body .fi-ta-header-description,
+.fi-body .fi-ta-cell-label,
+.fi-body .fi-ta-empty-state-description {
+    color: var(--admin-text-muted);
+}
+
+.fi-body .fi-ta-empty-state-icon-bg {
+    color: var(--admin-text-muted);
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-ta-filters-before-content-ctn,
+.fi-body .fi-ta-filters-after-content-ctn {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border-color: var(--admin-border);
+    box-shadow: none;
+}
+
+/* Section dan form create/edit/view */
+.fi-body .fi-section:not(.fi-section-not-contained):not(.fi-aside),
+.fi-body .fi-section.fi-aside > .fi-section-content-ctn {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-body .fi-section.fi-secondary:not(.fi-aside),
+.fi-body .fi-section.fi-secondary.fi-aside > .fi-section-content-ctn {
+    background-color: var(--admin-surface-subtle);
+}
+
+.fi-body .fi-section-header,
+.fi-body .fi-section-content-ctn,
+.fi-body .fi-section-footer,
+.fi-body .fi-section.fi-divided .fi-section-content {
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-section-header-heading,
+.fi-body .fi-fo-field-label-content {
+    color: var(--admin-text);
+}
+
+.fi-body .fi-section-header-description,
+.fi-body .fi-fo-field-wrp-hint,
+.fi-body .fi-fo-field-wrp-helper-text {
+    color: var(--admin-text-muted);
+}
+
+.fi-body .fi-input-wrp {
+    color: var(--admin-text);
+    background-color: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-body .fi-input-wrp:hover {
+    border-color: var(--admin-border-strong);
+}
+
+.fi-body .fi-input-wrp:focus-within {
+    background-color: var(--admin-surface);
+    border-color: var(--admin-accent);
+    outline: 3px solid var(--admin-focus);
+    outline-offset: 1px;
+}
+
+.fi-body .fi-input,
+.fi-body .fi-select-input,
+.fi-body .fi-textarea {
+    color: var(--admin-text);
+    background-color: transparent;
+}
+
+.fi-body .fi-input::placeholder,
+.fi-body .fi-textarea::placeholder,
+.fi-body .fi-input-wrp-label {
+    color: var(--admin-text-muted);
+}
+
+/* Popup, menu, modal, tabs, dan pagination */
+.fi-body .fi-dropdown-panel,
+.fi-body .fi-modal-window,
+.fi-body .fi-pagination-items,
+.fi-body .fi-tabs,
+.fi-body .fi-fo-date-time-picker-panel {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border-color: var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-body .fi-modal-header,
+.fi-body .fi-modal-footer {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-dropdown-list-item:hover,
+.fi-body .fi-dropdown-list-item:focus-visible,
+.fi-body .fi-tabs-item:hover,
+.fi-body .fi-pagination-item.fi-active .fi-pagination-item-btn {
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-pagination-item,
+.fi-body .fi-pagination {
+    border-color: var(--admin-border);
+}
+
+.fi-body .fi-pagination-overview,
+.fi-body .fi-pagination-item-label,
+.fi-body .fi-modal-heading {
+    color: var(--admin-text);
+}
+
+/* Navigasi dan panel pendukung */
+.fi-body .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-sidebar-item-btn:hover,
+.fi-body .fi-topbar-item-btn:hover {
+    background-color: var(--admin-surface-hover);
+}
+
+.fi-body .fi-global-search-results-ctn {
+    color: var(--admin-text);
+    background-color: var(--admin-surface);
+    border-color: var(--admin-border);
+    box-shadow: none;
+}
+
+.fi-body .fi-no-notification:not(.fi-inline),
+.fi-body .fi-no-notification.fi-color:not(.fi-inline) {
+    color: #422006;
+    background-color: #facc15;
+    border: 1px solid #eab308;
+    box-shadow: 0 12px 30px rgba(113, 63, 18, 0.16);
+    --color-400: #713f12;
+    --color-600: #713f12;
+}
+
+.fi-body .fi-no-notification .fi-no-notification-title,
+.fi-body .fi-no-notification .fi-no-notification-date,
+.fi-body .fi-no-notification .fi-no-notification-body,
+.fi-body .fi-no-notification.fi-color .fi-no-notification-body {
+    color: #422006;
+}
+
+.fi-body .fi-no-notification .fi-no-notification-icon,
+.fi-body .fi-no-notification .fi-no-notification-close-btn,
+.fi-body .fi-no-notification .fi-no-notification-close-btn .fi-icon {
+    color: #713f12;
+}
+
+.fi-body .fi-no-notification .fi-no-notification-close-btn:hover {
+    color: #422006;
+    background-color: rgba(113, 63, 18, 0.12);
+}
+
+/* Autentikasi dua faktor admin */
+.admin-mfa-setup-page .fi-simple-main {
+    max-width: 32rem;
+    padding: 2.25rem;
+}
+
+.admin-mfa-setup-page .fi-simple-page-content {
+    gap: 1.5rem;
+}
+
+.admin-mfa-challenge::before {
+    content: '';
+    display: block;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-inline: auto;
+    margin-bottom: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--admin-accent) 45%, transparent);
+    border-radius: 0.75rem;
+    background-color: color-mix(in srgb, var(--admin-accent) 10%, transparent);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23eab308' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.admin-mfa-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-mfa-brand img {
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+.admin-mfa-brand span {
+    color: var(--admin-text);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.admin-mfa-setup-card.fi-section {
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.875rem;
+    box-shadow: none;
+}
+
+.admin-mfa-setup-card .fi-section-content {
+    padding: 1.25rem;
+}
+
+.admin-mfa-setup-card .fi-sc-actions {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.admin-mfa-setup-card .fi-sc-actions-label-ctn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-mfa-setup-card .fi-sc-actions-label {
+    color: var(--admin-text);
+    font-weight: 700;
+}
+
+.admin-mfa-setup-card .fi-ac {
+    width: 100%;
+}
+
+.admin-mfa-setup-card .fi-btn {
+    width: 100%;
+}
+
+.admin-mfa-setup-card .fi-btn.fi-color-primary {
+    color: #0b1221;
+    background: #eab308;
+    opacity: 1;
+    filter: none;
+    box-shadow: 0 8px 20px rgba(234, 179, 8, 0.16);
+}
+
+.admin-mfa-setup-card .fi-btn.fi-color-primary:hover {
+    color: #0b1221;
+    background: #ca8a04;
+}
+
+.admin-mfa-aws-modal .fi-btn.fi-color-primary {
+    color: #0b1221;
+    background: #eab308;
+    opacity: 1;
+    filter: none;
+    box-shadow: none;
+}
+
+.admin-mfa-aws-modal .fi-btn.fi-color-primary:hover {
+    color: #0b1221;
+    background: #ca8a04;
+}
+
+.admin-mfa-aws-modal .fi-modal-footer .fi-btn.fi-color-primary:focus,
+.admin-mfa-aws-modal .fi-modal-footer .fi-btn.fi-color-primary:focus-visible {
+    outline: none;
+    box-shadow: none;
+    --tw-ring-shadow: 0 0 #0000;
+}
+
+.admin-mfa-setup-card .fi-sc-actions-below-content {
+    color: var(--admin-text-muted);
+    line-height: 1.55;
+}
+
+
+.admin-mfa-challenge {
+    padding-top: 0.25rem;
+}
+
+.admin-mfa-challenge::before {
+    margin-bottom: 1.25rem;
+}
+
+.admin-mfa-challenge .fi-fo-field,
+.admin-mfa-challenge .fi-fo-field-wrp,
+.admin-mfa-challenge .fi-fo-field-wrp-label,
+.admin-mfa-challenge .fi-fo-field-wrp-helper-text {
+    text-align: center;
+}
+
+.admin-mfa-challenge .fi-one-time-code-input-ctn {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.admin-mfa-challenge .fi-one-time-code-input-digit {
+    width: 2.75rem;
+    height: 3.25rem;
+    text-align: center;
+    color: var(--admin-text);
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border-strong);
+    border-radius: 0.625rem;
+    box-shadow: none;
+}
+
+.admin-mfa-challenge .fi-one-time-code-input-digit:focus {
+    border-color: var(--admin-accent);
+    outline: 3px solid var(--admin-focus);
+}
+
+.admin-mfa-setup-modal.fi-modal-window {
+    width: min(100% - 2rem, 35rem);
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: 0 24px 70px rgba(2, 6, 23, 0.28);
+}
+
+.admin-mfa-setup-modal .fi-modal-header {
+    padding: 1.5rem 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-mfa-setup-modal .fi-modal-content {
+    padding: 1.5rem;
+}
+
+.admin-mfa-setup-modal .fi-sc-group > .fi-sc,
+.admin-mfa-setup-modal .fi-sc-group > .fi-sc > .fi-sc {
+    align-items: center;
+    text-align: center;
+}
+
+.admin-mfa-setup-modal .fi-sc-image {
+    margin-inline: auto;
+}
+
+.admin-mfa-setup-modal .fi-sc-flex {
+    width: 100%;
+    justify-content: center;
+}
+
+.admin-mfa-setup-modal .fi-fo-field-wrp-label,
+.admin-mfa-setup-modal .fi-fo-field-wrp-helper-text {
+    display: block;
+    text-align: center;
+}
+
+.admin-mfa-setup-modal .fi-one-time-code-input-ctn {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+    justify-content: center;
+    gap: 0.55rem;
+}
+
+.admin-mfa-setup-modal .fi-one-time-code-input-digit {
+    width: 2.8rem;
+    height: 3.25rem;
+    text-align: center;
+    border: 1px solid var(--admin-border-strong);
+    border-radius: 0.625rem;
+}
+
+.admin-mfa-setup-modal .fi-modal-footer-actions {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.admin-mfa-setup-modal .fi-modal-footer .fi-btn {
+    min-width: 7rem;
+}
+
+.admin-mfa-aws-modal.fi-modal-window {
+    max-height: calc(100dvh - 2rem);
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: 0 24px 70px rgba(2, 6, 23, 0.3);
+}
+
+.admin-mfa-aws-modal .fi-modal-header {
+    flex: 0 0 auto;
+    padding: 1rem 1.25rem 0.85rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-mfa-aws-modal .fi-modal-description {
+    margin-top: 0.25rem;
+}
+
+.admin-mfa-aws-modal .fi-modal-content {
+    min-height: 0;
+    flex: 1 1 auto;
+    gap: 0;
+    padding: 0.5rem 1.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-mfa-aws-modal .fi-modal-content > .fi-sc {
+    gap: 0;
+}
+
+.admin-mfa-inline-step {
+    width: 100%;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-mfa-inline-step.fi-sc-flex {
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.admin-mfa-inline-step:last-child {
+    padding-bottom: 0.9rem;
+    border-bottom: 0;
+}
+
+.admin-mfa-step-number {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    color: #111827;
+    font-weight: 800;
+    background: var(--admin-accent);
+    border-radius: 9999px;
+}
+
+.admin-mfa-inline-step .fi-sc-group {
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-mfa-inline-step .fi-sc-group > .fi-sc {
+    gap: 0.5rem;
+}
+
+.admin-mfa-inline-step .fi-sc-text {
+    line-height: 1.55;
+}
+
+.admin-mfa-inline-step .fi-sc-group > .fi-sc > .fi-sc-actions,
+.admin-mfa-inline-step .fi-sc-group > .fi-sc > .fi-sc-grid {
+    margin-top: 0.25rem;
+}
+
+.admin-mfa-secret-actions .fi-ac {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.admin-mfa-secret-actions .fi-ac > * {
+    min-width: 0;
+}
+
+.admin-mfa-secret-actions .fi-btn {
+    width: 100%;
+    min-height: 2.5rem;
+}
+
+.admin-mfa-reveal-panel {
+    transform-origin: top center;
+    animation: admin-mfa-slide-down 220ms ease-out both;
+}
+
+@keyframes admin-mfa-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-0.65rem) scaleY(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+.admin-mfa-qr-panel,
+.admin-mfa-secret-panel {
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+    padding: 0.75rem;
+    text-align: center;
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.875rem;
+}
+
+.admin-mfa-qr-panel .fi-sc-image {
+    margin-inline: auto;
+}
+
+.admin-mfa-secret-value {
+    display: block;
+    padding: 0.9rem 1rem;
+    margin-top: 0.75rem;
+    overflow-wrap: anywhere;
+    color: var(--admin-text);
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border-strong);
+    border-radius: 0.625rem;
+    letter-spacing: 0.08em;
+}
+
+.admin-mfa-code-step {
+    width: 100%;
+}
+
+.admin-mfa-code-step .fi-input {
+    min-height: 2.6rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-align: center;
+}
+
+.admin-mfa-aws-modal .fi-modal-footer {
+    min-height: 4.5rem;
+    flex: 0 0 auto;
+    padding: 0.8rem 1.25rem 1rem;
+    overflow: visible;
+    border-top: 1px solid var(--admin-border);
+}
+
+.admin-mfa-aws-modal .fi-modal-footer.fi-align-end .fi-modal-footer-actions {
+    width: auto;
+    min-height: 2.75rem;
+    margin-inline-start: auto;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@media (max-width: 640px) {
+    .admin-mfa-setup-page {
+        min-height: 100dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-mfa-setup-page .fi-simple-main-ctn {
+        min-height: auto;
+        flex: 0 0 auto;
+        align-items: flex-start;
+        padding: max(1rem, env(safe-area-inset-top)) 0.75rem max(1.5rem, env(safe-area-inset-bottom));
+    }
+
+    .admin-mfa-setup-page .fi-simple-main {
+        max-width: none;
+        margin-block: 0;
+        padding: 1.5rem 1.1rem;
+        border-radius: 1rem;
+    }
+
+    .fi-simple-main-ctn {
+        padding: 1rem;
+    }
+
+    .fi-simple-main {
+        margin-block: 1rem;
+        padding: 2rem 1.35rem;
+        border-radius: 1rem;
+    }
+
+    .fi-simple-header .fi-header-heading {
+        font-size: 1.5rem;
+    }
+
+    .admin-mfa-challenge .fi-one-time-code-input-digit {
+        width: 2.35rem;
+        height: 3rem;
+    }
+
+    .admin-mfa-inline-step.fi-sc-flex {
+        gap: 0.75rem;
+    }
+
+    .admin-mfa-step-number {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .admin-mfa-brand img {
+        width: 4.75rem;
+        height: 4.75rem;
+    }
+
+    .admin-mfa-brand span {
+        font-size: 1.5rem;
+    }
+
+    .admin-mfa-setup-page .fi-simple-header-subheading {
+        font-size: 0.875rem;
+        line-height: 1.55;
+    }
+
+    .admin-mfa-setup-card .fi-section-content {
+        padding: 1rem;
+    }
+
+    .admin-mfa-aws-modal.fi-modal-window {
+        max-height: calc(100dvh - max(1rem, env(safe-area-inset-top)) - max(1rem, env(safe-area-inset-bottom)));
+        border-radius: 0.875rem;
+    }
+
+    .admin-mfa-aws-modal .fi-modal-header {
+        flex: 0 0 auto;
+        padding: 0.9rem 1rem 0.75rem;
+    }
+
+    .admin-mfa-aws-modal .fi-modal-content {
+        min-height: 0;
+        padding: 0.45rem 1rem 1rem;
+        overflow-y: auto;
+    }
+
+    .admin-mfa-aws-modal .fi-modal-footer {
+        flex: 0 0 auto;
+        padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+    }
+
+    .admin-mfa-secret-actions .fi-ac {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .admin-mfa-secret-actions .fi-btn {
+        min-height: 2.75rem;
+        padding-inline: 0.65rem;
+        font-size: 0.8rem;
+    }
+
+    .admin-mfa-qr-panel,
+    .admin-mfa-secret-panel {
+        max-width: 100%;
+    }
+
+    .admin-mfa-code-step .fi-sc-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-mfa-aws-modal .fi-modal-footer-actions {
+        gap: 0.5rem;
+    }
+}
+
+/* Pengelolaan keamanan akun */
+.admin-account-security-card > .fi-section {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: none;
+}
+
+.admin-account-security-card > .fi-section > .fi-section-header {
+    padding: 1.75rem;
+    background: color-mix(in srgb, var(--admin-success) 7%, var(--admin-surface));
+}
+
+.admin-account-security-card .fi-section-header-heading {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.admin-account-security-card .fi-section-header-description {
+    max-width: 38rem;
+    margin-top: 0.4rem;
+    line-height: 1.55;
+}
+
+.admin-account-security-card > .fi-section > .fi-section-content-ctn > .fi-section-content {
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.admin-totp-device-row.fi-sc-flex {
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-totp-device-row.fi-sc-flex:first-of-type {
+    padding-top: 0.5rem;
+}
+
+.admin-totp-device-row.fi-sc-flex .fi-sc-group {
+    min-width: 0;
+}
+
+.admin-account-mfa-actions {
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+.admin-account-mfa-actions .fi-sc-actions-label {
+    font-weight: 700;
+}
+
+.admin-account-mfa-actions .fi-ac {
+    gap: 0.75rem;
+}
+
+.admin-account-security-card .fi-sc-actions .fi-btn {
+    min-height: 2.75rem;
+}
+
+@media (max-width: 640px) {
+    .admin-account-security-card > .fi-section > .fi-section-header,
+    .admin-account-security-card > .fi-section > .fi-section-content-ctn > .fi-section-content {
+        padding: 1.25rem;
+    }
+
+    .admin-totp-device-row.fi-sc-flex {
+        align-items: flex-start;
+    }
+
+    .admin-totp-device-row.fi-sc-flex .fi-ac {
+        width: 100%;
+    }
+
+    .admin-totp-device-row.fi-sc-flex .fi-btn {
+        width: 100%;
+    }
+
+    .admin-account-mfa-actions .fi-ac {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .admin-account-mfa-actions .fi-btn {
+        width: 100%;
+    }
+}
+
+
+.fi-ac-btn-group.app-persistent-bulk-actions {
+    cursor: pointer;
+}
+
+.fi-dropdown-list-item.app-persistent-delete-bulk-action:disabled,
+.fi-dropdown-list-item.app-persistent-delete-bulk-action[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.fi-btn.app-delete-action,
+.fi-dropdown-list-item.app-delete-action {
+    color: #ffffff;
+    background: #dc2626;
+    border-color: #dc2626;
+    box-shadow: none;
+}
+
+.fi-btn.app-delete-action .fi-icon,
+.fi-btn.app-delete-action .fi-btn-label,
+.fi-dropdown-list-item.app-delete-action .fi-icon,
+.fi-dropdown-list-item.app-delete-action .fi-dropdown-list-item-label {
+    color: #ffffff;
+}
+
+.fi-btn.app-delete-action:not(:disabled):not(.fi-disabled):hover,
+.fi-dropdown-list-item.app-delete-action:not(:disabled):not(.fi-disabled):hover {
+    color: #ffffff;
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.fi-btn.app-delete-action:not(:disabled):not(.fi-disabled):hover .fi-icon,
+.fi-btn.app-delete-action:not(:disabled):not(.fi-disabled):hover .fi-btn-label,
+.fi-dropdown-list-item.app-delete-action:not(:disabled):not(.fi-disabled):hover .fi-icon,
+.fi-dropdown-list-item.app-delete-action:not(:disabled):not(.fi-disabled):hover .fi-dropdown-list-item-label {
+    color: #ffffff;
+}
+
+.fi-btn.app-delete-action:focus-visible,
+.fi-dropdown-list-item.app-delete-action:focus-visible {
+    outline: 3px solid rgba(248, 113, 113, 0.45);
+    outline-offset: 2px;
+}
+
+.fi-fo-file-upload .filepond--file-action-button.filepond--action-remove-item {
+    color: #ffffff;
+    background-color: #dc2626;
+    box-shadow: none;
+}
+
+.fi-fo-file-upload .filepond--file-action-button.filepond--action-remove-item:hover,
+.fi-fo-file-upload .filepond--file-action-button.filepond--action-remove-item:focus-visible {
+    color: #ffffff;
+    background-color: #b91c1c;
+    box-shadow: 0 0 0 0.125em rgba(255, 255, 255, 0.9);
+}
+
+.admin-mfa-error-modal.fi-modal-window {
+    overflow: hidden;
+    border: 2px solid #ef4444;
+    border-radius: 1rem;
+    box-shadow: none;
+}
+
+.admin-mfa-error-modal .fi-modal-header {
+    border-bottom: 0;
+}
+
+.admin-mfa-error-modal .fi-modal-icon-ctn {
+    color: #ef4444;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+.admin-mfa-error-modal .fi-modal-icon,
+.admin-mfa-error-modal .fi-modal-heading {
+    color: #ef4444;
+}
+
+.admin-mfa-error-modal .fi-modal-description {
+    color: color-mix(in srgb, #ef4444 72%, var(--admin-text));
+}
+
+.admin-mfa-error-modal .fi-modal-footer {
+    border-top: 0;
+}
+
+.admin-mfa-error-modal .fi-modal-footer .fi-btn.fi-color-danger {
+    color: #ffffff;
+    background: #dc2626;
+    border-color: #dc2626;
+    border-radius: 0.75rem;
+    box-shadow: none;
+}
+
+.admin-mfa-error-modal .fi-modal-footer .fi-btn.fi-color-danger:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.admin-mfa-recovery-codes-modal.fi-modal-window {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: 0 20px 55px rgba(2, 6, 23, 0.24);
+}
+
+.admin-mfa-recovery-codes-modal .fi-modal-header {
+    padding: 1.5rem 1.5rem 0.75rem;
+    border-bottom: 0;
+}
+
+.admin-mfa-recovery-codes-modal .fi-modal-content {
+    padding: 0.75rem 1.5rem;
+}
+
+.admin-mfa-recovery-codes-modal .fi-modal-footer {
+    padding: 0.75rem 1.5rem 1.5rem;
+    border-top: 0;
+}
+
+.admin-mfa-recovery-codes-modal .fi-modal-footer-actions {
+    margin-inline-start: auto;
+}
+
+.admin-mfa-recovery-code-content > .fi-sc {
+    gap: 1rem;
+}
+
+.admin-mfa-recovery-code-list {
+    padding: 1rem 1.15rem;
+    background: var(--admin-surface-subtle);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.75rem;
+}
+
+.admin-mfa-recovery-code-list ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.admin-mfa-recovery-code-list li {
+    display: flex;
+    min-width: 0;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 0.75rem;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 0.6rem;
+    text-align: center;
+}
+
+.admin-mfa-recovery-code-list li > * {
+    width: 100%;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.admin-mfa-recovery-code-actions .fi-ac {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+}
+
+.admin-mfa-recovery-code-actions .fi-btn {
+    border-radius: 0.65rem;
+}
+
+.admin-mfa-add-device-password-modal.fi-modal-window {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: none;
+}
+
+.admin-mfa-add-device-password-modal .fi-modal-header {
+    padding: 1.35rem 1.5rem 0.5rem;
+    border-bottom: 0;
+}
+
+.admin-mfa-add-device-password-modal .fi-modal-content {
+    padding: 0.75rem 1.5rem;
+}
+
+.admin-mfa-add-device-password-modal .fi-modal-footer {
+    padding: 0.75rem 1.5rem 1.35rem;
+    border-top: 0;
+}
+
+.admin-mfa-add-device-password-modal .fi-modal-footer-actions {
+    gap: 0.75rem;
+}
+
+.admin-mfa-add-device-password-modal .fi-fo-field-wrp-error-message {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.admin-mfa-manage-modal.fi-modal-window {
+    overflow: hidden;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    box-shadow: 0 24px 70px rgba(2, 6, 23, 0.28);
+}
+
+.admin-mfa-manage-modal .fi-modal-header {
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-mfa-manage-modal .fi-modal-icon-ctn {
+    flex: 0 0 auto;
+}
+
+.admin-mfa-manage-modal .fi-modal-header > div:last-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.admin-mfa-manage-modal .fi-modal-description {
+    margin-top: 0.35rem;
+    line-height: 1.55;
+}
+
+.admin-mfa-manage-modal .fi-modal-content {
+    padding: 1.25rem;
+}
+
+.admin-mfa-method-scope {
+    display: grid;
+    gap: 1.15rem;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker.fi-btn-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.75rem;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker.fi-btn-group > .fi-btn {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker.fi-btn-group > .fi-btn:nth-child(1 of .fi-btn) {
+    border-start-start-radius: 0.75rem;
+    border-end-start-radius: 0.75rem;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker.fi-btn-group > .fi-btn:nth-last-child(1 of .fi-btn) {
+    border-start-end-radius: 0.75rem;
+    border-end-end-radius: 0.75rem;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker input:checked + .fi-btn {
+    color: #0b1221;
+    background: #eab308;
+    border-color: #eab308;
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker input:not(:checked) + .fi-btn {
+    color: var(--admin-text);
+    background: var(--admin-surface-subtle);
+}
+
+.admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker input:focus-visible + .fi-btn {
+    outline: 3px solid var(--admin-focus);
+    outline-offset: 2px;
+}
+
+.admin-mfa-manage-modal .fi-one-time-code-input-wrp,
+.admin-mfa-manage-modal .fi-one-time-code-input-ctn {
+    width: fit-content;
+    margin-inline: auto;
+}
+
+.admin-mfa-manage-modal .fi-one-time-code-input-ctn {
+    justify-content: center;
+}
+
+.admin-mfa-manage-modal .fi-modal-footer.fi-align-end .fi-modal-footer-actions {
+    margin-inline-start: auto;
+}
+
+@media (max-width: 640px) {
+    .admin-mfa-recovery-code-list ul {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-mfa-recovery-code-actions .fi-ac {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .admin-mfa-recovery-code-actions .fi-btn {
+        width: 100%;
+    }
+
+    .admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker.fi-btn-group {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-mfa-manage-modal .fi-fo-toggle-buttons.admin-mfa-method-picker .fi-btn {
+        padding-inline: 0.6rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-simple-main .fi-input-wrp,
+    .fi-simple-main .fi-btn {
+        transition: none;
+    }
+
+    .admin-mfa-reveal-panel {
+        animation: none;
+    }
+}

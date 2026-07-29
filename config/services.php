@@ -38,6 +38,7 @@ return [
     'turnstile' => [
         'site_key' => env('TURNSTILE_SITE_KEY'),
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
+        'hostname' => env('TURNSTILE_HOSTNAME'),
         // Bisa dimatikan untuk testing/local (default tetap aktif di produksi).
         'enabled' => env('TURNSTILE_ENABLED', true),
     ],

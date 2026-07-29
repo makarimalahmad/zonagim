@@ -22,20 +22,24 @@ class PageController extends Controller
         $dir = public_path('images/games');
         $files = [];
         foreach (['svg', 'png', 'webp', 'jpg', 'jpeg'] as $ext) {
-            $files = array_merge($files, glob($dir . '/*.' . $ext) ?: []);
+            $files = array_merge($files, glob($dir.'/*.'.$ext) ?: []);
         }
         sort($files);
 
         $gameLogos = array_map(function ($file) {
             $base = pathinfo($file, PATHINFO_FILENAME);
+
             return [
                 'name' => ucwords(str_replace(['-', '_'], ' ', $base)),
-                'src' => asset('images/games/' . basename($file)),
+                'src' => asset('images/games/'.basename($file)),
             ];
         }, $files);
 
         return Inertia::render('Landing', [
             'gameLogos' => array_values($gameLogos),
+            'contactUrl' => filled(config('seo.whatsapp'))
+                ? 'https://wa.me/'.config('seo.whatsapp')
+                : null,
         ]);
     }
 

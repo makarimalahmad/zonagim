@@ -20,7 +20,6 @@ class AuthenticatedSessionController extends Controller
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
         ]);
     }
 
@@ -35,12 +34,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->flash('success', 'Selamat datang! Kamu berhasil masuk.');
 
-        $target = $request->session()->pull('url.intended', route('market'));
-
-        // User biasa tidak boleh diarahkan ke panel admin.
-        if (str_contains($target, '/admin')) {
-            $target = route('market');
-        }
+        $target = $this->safeIntendedTarget(
+            $request->session()->pull('url.intended'),
+        );
 
         // Full-page visit ke area terautentikasi. Ini memastikan cookie session
         // baru (hasil regenerate) terkirim di request top-level dan menghindari
@@ -49,16 +45,50 @@ class AuthenticatedSessionController extends Controller
         return Inertia::location($target);
     }
 
+    private function safeIntendedTarget(mixed $target): string
+    {
+        $fallback = route('market');
+
+        if (
+            ! is_string($target)
+            || $target === ''
+            || str_contains($target, '\\')
+            || preg_match('/[\x00-\x1F\x7F]/', $target) === 1
+            || str_starts_with($target, '//')
+        ) {
+            return $fallback;
+        }
+
+        $targetUrl = parse_url($target);
+        $fallbackUrl = parse_url($fallback);
+
+        if ($targetUrl === false || $fallbackUrl === false) {
+            return $fallback;
+        }
+
+        if (isset($targetUrl['host'])) {
+            foreach (['scheme', 'host', 'port'] as $part) {
+                if (($targetUrl[$part] ?? null) !== ($fallbackUrl[$part] ?? null)) {
+                    return $fallback;
+                }
+            }
+        } elseif (! str_starts_with($target, '/')) {
+            return $fallback;
+        }
+
+        $path = $targetUrl['path'] ?? '/';
+
+        return str_starts_with($path, '/admin') ? $fallback : $target;
+    }
+
     /**
      * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Hanya logout guard 'web' (user). JANGAN invalidate seluruh session,
-        // karena panel admin memakai guard 'admin' yang berbagi cookie session
-        // yang sama — meng-invalidate akan ikut me-logout admin & memicu
-        // "page expired" (CSRF) di tab admin.
         Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/');
     }

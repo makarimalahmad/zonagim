@@ -91,7 +91,7 @@ const DropdownLink = ({ className = '', children, ...props }) => {
         <Link
             {...props}
             className={
-                'block w-full px-4 py-2 text-start text-sm leading-5 text-base-content transition duration-150 ease-in-out hover:bg-base-200 focus:bg-base-200 focus:outline-none ' +
+                'block w-full cursor-pointer px-4 py-2 text-start text-sm leading-5 text-base-content transition duration-150 ease-in-out hover:bg-base-200 focus:bg-base-200 focus:outline-none ' +
                 className
             }
         >

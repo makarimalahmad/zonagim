@@ -102,11 +102,157 @@
     --breakpoint-xs: 475px;
 }
 
-/* ===== Marquee logo wall (hero "Game Terpopuler") ===== */
+/* Transisi halus saat ganti tema (fallback bila View Transitions tidak ada) */
+:root:not([data-theme-vt]) :where(*, *::before, *::after) {
+    transition:
+        background-color 400ms ease,
+        border-color 400ms ease,
+        color 400ms ease,
+        fill 400ms ease,
+        stroke 400ms ease,
+        box-shadow 400ms ease;
+}
+
+/* Circular reveal via View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 9999;
+}
+
+@keyframes theme-reveal {
+    from {
+        clip-path: circle(0% at var(--theme-x, 50%) var(--theme-y, 50%));
+    }
+    to {
+        clip-path: circle(
+            var(--theme-r, 150%) at var(--theme-x, 50%) var(--theme-y, 50%)
+        );
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root:not([data-theme-vt]) :where(*, *::before, *::after) {
+        transition: none;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none;
+    }
+}
+
+a[href],
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+select,
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="reset"]:not(:disabled) {
+    cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input:disabled {
+    cursor: not-allowed;
+}
+
+.app-delete-button {
+    color: #ffffff;
+    background-color: #dc2626;
+    border-color: #dc2626;
+    box-shadow: none;
+}
+
+.app-delete-button:not(:disabled):hover {
+    color: #ffffff;
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.app-delete-button:not(:disabled):active {
+    color: #ffffff;
+    background-color: #991b1b;
+    border-color: #991b1b;
+}
+
+/* Media tetap menempati ruang selama proses unduh untuk mencegah CLS. */
+.progressive-image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-base-200);
+    isolation: isolate;
+}
+
+.progressive-image__media,
+.progressive-image__skeleton,
+.progressive-image__fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.progressive-image__media {
+    z-index: 1;
+    opacity: 0;
+}
+
+.progressive-image__media--loaded {
+    opacity: 1;
+}
+
+.progressive-image__skeleton {
+    z-index: 0;
+    background: linear-gradient(
+        100deg,
+        var(--color-base-200) 20%,
+        var(--color-base-300) 50%,
+        var(--color-base-200) 80%
+    );
+    background-size: 220% 100%;
+    animation: progressive-image-shimmer 1.4s ease-in-out infinite;
+}
+
+.progressive-image__fallback {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: color-mix(in srgb, var(--color-base-content) 35%, transparent);
+    background: var(--color-base-300);
+}
+
+@keyframes progressive-image-shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -20% 0;
+    }
+}
+
+/* Marquee logo game pada hero */
 @keyframes marquee-ltr {
     from {
         transform: translateX(0);
     }
+
     to {
         transform: translateX(-50%);
     }
@@ -116,6 +262,7 @@
     from {
         transform: translateX(-50%);
     }
+
     to {
         transform: translateX(0);
     }
@@ -126,7 +273,75 @@
     will-change: transform;
 }
 
-/* Jeda animasi saat kursor di atas wall */
+.game-logo-wall {
+    background: color-mix(
+        in srgb,
+        var(--color-base-100) 94%,
+        var(--color-base-200)
+    );
+}
+
+.game-logo-fade {
+    width: 100%;
+}
+
+.game-logo-tile {
+    border-color: color-mix(
+        in srgb,
+        var(--color-base-content) 10%,
+        transparent
+    );
+    background: var(--color-base-200);
+    transition:
+        transform 300ms ease,
+        border-color 300ms ease,
+        background-color 300ms ease;
+}
+
+.game-logo-tile .progressive-image__skeleton {
+    background: transparent;
+    animation: none;
+}
+
+.game-logo-image {
+    opacity: 1;
+    filter: none;
+    transition: transform 200ms ease;
+}
+
+.game-logo-tile:hover,
+.game-logo-tile:focus-visible {
+    z-index: 1;
+    transform: translateY(-2px);
+    border-color: color-mix(
+        in srgb,
+        var(--color-base-content) 24%,
+        transparent
+    );
+    background: var(--color-base-100);
+}
+
+.game-logo-tile:focus-visible {
+    outline: 2px solid
+        color-mix(in srgb, var(--color-base-content) 45%, transparent);
+    outline-offset: 2px;
+}
+
+.game-logo-tile:hover .game-logo-image,
+.game-logo-tile:focus-visible .game-logo-image {
+    transform: scale(1.04);
+}
+
 .marquee-track:hover {
     animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation-play-state: paused;
+    }
+
+    .progressive-image__skeleton {
+        animation: none;
+    }
 }

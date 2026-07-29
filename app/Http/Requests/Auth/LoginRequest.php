@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use App\Services\TurnstileService;
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -23,7 +26,7 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -50,7 +53,7 @@ class LoginRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            if (!$validator->errors()->has('cf_turnstile_response')) {
+            if (! $validator->errors()->has('cf_turnstile_response')) {
                 $this->validateTurnstile($validator);
             }
         });
@@ -67,9 +70,9 @@ class LoginRequest extends FormRequest
             return;
         }
 
-        $turnstile = new TurnstileService();
+        $turnstile = new TurnstileService;
 
-        if (!$turnstile->verify($token, $this->ip())) {
+        if (! $turnstile->verify($token, $this->ip())) {
             $validator->errors()->add(
                 'cf_turnstile_response',
                 'Verifikasi keamanan gagal. Silakan coba lagi.'
@@ -80,17 +83,34 @@ class LoginRequest extends FormRequest
     /**
      * Attempt to authenticate the request's credentials.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $user = User::query()->where('email', $this->string('email'))->first();
+
+        if (
+            $user?->isSuspended()
+            && Hash::check($this->string('password'), $user->password)
+        ) {
+            RateLimiter::clear($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'suspended' => 'Akun Anda telah ditangguhkan. Silakan hubungi administrator Zonagim untuk bantuan lebih lanjut.',
+            ]);
+        }
+
+        if (! Auth::attemptWhen(
+            $this->only('email', 'password'),
+            fn (User $user): bool => $user->isActiveCustomer(),
+            $this->boolean('remember'),
+        )) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email atau kata sandi yang Anda masukkan tidak sesuai. Silakan periksa kembali.',
             ]);
         }
 
@@ -100,7 +120,7 @@ class LoginRequest extends FormRequest
     /**
      * Ensure the login request is not rate limited.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function ensureIsNotRateLimited(): void
     {
@@ -125,6 +145,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }

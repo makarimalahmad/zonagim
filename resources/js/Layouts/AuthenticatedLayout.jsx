@@ -1,38 +1,38 @@
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import ThemeToggle from "@/Components/ThemeToggle";
 import Dropdown from "@/Components/Dropdown";
 import ChatWidget from "@/Components/ChatWidget";
 import FlashToaster from "@/Components/FlashToaster";
 import Footer from "@/Components/Footer";
+import ProgressiveImage from "@/Components/ProgressiveImage";
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
-    const { post } = useForm();
-
-    const logout = () => {
-        post(route("logout"));
-    };
 
     return (
         <div className="min-h-screen bg-base-200 flex flex-col">
-            <nav className="flex justify-between items-center px-6 py-4 bg-base-100 border-b border-base-300">
-                <Link
-                    href={route("market")}
-                    className="flex items-center gap-3 group"
-                >
-                    <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center group-hover:bg-base-300 transition-colors">
-                        <img
-                            src="/images/lapakgimid.png"
-                            alt="LapakGimID Logo"
-                            className="w-8 h-8 object-contain"
+            <nav className="bg-base-100 border-b border-base-300">
+                <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+                    <Link
+                        href={route("market")}
+                        className="flex items-center gap-3 group"
+                    >
+                        <ProgressiveImage
+                            src="/images/zonagim.png"
+                            alt="Logo Zonagim"
+                            width={40}
+                            height={40}
+                            loading="eager"
+                            fetchPriority="high"
+                            wrapperClassName="w-10 h-10 shrink-0"
+                            className="object-contain"
                         />
-                    </div>
-                    <span className="text-xl font-bold text-base-content group-hover:text-yellow-500 transition-colors">
-                        LapakGimID
-                    </span>
-                </Link>
+                        <span className="text-xl font-bold text-base-content group-hover:text-yellow-500 transition-colors">
+                            Zonagim
+                        </span>
+                    </Link>
 
-                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                     <ThemeToggle />
 
                     <div className="relative">
@@ -43,10 +43,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                         type="button"
                                         className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-base-content hover:bg-base-200 focus:outline-none transition ease-in-out duration-150"
                                     >
-                                        <img
-                                            src={`https://ui-avatars.com/api/?name=${auth.user.name}&background=random&color=fff`}
+                                        <ProgressiveImage
+                                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(auth.user.name)}&background=random&color=fff`}
                                             alt={auth.user.name}
-                                            className="h-8 w-8 rounded-full object-cover sm:mr-2"
+                                            width={32}
+                                            height={32}
+                                            loading="eager"
+                                            wrapperClassName="h-8 w-8 shrink-0 rounded-full sm:mr-2"
+                                            className="object-cover"
                                         />
                                         <span className="hidden sm:inline font-semibold">
                                             {auth.user.name}
@@ -82,7 +86,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route("profile.edit")}
                                     className="text-base-content hover:bg-base-200 flex items-center gap-2"
                                 >
-                                    Settings
+                                    Pengaturan
                                 </Dropdown.Link>
 
                                 <div className="border-t border-base-200 my-1"></div>
@@ -92,15 +96,18 @@ export default function AuthenticatedLayout({ header, children }) {
                                     method="post"
                                     as="button"
                                     onClick={() =>
-                                        localStorage.removeItem("chat_history")
+                                        localStorage.removeItem(
+                                            `chat_history_user_${auth.user.id}`,
+                                        )
                                     }
                                     className="text-error hover:bg-error/10 w-full text-left flex items-center gap-2"
                                 >
-                                    Sign Out
+                                    Keluar
                                 </Dropdown.Link>
                             </Dropdown.Content>
                         </Dropdown>
                     </div>
+                </div>
                 </div>
             </nav>
 
@@ -112,7 +119,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </header>
             )}
 
-            <main className="p-6 flex-grow">{children}</main>
+            <main className="p-6 grow">{children}</main>
             <Footer />
             <ChatWidget />
             <FlashToaster />

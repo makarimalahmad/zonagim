@@ -35,7 +35,7 @@ export default function ResetPassword({ token, email }) {
 
     const RequirementItem = ({ met, text }) => (
         <div className={`flex items-center gap-2 text-xs transition-colors ${met ? "text-success" : "text-base-content/50"}`}>
-            {met ? <Check size={14} className="flex-shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-base-content/30 flex-shrink-0" />}
+            {met ? <Check size={14} className="shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-base-content/30 shrink-0" />}
             <span>{text}</span>
         </div>
     );

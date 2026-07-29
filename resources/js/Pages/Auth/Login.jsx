@@ -5,18 +5,12 @@ import TextInput from "@/Components/TextInput";
 import Turnstile from "@/Components/Turnstile";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { Eye, EyeOff } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { CircleX, Eye, EyeOff } from "lucide-react";
+import { useState, useRef } from "react";
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ canResetPassword }) {
     const { turnstileSiteKey } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
-    const [message, setMessage] = useState(null);
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        setMessage(params.get("message"));
-    }, []);
 
     const [turnstileToken, setTurnstileToken] = useState(null);
     const turnstileRef = useRef(null);
@@ -73,21 +67,19 @@ export default function Login({ status, canResetPassword }) {
                 </p>
             </div>
 
-            {message && (
-                <div className="mb-6 text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 flex items-center gap-2">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 flex-shrink-0"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                    <span>{message}</span>
+            {errors.suspended && (
+                <div
+                    role="alert"
+                    aria-live="polite"
+                    className="mb-5 flex items-center gap-3 rounded-xl border border-red-500/35 bg-red-500/10 px-4 py-3.5 shadow-sm shadow-red-950/10"
+                >
+                    <CircleX
+                        className="h-6 w-6 shrink-0 text-red-500"
+                        aria-hidden="true"
+                    />
+                    <p className="text-sm font-medium leading-6 text-red-600 dark:text-red-400">
+                        {errors.suspended}
+                    </p>
                 </div>
             )}
 

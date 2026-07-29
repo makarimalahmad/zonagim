@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -32,12 +33,22 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn (): ?array => $request->user()?->only([
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                    'created_at',
+                ]),
             ],
             // Site key Turnstile diambil dari config (env), bukan di-hardcode di frontend.
             'turnstileSiteKey' => config('services.turnstile.site_key'),
             // Flash message untuk ditampilkan sebagai toast (notif) di frontend.
             'flash' => [
+                'id' => fn () => $request->session()->has('status') || $request->session()->has('success') || $request->session()->has('error')
+                    ? (string) Str::uuid()
+                    : null,
                 'status' => fn () => $request->session()->get('status'),
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

@@ -1,16 +1,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import GuestLayout from "@/Layouts/GuestLayout";
+import ProgressiveImage from "@/Components/ProgressiveImage";
 import { Link, usePage, Head, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ArrowLeft,
     Gamepad2,
-    Tag,
-    ShoppingCart,
     Filter,
     X,
     ChevronDown,
-    Search,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -22,6 +20,15 @@ export default function Game({
 }) {
     const { auth } = usePage().props;
     const Layout = auth?.user ? AuthenticatedLayout : GuestLayout;
+    const productItems = Array.isArray(products)
+        ? products
+        : (products?.data ?? []);
+    const totalProducts = Array.isArray(products)
+        ? products.length
+        : (products?.total ?? 0);
+    const paginationLinks = Array.isArray(products)
+        ? []
+        : (products?.links ?? []);
 
     // Helper to safely get filter values (Handles if filters is array [] or object {})
     const getSafeSort = (f) => {
@@ -157,13 +164,12 @@ export default function Game({
                                 Accounts
                             </h1>
                             <p className="text-base-content/60 max-w-2xl">
-                                Daftar akun {activeGame} terlengkap, aman, dan
-                                bergaransi.
+                                Lihat listing akun {activeGame} yang tersedia.
                             </p>
                         </div>
 
                         <div className="bg-base-100 px-4 py-2 rounded-full border border-base-300 text-sm font-medium text-base-content/70 shadow-sm">
-                            {products.length} Akun Tersedia
+                            {totalProducts} Akun Tersedia
                         </div>
                     </div>
                 </motion.div>
@@ -366,79 +372,59 @@ export default function Game({
                     animate="visible"
                     className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10"
                 >
-                    {products.length > 0 ? (
-                        products.map((product) => (
+                    {productItems.length > 0 ? (
+                        productItems.map((product) => (
                             <motion.div
                                 key={product.id}
                                 variants={itemVariants}
                             >
-                                <div className="card bg-base-100 shadow-sm border border-base-300 hover:border-yellow-500/50 hover:shadow-md transition-all duration-300 group h-full flex flex-col overflow-hidden rounded-2xl">
-                                    {/* Image Section */}
-                                    <figure className="relative aspect-[16/9] bg-base-200 overflow-hidden">
-                                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300 z-10" />
-
-                                        {product.image ? (
-                                            <img
-                                                src={product.image}
-                                                alt={product.game_name}
-                                                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-base-300">
-                                                <Gamepad2 className="w-12 h-12 text-base-content/20" />
-                                            </div>
-                                        )}
-
-                                        {/* Badge Price */}
-                                        <div className="absolute top-3 left-3 z-20">
-                                            <div className="badge badge-warning font-bold shadow-md border-none bg-yellow-500 text-black">
-                                                {activeGame}
-                                            </div>
-                                        </div>
+                                <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 transition-colors duration-200 hover:border-yellow-500/50">
+                                    <figure className="relative aspect-[4/3] overflow-hidden bg-base-200">
+                                        <ProgressiveImage
+                                            src={product.image}
+                                            alt={product.title || product.game_name}
+                                            width={4}
+                                            height={3}
+                                            wrapperClassName="w-full h-full"
+                                            className="object-cover"
+                                            fallback={
+                                                <Gamepad2
+                                                    className="w-12 h-12 text-base-content/20"
+                                                    aria-hidden="true"
+                                                />
+                                            }
+                                        />
                                     </figure>
 
-                                    {/* Content Section */}
-                                    <div className="card-body p-5 flex-1 relative">
-                                        <h2 className="card-title text-lg font-bold text-base-content line-clamp-2 group-hover:text-yellow-500 transition-colors mb-2 leading-tight">
-                                            {product.game_name}
-                                        </h2>
+                                    <div className="flex flex-1 flex-col justify-between gap-3 p-4">
+                                        <div>
+                                            <h2 className="line-clamp-2 text-base font-bold leading-tight text-base-content">
+                                                {product.title || product.game_name}
+                                            </h2>
+                                        </div>
 
-                                        <div className="mt-auto pt-4 flex flex-col gap-3">
-                                            <div className="flex flex-col">
-                                                <span className="text-xs text-base-content/50 uppercase tracking-wider font-semibold mb-1">
-                                                    Harga
-                                                </span>
-                                                <span className="text-xl font-extrabold text-yellow-500 whitespace-nowrap leading-none">
-                                                    Rp{" "}
-                                                    {Number(
-                                                        product.price,
-                                                    ).toLocaleString("id-ID")}
-                                                </span>
-                                            </div>
+                                        <div className="space-y-3">
+                                            <p className="text-lg font-extrabold text-yellow-500">
+                                                Rp{" "}
+                                                {Number(
+                                                    product.price,
+                                                ).toLocaleString("id-ID")}
+                                            </p>
 
-                                            {isGuest ? (
-                                                <Link
-                                                    href={route("login", {
-                                                        message:
-                                                            "Silakan login untuk melihat detail akun",
-                                                    })}
-                                                    className="btn btn-sm w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold border-none rounded-xl shadow-sm transition-all transform hover:-translate-y-0.5"
-                                                    title="Login untuk detail"
-                                                >
-                                                    Detail Akun
-                                                </Link>
-                                            ) : (
-                                                <Link
-                                                    href={route("akun.show", [
-                                                        activeGameSlug,
-                                                        product.id,
-                                                    ])}
-                                                    className="btn btn-sm w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold border-none rounded-xl shadow-sm transition-all transform hover:-translate-y-0.5"
-                                                    title="Lihat detail akun"
-                                                >
-                                                    Detail
-                                                </Link>
-                                            )}
+                                            <Link
+                                                href={route("akun.show", [
+                                                    activeGameSlug,
+                                                    product.slug,
+                                                ])}
+                                                className="btn btn-sm w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold border-none rounded-xl"
+                                                title={
+                                                    isGuest
+                                                        ? "Masuk untuk melihat detail akun"
+                                                        : "Lihat detail akun"
+                                                }
+                                            >
+                                                Detail Akun
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -459,6 +445,49 @@ export default function Game({
                         </div>
                     )}
                 </motion.div>
+
+                {paginationLinks.length > 3 && (
+                    <nav
+                        aria-label="Navigasi halaman produk"
+                        className="max-w-7xl mx-auto mt-10 flex flex-wrap justify-center gap-2"
+                    >
+                        {paginationLinks.map((link, index) => {
+                            const label = link.label.includes("Previous")
+                                ? "Sebelumnya"
+                                : link.label.includes("Next")
+                                  ? "Berikutnya"
+                                  : link.label;
+
+                            return link.url ? (
+                                <Link
+                                    key={`${link.label}-${index}`}
+                                    href={link.url}
+                                    only={["products"]}
+                                    preserveScroll
+                                    preserveState
+                                    aria-current={
+                                        link.active ? "page" : undefined
+                                    }
+                                    className={`btn btn-sm min-w-10 rounded-lg ${
+                                        link.active
+                                            ? "btn-warning"
+                                            : "btn-ghost border border-base-300"
+                                    }`}
+                                >
+                                    {label}
+                                </Link>
+                            ) : (
+                                <span
+                                    key={`${link.label}-${index}`}
+                                    aria-disabled="true"
+                                    className="btn btn-sm min-w-10 rounded-lg btn-disabled"
+                                >
+                                    {label}
+                                </span>
+                            );
+                        })}
+                    </nav>
+                )}
             </div>
         </Layout>
     );

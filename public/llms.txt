@@ -1,29 +1,31 @@
-# LapakGimID
+# Zonagim
 
-> LapakGimID (lapakgim.my.id) adalah marketplace jual beli akun game di Indonesia dengan sistem Rekber (rekening bersama) otomatis untuk transaksi yang lebih aman dan bergaransi. Tersedia akun untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game populer lainnya.
+> Zonagim (zonagim.my.id) adalah marketplace P2P akun game yang mempertemukan penjual dan pembeli. Zonagim menampilkan listing seller dan menyediakan opsi Rekber sebagai perantara alur transaksi. Listing dapat tersedia untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game lainnya.
 
 ## Halaman Utama
-- [Beranda](https://lapakgim.my.id/): Ringkasan layanan, keunggulan, dan cara kerja LapakGimID.
-- [Market Akun Game](https://lapakgim.my.id/market): Katalog game yang tersedia untuk dibeli akunnya.
+- [Beranda](https://zonagim.my.id/): Ringkasan layanan, keunggulan, dan cara kerja Zonagim.
+- [Market Akun Game](https://zonagim.my.id/market): Katalog game yang tersedia untuk dibeli akunnya.
 
 ## Cara Kerja
-- Daftar akun gratis menggunakan email aktif.
-- Pilih akun game yang diinginkan di halaman Market.
-- Bayar dengan aman lewat sistem Rekber, lalu terima data akun.
+- Daftar akun menggunakan email aktif.
+- Pilih listing seller di halaman Market.
+- Jika memakai Rekber, ikuti arahan Admin untuk alur pembayaran.
+- Seller asli mengirim kredensial langsung kepada buyer; Zonagim tidak mengumpulkan password, OTP, atau recovery code.
 
-## Keunggulan
-- Rekber Otomatis: dana pembeli ditahan sistem sampai akun berhasil diterima.
-- Transaksi Kilat: pesanan diproses otomatis tanpa menunggu lama.
-- Komunitas Verified: penjual wajib verifikasi identitas (KYC).
+## Fitur
+- Marketplace P2P: satu akun pengguna dapat menjadi buyer sekaligus seller.
+- Listing Seller: Zonagim menampilkan informasi akun yang diajukan dan disetujui.
+- Opsi Rekber: Zonagim membantu alur serah terima dana dan data selama transaksi, bukan pemilik akun atau pemberi garansi pascatransaksi.
 
 ## Disclaimer Penting
-- LapakGimID berperan sebagai penyedia platform (perantara) jual beli akun game.
-- Layanan Rekber hanya mengamankan proses serah terima uang & data saat transaksi berlangsung, BUKAN garansi atau asuransi terhadap hack back maupun banned setelah transaksi selesai.
+- Zonagim berperan sebagai penyedia platform (perantara) jual beli akun game.
+- Layanan Rekber membantu proses serah terima uang dan data saat transaksi berlangsung, bukan garansi atau asuransi terhadap hack back maupun banned setelah transaksi selesai.
+- Kredensial akun tetap dikirim langsung oleh seller asli kepada buyer.
 - Segala risiko pasca-transaksi sepenuhnya menjadi tanggung jawab pembeli.
 
 ## Legal
-- [Syarat & Ketentuan](https://lapakgim.my.id/terms-of-service)
-- [Kebijakan Privasi](https://lapakgim.my.id/privacy-policy)
+- [Syarat & Ketentuan](https://zonagim.my.id/terms-of-service)
+- [Kebijakan Privasi](https://zonagim.my.id/privacy-policy)
 
 ## Kontak
 - Transaksi & Rekber: hubungi Admin via WhatsApp yang tertera di situs.

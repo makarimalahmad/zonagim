@@ -4,29 +4,32 @@ namespace App\Filament\Widgets;
 
 use App\Models\Product;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ProductGrowthChart extends ChartWidget
 {
-    protected ?string $heading = 'Product Growth';
+    protected ?string $heading = 'Pertumbuhan Produk';
 
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    protected ?string $pollingInterval = null;
+
+    protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
     {
-        // Ambil produk 6 bulan terakhir lalu kelompokkan per bulan di PHP.
-        // Dibuat database-agnostic (aman untuk SQLite maupun MySQL) —
-        // sebelumnya pakai DATE_FORMAT() yang khusus MySQL dan error di SQLite.
         $start = now()->subMonths(5)->startOfMonth();
+        $monthExpression = match (DB::connection()->getDriverName()) {
+            'sqlite' => "strftime('%Y-%m', created_at)",
+            'pgsql' => "to_char(created_at, 'YYYY-MM')",
+            default => "DATE_FORMAT(created_at, '%Y-%m')",
+        };
 
         $monthlyCounts = Product::query()
+            ->selectRaw("{$monthExpression} as month_key, COUNT(*) as aggregate")
             ->where('created_at', '>=', $start)
-            ->get(['created_at'])
-            ->groupBy(fn (Product $product) => $product->created_at->format('Y-m'))
-            ->map->count();
+            ->groupByRaw($monthExpression)
+            ->pluck('aggregate', 'month_key');
 
         // Siapkan label & data untuk 6 bulan terakhir (termasuk bulan tanpa data).
         $labels = [];
@@ -35,14 +38,14 @@ class ProductGrowthChart extends ChartWidget
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $key = $date->format('Y-m');
-            $labels[] = $date->format('M Y');
-            $values[] = $monthlyCounts->get($key, 0);
+            $labels[] = $date->translatedFormat('M Y');
+            $values[] = (int) $monthlyCounts->get($key, 0);
         }
 
         return [
             'datasets' => [
                 [
-                    'label' => 'New Products',
+                    'label' => 'Produk Baru',
                     'data' => $values,
                     'backgroundColor' => 'rgba(234, 179, 8, 0.2)',
                     'borderColor' => '#eab308',

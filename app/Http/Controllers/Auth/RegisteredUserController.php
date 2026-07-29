@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OtpMail;
 use App\Models\User;
+use App\Services\PendingRegistrationService;
 use App\Services\TurnstileService;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -28,58 +30,53 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        PendingRegistrationService $pendingRegistrations,
+    ): RedirectResponse {
         // Validate basic fields
         $request->validate([
             'name' => 'required|string|min:3|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'cf_turnstile_response' => 'required|string',
         ], [
+            'email.unique' => 'Alamat email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
             'cf_turnstile_response.required' => 'Verifikasi keamanan diperlukan. Silakan selesaikan CAPTCHA.',
         ]);
 
         // Validate Turnstile token
-        $turnstile = new TurnstileService();
-        if (!$turnstile->verify($request->input('cf_turnstile_response'), $request->ip())) {
+        $turnstile = new TurnstileService;
+        if (! $turnstile->verify($request->input('cf_turnstile_response'), $request->ip())) {
             throw ValidationException::withMessages([
                 'cf_turnstile_response' => 'Verifikasi keamanan gagal. Silakan coba lagi.',
             ]);
         }
 
-        $otp = rand(100000, 999999);
-        $ttl = 30 * 60; // 30 minutes
+        $pending = $pendingRegistrations->create([
+            'name' => $request->string('name')->toString(),
+            'email' => $request->string('email')->toString(),
+            'password' => Hash::make($request->string('password')->toString()),
+        ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash it now
-            'role' => 'user',
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(10), // For logic consistency, though cache handles expiry too
-            'otp_sent_at' => time(), // Store as Unix timestamp
-        ];
+        RateLimiter::hit('otp-resend:'.$pending['id'], 60);
 
-        // Store in Cache
-        \Illuminate\Support\Facades\Cache::put('pending_registration_' . $request->email, $data, $ttl);
-
-        // Start Rate Limiter for Resend (60 seconds)
-        $key = 'otp-resend:' . $request->email;
-        \Illuminate\Support\Facades\RateLimiter::hit($key, 60);
-
-        // Kirim Email OTP
         try {
-            // Send directly to email address since we don't have a user object yet
-            \Illuminate\Support\Facades\Mail::to($request->email)->send(new \App\Mail\OtpMail($otp));
-        } catch (\Exception $e) {
-            // Log error jika gagal kirim email (opsional)
+            Mail::to($request->string('email')->toString())->send(new OtpMail($pending['otp']));
+        } catch (\Throwable) {
+            $pendingRegistrations->forget($pending['id']);
+
+            throw ValidationException::withMessages([
+                'email' => 'Kode verifikasi belum dapat dikirim. Silakan coba lagi nanti.',
+            ]);
         }
 
-        // Simpan email di session untuk halaman verifikasi
-        session(['auth.verification.email' => $request->email]);
+        session([
+            'auth.verification.pending_id' => $pending['id'],
+            'auth.verification.email' => $request->string('email')->toString(),
+        ]);
 
         return redirect()->route('verification.otp');
     }

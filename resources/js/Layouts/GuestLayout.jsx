@@ -3,6 +3,7 @@ import ChatWidget from "@/Components/ChatWidget";
 import FlashToaster from "@/Components/FlashToaster";
 import Footer from "@/Components/Footer";
 import ThemeToggle from "@/Components/ThemeToggle";
+import ProgressiveImage from "@/Components/ProgressiveImage";
 
 export default function GuestLayout({ children, withNavbar = false }) {
     // Kalau withNavbar true, pakai layout dengan navbar (untuk market)
@@ -16,15 +17,20 @@ export default function GuestLayout({ children, withNavbar = false }) {
                             {/* Logo & Brand */}
                             <Link
                                 href="/"
-                                className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
+                                className="group flex items-center gap-2 sm:gap-3 shrink-0"
                             >
-                                <img
-                                    src="/images/lapakgimid.png"
-                                    alt="LapakGimID"
-                                    className="w-8 h-8 sm:w-10 sm:h-10"
+                                <ProgressiveImage
+                                    src="/images/zonagim.png"
+                                    alt="Logo Zonagim"
+                                    width={40}
+                                    height={40}
+                                    loading="eager"
+                                    fetchPriority="high"
+                                    wrapperClassName="w-8 h-8 sm:w-10 sm:h-10 shrink-0"
+                                    className="object-contain"
                                 />
-                                <span className="text-lg sm:text-xl font-bold text-yellow-500 hidden xs:inline">
-                                    LapakGimID
+                                <span className="hidden text-lg font-bold text-base-content transition-colors group-hover:text-yellow-500 xs:inline sm:text-xl">
+                                    Zonagim
                                 </span>
                             </Link>
 
@@ -48,7 +54,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                     </div>
                 </nav>
 
-                <main className="p-6 max-w-7xl mx-auto flex-grow">
+                <main className="w-full p-6 max-w-7xl mx-auto grow">
                     {children}
                 </main>
                 <Footer />
@@ -61,52 +67,67 @@ export default function GuestLayout({ children, withNavbar = false }) {
     // Layout default untuk auth (Login/Register) - 2 kolom
     return (
         <>
-            <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-base-200">
+            <div className="fixed inset-0 overflow-hidden bg-base-200">
                 {/* LEFT BRANDING */}
-                <div className="hidden lg:flex flex-col justify-center items-center bg-base-100 border-r border-base-300">
+                <div className="fixed inset-y-0 left-0 hidden w-1/2 flex-col items-center justify-center border-r border-base-300 bg-base-100 lg:flex">
                     {/* Content */}
                     <div className="flex flex-col items-center text-center px-10">
                         <Link href="/">
-                            <img
-                                src="/images/lapakgimid.png"
-                                alt="LapakGimID"
-                                className="w-52 mb-8 mx-auto"
+                            <ProgressiveImage
+                                src="/images/zonagim.png"
+                                alt="Logo Zonagim"
+                                width={208}
+                                height={208}
+                                loading="eager"
+                                fetchPriority="high"
+                                wrapperClassName="w-52 h-52 mb-8 mx-auto"
+                                className="object-contain"
                             />
 
                             <h1 className="text-3xl font-extrabold text-yellow-500 tracking-wide mb-3">
-                                LapakGimID
+                                Zonagim
                             </h1>
                         </Link>
 
                         <p className="text-base-content/70 max-w-sm leading-relaxed">
-                            Marketplace akun game terpercaya. Transaksi lebih
-                            aman dengan opsi jasa rekber.
+                            Marketplace jual beli akun game dengan opsi jasa
+                            rekber.
                         </p>
 
                         <span className="mt-10 text-xs text-base-content/50">
-                            © {new Date().getFullYear()} LapakGimID
+                            © {new Date().getFullYear()} Zonagim
                         </span>
                     </div>
                 </div>
 
                 {/* RIGHT FORM */}
-                <div className="flex items-center justify-center px-6 py-12">
-                    <div className="w-full max-w-md bg-base-100 border border-base-300 rounded-2xl shadow-sm p-8">
+                <div
+                    data-lenis-prevent
+                    className="ml-auto h-dvh w-full overflow-x-hidden overflow-y-auto overscroll-contain px-6 lg:w-1/2"
+                >
+                    <div className="flex min-h-full items-center justify-center py-12">
+                        <div className="w-full max-w-md bg-base-100 border border-base-300 rounded-2xl shadow-sm p-8">
                         {/* Mobile logo */}
                         <div className="flex flex-col items-center mb-6 lg:hidden">
                             <Link href="/">
-                                <img
-                                    src="/images/lapakgimid.png"
-                                    alt="LapakGimID"
-                                    className="w-32 mb-3 mx-auto"
+                                <ProgressiveImage
+                                    src="/images/zonagim.png"
+                                    alt="Logo Zonagim"
+                                    width={128}
+                                    height={128}
+                                    loading="eager"
+                                    fetchPriority="high"
+                                    wrapperClassName="w-32 h-32 mb-3 mx-auto"
+                                    className="object-contain"
                                 />
                                 <h1 className="text-xl font-bold text-yellow-500 text-center">
-                                    LapakGimID
+                                    Zonagim
                                 </h1>
                             </Link>
                         </div>
 
-                        {children}
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>

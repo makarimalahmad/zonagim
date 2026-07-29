@@ -18,16 +18,19 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
+    protected static ?string $navigationLabel = 'Kategori';
+
+    protected static ?string $modelLabel = 'Kategori';
+
+    protected static ?string $pluralModelLabel = 'Kategori';
+
     // Icon sidebar
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     // Judul record = kolom "name"
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        return parent::getEloquentQuery()->withCount('products');
-    }
+    protected static ?string $recordRouteKeyName = 'id';
 
     public static function form(Schema $schema): Schema
     {
@@ -47,9 +50,9 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListCategories::route('/'),
+            'index' => ListCategories::route('/'),
             'create' => CreateCategory::route('/create'),
-            'edit'   => EditCategory::route('/{record}/edit'),
+            'edit' => EditCategory::route('/{record}/edit'),
         ];
     }
 }

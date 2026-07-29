@@ -1,11 +1,11 @@
-LapakGimID - Kode Verifikasi Akun
+Zonagim - Kode Verifikasi Akun
 
-Masukkan kode berikut untuk menyelesaikan pendaftaran akunmu di LapakGimID:
+Masukkan kode berikut untuk menyelesaikan pendaftaran akunmu di Zonagim:
 
     {{ $otp }}
 
 Kode ini berlaku selama 10 menit. Demi keamanan, jangan bagikan kode ini kepada siapa pun.
 
-Jika kamu tidak merasa mendaftar di LapakGimID, abaikan email ini.
+Jika kamu tidak merasa mendaftar di Zonagim, abaikan email ini.
 
-(c) {{ date('Y') }} LapakGimID - lapakgim.my.id
+(c) {{ date('Y') }} Zonagim - zonagim.my.id

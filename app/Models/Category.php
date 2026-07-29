@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Category extends Model
@@ -26,14 +27,38 @@ class Category extends Model
                     ->where('id', '!=', $category->id)
                     ->exists()
                 ) {
-                    $slug = $baseSlug . '-' . $count++;
+                    $slug = $baseSlug.'-'.$count++;
                 }
 
                 $category->slug = $slug;
             }
         });
+
+        static::updated(function (Category $category): void {
+            if (! $category->wasChanged('image')) {
+                return;
+            }
+
+            self::deleteOwnedImage($category->getPrevious()['image'] ?? null);
+        });
+
+        static::deleted(function (Category $category): void {
+            self::deleteOwnedImage($category->image);
+        });
     }
 
+    private static function deleteOwnedImage(mixed $path): void
+    {
+        if (
+            ! is_string($path)
+            || ! str_starts_with($path, 'categories/')
+            || str_contains($path, '..')
+        ) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
+    }
 
     public function products()
     {

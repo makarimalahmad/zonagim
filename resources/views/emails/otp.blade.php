@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Kode Verifikasi LapakGimID</title>
+    <title>Kode Verifikasi Zonagim</title>
 </head>
 <body style="margin:0; padding:0; width:100%; background-color:#f4f5f7; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
     {{-- Preheader: teks ringkas yang muncul di preview inbox (disembunyikan di body) --}}
@@ -23,7 +23,7 @@
                     {{-- Brand --}}
                     <tr>
                         <td style="padding:30px 32px 0; text-align:center;">
-                            <span style="font-size:20px; font-weight:700; letter-spacing:.2px; color:#0b1221;">Lapak<span style="color:#eab308;">AkunID</span></span>
+                            <span style="font-size:20px; font-weight:700; letter-spacing:.2px; color:#0b1221;">Zona<span style="color:#eab308;">gim</span></span>
                         </td>
                     </tr>
 
@@ -31,7 +31,7 @@
                     <tr>
                         <td style="padding:22px 32px 4px; text-align:center;">
                             <h1 style="margin:0 0 8px; font-size:20px; line-height:1.3; color:#0b1221; font-weight:700;">Kode Verifikasi Akun</h1>
-                            <p style="margin:0; font-size:14px; line-height:1.6; color:#64748b;">Masukkan kode di bawah ini untuk menyelesaikan pendaftaran akunmu di LapakGimID.</p>
+                            <p style="margin:0; font-size:14px; line-height:1.6; color:#64748b;">Masukkan kode di bawah ini untuk menyelesaikan pendaftaran akunmu di Zonagim.</p>
                         </td>
                     </tr>
 
@@ -63,14 +63,14 @@
 
                     <tr>
                         <td style="padding:16px 32px 28px; text-align:center;">
-                            <p style="margin:0; font-size:12px; line-height:1.6; color:#94a3b8;">Kamu menerima email ini karena alamat ini dipakai untuk mendaftar di LapakGimID. Jika ini bukan kamu, cukup abaikan email ini.</p>
+                            <p style="margin:0; font-size:12px; line-height:1.6; color:#94a3b8;">Kamu menerima email ini karena alamat ini dipakai untuk mendaftar di Zonagim. Jika ini bukan kamu, cukup abaikan email ini.</p>
                         </td>
                     </tr>
 
                     {{-- Footer --}}
                     <tr>
                         <td style="padding:18px 32px; background-color:#fafbfc; border-top:1px solid #eef0f3; text-align:center;">
-                            <p style="margin:0; font-size:12px; color:#94a3b8;">&copy; {{ date('Y') }} LapakGimID &middot; lapakgim.my.id</p>
+                            <p style="margin:0; font-size:12px; color:#94a3b8;">&copy; {{ date('Y') }} Zonagim &middot; zonagim.my.id</p>
                         </td>
                     </tr>
 

@@ -4,9 +4,12 @@ import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
+import { toastOptions } from "@/utils/notificationTheme";
 import { useForm, usePage } from "@inertiajs/react";
 import { ChevronRight, X } from "lucide-react";
+import axios from "axios";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -15,18 +18,30 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
     const [editingField, setEditingField] = useState(null);
+    const [regions, setRegions] = useState({
+        provinces: [],
+        cities: [],
+        districts: [],
+        villages: [],
+    });
+    const [loadingRegion, setLoadingRegion] = useState("");
 
-    // Ensure address is an object, handle potential null or string legacy data
-    const initialAddress =
-        typeof user.address === "object" && user.address !== null
+    const initialAddress = {
+        country: "Indonesia",
+        province_code: "",
+        province: "",
+        city_code: "",
+        city: "",
+        district_code: "",
+        district: "",
+        village_code: "",
+        village: "",
+        street: "",
+        zip: "",
+        ...(typeof user.address === "object" && user.address !== null
             ? user.address
-            : {
-                  country: "Indonesia",
-                  province: "",
-                  city: "",
-                  street: "",
-                  zip: "",
-              };
+            : {}),
+    };
 
     const { data, setData, patch, errors, processing, reset, clearErrors } =
         useForm({
@@ -36,18 +51,80 @@ export default function UpdateProfileInformation({
             address: initialAddress,
         });
 
+    const loadRegions = async (type, parent = "") => {
+        setLoadingRegion(type);
+
+        try {
+            const response = await axios.get(route("profile.regions"), {
+                params: { type, parent },
+            });
+            setRegions((current) => ({ ...current, [type]: response.data }));
+        } catch {
+            showErrorToast("Data wilayah gagal dimuat. Silakan coba lagi.");
+        } finally {
+            setLoadingRegion("");
+        }
+    };
+
     const openModal = (field) => {
         setEditingField(field);
         clearErrors();
         if (field === "address") {
-            // For address, we need to ensure we set the object correctly from user props if it changed,
-            // but 'user.address' from props might be stale if we didn't full reload.
-            // Actually, 'reset()' in closeModal handles reverting to initial props.
-            // Here we might just want to set data to current user state.
             setData("address", initialAddress);
+            loadRegions("provinces");
+            if (initialAddress.province_code) {
+                loadRegions("cities", initialAddress.province_code);
+            }
+            if (initialAddress.city_code) {
+                loadRegions("districts", initialAddress.city_code);
+            }
+            if (initialAddress.district_code) {
+                loadRegions("villages", initialAddress.district_code);
+            }
         } else {
             setData(field, user[field] || "");
         }
+    };
+
+    const changeRegion = (type, event) => {
+        const code = event.target.value;
+        const name = event.target.selectedOptions[0]?.dataset.name || "";
+        const resets = {
+            province: {
+                province_code: code,
+                province: name,
+                city_code: "",
+                city: "",
+                district_code: "",
+                district: "",
+                village_code: "",
+                village: "",
+                zip: "",
+            },
+            city: {
+                city_code: code,
+                city: name,
+                district_code: "",
+                district: "",
+                village_code: "",
+                village: "",
+                zip: "",
+            },
+            district: {
+                district_code: code,
+                district: name,
+                village_code: "",
+                village: "",
+                zip: "",
+            },
+            village: { village_code: code, village: name, zip: "" },
+        };
+
+        setData("address", { ...data.address, ...resets[type] });
+
+        if (code && type === "province") loadRegions("cities", code);
+        if (code && type === "city") loadRegions("districts", code);
+        if (code && type === "district") loadRegions("villages", code);
     };
 
     const closeModal = () => {
@@ -55,54 +132,99 @@ export default function UpdateProfileInformation({
         reset();
     };
 
-    const submit = (e) => {
-        e.preventDefault();
+    const showErrorToast = (message) => {
+        Swal.fire(toastOptions("error", message));
+    };
+
+    const submit = (event) => {
+        event.preventDefault();
         patch(route("profile.update"), {
+            preserveScroll: true,
             onSuccess: () => {
                 setEditingField(null);
+            },
+            onError: (formErrors) => {
+                const fieldError =
+                    formErrors.name ||
+                    formErrors.phone ||
+                    formErrors["address.zip"] ||
+                    formErrors["address.province_code"] ||
+                    formErrors["address.province"] ||
+                    formErrors["address.city_code"] ||
+                    formErrors["address.city"] ||
+                    formErrors["address.district_code"] ||
+                    formErrors["address.district"] ||
+                    formErrors["address.village_code"] ||
+                    formErrors["address.village"] ||
+                    formErrors["address.street"] ||
+                    formErrors.address;
+
+                showErrorToast(
+                    fieldError ||
+                        "Informasi profil gagal diperbarui. Periksa kembali data yang Anda masukkan.",
+                );
             },
         });
     };
 
     const formatDate = (dateString) => {
-        const options = {
+        if (!dateString) {
+            return "-";
+        }
+
+        const date = new Date(dateString);
+
+        if (Number.isNaN(date.getTime())) {
+            return "-";
+        }
+
+        return new Intl.DateTimeFormat("id-ID", {
             day: "numeric",
             month: "long",
             year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        };
-        return new Date(dateString)
-            .toLocaleDateString("id-ID", options)
-            .replace("pukul", "")
-            .replace(".", ":")
-            .trim();
+        }).format(date);
     };
 
     const formatAddress = (addr) => {
         if (!addr || typeof addr !== "object") return "-";
-        const parts = [
+
+        const lines = [
             addr.street,
-            addr.city,
-            addr.province,
+            [addr.village, addr.district].filter(Boolean).join(", "),
+            [addr.city, addr.province].filter(Boolean).join(", "),
+            addr.zip ? `Kode Pos ${addr.zip}` : "",
             addr.country,
         ].filter(Boolean);
-        return parts.length > 0 ? parts.join(", ") : "-";
+
+        if (lines.length === 0) return "-";
+
+        return (
+            <address className="flex max-w-xl flex-col items-start gap-1 text-left not-italic leading-relaxed sm:items-end sm:text-right">
+                {lines.map((line, index) => (
+                    <span
+                        key={`${line}-${index}`}
+                        className={index === 0 ? "font-semibold" : "font-normal"}
+                    >
+                        {line}
+                    </span>
+                ))}
+            </address>
+        );
     };
 
     const ListItem = ({ label, value, field, isEditable = true }) => (
         <div
             onClick={() => isEditable && openModal(field)}
-            className={`flex items-center justify-between p-4 border-b border-base-300 last:border-0 transition-colors ${isEditable ? "cursor-pointer hover:bg-base-200/50" : ""}`}
+            className={`grid grid-cols-[minmax(0,1fr)_1.25rem] items-center gap-x-3 gap-y-1.5 border-b border-base-300 p-4 transition-colors last:border-0 sm:flex sm:justify-between ${isEditable ? "cursor-pointer hover:bg-base-200/50" : ""}`}
         >
-            <div className="w-1/3 text-base-content/70 font-medium break-words">
+            <div className="min-w-0 text-sm font-medium text-base-content/70 sm:w-1/3 sm:text-base">
                 {label}
             </div>
-            <div className="flex-1 text-right text-base-content font-semibold break-words px-4">
+            <div className="col-start-1 row-start-2 min-w-0 text-left text-sm font-semibold text-base-content wrap-break-word sm:flex sm:flex-1 sm:justify-end sm:px-4 sm:text-right sm:text-base">
                 {value}
             </div>
             <div
-                className={`w-6 flex justify-end text-base-content/50 ${!isEditable && "invisible"}`}
+                className={`col-start-2 row-span-2 row-start-1 flex w-5 justify-end text-base-content/50 sm:w-6 ${!isEditable && "invisible"}`}
             >
                 <ChevronRight className="w-5 h-5" />
             </div>
@@ -111,13 +233,10 @@ export default function UpdateProfileInformation({
 
     return (
         <section className={className}>
-            <header className="mb-6">
-                <h2 className="text-lg font-medium text-base-content">
-                    Profile Information
+            <header className="mb-4">
+                <h2 className="text-lg font-semibold text-base-content">
+                    Informasi Profil
                 </h2>
-                <p className="mt-1 text-sm text-base-content/70">
-                    Detail berikut akan disertakan dalam invoice transaksi Anda.
-                </p>
             </header>
 
             <div className="bg-base-100 rounded-lg border border-base-300 overflow-hidden">
@@ -178,7 +297,10 @@ export default function UpdateProfileInformation({
                         <SecondaryButton onClick={closeModal}>
                             Batal
                         </SecondaryButton>
-                        <PrimaryButton disabled={processing}>
+                        <PrimaryButton
+                            className="!bg-yellow-400 !text-yellow-950 hover:!bg-yellow-300 focus:!bg-yellow-300 active:!bg-yellow-500"
+                            disabled={processing}
+                        >
                             Simpan
                         </PrimaryButton>
                     </div>
@@ -202,22 +324,30 @@ export default function UpdateProfileInformation({
                     </div>
 
                     <div className="mt-4">
-                        <InputLabel htmlFor="phone" value="WhatsApp Number" />
-                        <div className="mt-1 flex rounded-md shadow-sm">
-                            <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-base-300 bg-base-200 text-base-content/70 sm:text-sm">
+                        <InputLabel htmlFor="phone" value="Nomor WhatsApp" />
+                        <div className="mt-1 flex h-12 items-stretch">
+                            <span className="inline-flex w-16 shrink-0 items-center justify-center rounded-l-lg border border-r-0 border-base-300 bg-base-200 text-sm text-base-content/70">
                                 +62
                             </span>
                             <TextInput
                                 id="phone"
-                                type="text"
-                                className="flex-1 block w-full rounded-none rounded-r-md"
+                                type="tel"
+                                inputMode="numeric"
+                                autoComplete="tel-national"
+                                className="!mt-0 !h-12 min-w-0 flex-1 !rounded-l-none !rounded-r-lg"
                                 value={data.phone}
                                 onChange={(e) =>
-                                    setData("phone", e.target.value)
+                                    setData(
+                                        "phone",
+                                        e.target.value.replace(/\D/g, ""),
+                                    )
                                 }
                                 placeholder="81234567890"
                             />
                         </div>
+                        <p className="mt-2 text-xs text-base-content/50">
+                            Gunakan format 8xxxxxxxxxx tanpa angka 0 atau +62.
+                        </p>
                         <InputError className="mt-2" message={errors.phone} />
                     </div>
 
@@ -225,7 +355,10 @@ export default function UpdateProfileInformation({
                         <SecondaryButton onClick={closeModal}>
                             Batal
                         </SecondaryButton>
-                        <PrimaryButton disabled={processing}>
+                        <PrimaryButton
+                            className="!bg-yellow-400 !text-yellow-950 hover:!bg-yellow-300 focus:!bg-yellow-300 active:!bg-yellow-500"
+                            disabled={processing}
+                        >
                             Simpan
                         </PrimaryButton>
                     </div>
@@ -261,42 +394,96 @@ export default function UpdateProfileInformation({
                             />
                         </div>
 
-                        {/* Province */}
                         <div>
-                            <TextInput
+                            <InputLabel htmlFor="province" value="Provinsi" />
+                            <select
                                 id="province"
-                                className="mt-1 block w-full"
-                                value={data.address.province}
-                                onChange={(e) =>
-                                    setData("address", {
-                                        ...data.address,
-                                        province: e.target.value,
-                                    })
-                                }
-                                placeholder="Kabupaten/Provinsi/Negara (opsional)"
-                            />
+                                className="mt-1 block w-full rounded-lg border-base-300 bg-base-100 cursor-pointer disabled:cursor-not-allowed"
+                                value={data.address.province_code}
+                                onChange={(event) => changeRegion("province", event)}
+                                disabled={loadingRegion === "provinces"}
+                            >
+                                <option value="">Pilih provinsi</option>
+                                {regions.provinces.map((region) => (
+                                    <option key={region.code} value={region.code} data-name={region.name}>
+                                        {region.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
-                        {/* City */}
                         <div>
-                            <TextInput
+                            <InputLabel htmlFor="city" value="Kabupaten/Kota" />
+                            <select
                                 id="city"
-                                className="mt-1 block w-full"
-                                value={data.address.city}
-                                onChange={(e) =>
-                                    setData("address", {
-                                        ...data.address,
-                                        city: e.target.value,
-                                    })
-                                }
-                                placeholder="Kota"
-                            />
+                                className="mt-1 block w-full rounded-lg border-base-300 bg-base-100 cursor-pointer disabled:cursor-not-allowed"
+                                value={data.address.city_code}
+                                onChange={(event) => changeRegion("city", event)}
+                                disabled={!data.address.province_code}
+                            >
+                                <option value="">
+                                    {loadingRegion === "cities"
+                                        ? "Memuat kabupaten/kota..."
+                                        : "Pilih kabupaten/kota"}
+                                </option>
+                                {regions.cities.map((region) => (
+                                    <option key={region.code} value={region.code} data-name={region.name}>
+                                        {region.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="district" value="Kecamatan" />
+                            <select
+                                id="district"
+                                className="mt-1 block w-full rounded-lg border-base-300 bg-base-100 cursor-pointer disabled:cursor-not-allowed"
+                                value={data.address.district_code}
+                                onChange={(event) => changeRegion("district", event)}
+                                disabled={!data.address.city_code}
+                            >
+                                <option value="">
+                                    {loadingRegion === "districts"
+                                        ? "Memuat kecamatan..."
+                                        : "Pilih kecamatan"}
+                                </option>
+                                {regions.districts.map((region) => (
+                                    <option key={region.code} value={region.code} data-name={region.name}>
+                                        {region.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="village" value="Kelurahan/Desa" />
+                            <select
+                                id="village"
+                                className="mt-1 block w-full rounded-lg border-base-300 bg-base-100 cursor-pointer disabled:cursor-not-allowed"
+                                value={data.address.village_code}
+                                onChange={(event) => changeRegion("village", event)}
+                                disabled={!data.address.district_code}
+                            >
+                                <option value="">
+                                    {loadingRegion === "villages"
+                                        ? "Memuat kelurahan/desa..."
+                                        : "Pilih kelurahan/desa"}
+                                </option>
+                                {regions.villages.map((region) => (
+                                    <option key={region.code} value={region.code} data-name={region.name}>
+                                        {region.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         {/* Street Address */}
                         <div>
+                            <InputLabel htmlFor="street" value="Alamat Lengkap" />
                             <TextInput
                                 id="street"
+                                autoComplete="street-address"
                                 className="mt-1 block w-full"
                                 value={data.address.street}
                                 onChange={(e) =>
@@ -311,27 +498,45 @@ export default function UpdateProfileInformation({
 
                         {/* Zip Code */}
                         <div>
+                            <InputLabel htmlFor="zip" value="Kode Pos" />
                             <TextInput
                                 id="zip"
+                                inputMode="numeric"
+                                autoComplete="postal-code"
                                 className="mt-1 block w-full"
                                 value={data.address.zip}
                                 onChange={(e) =>
                                     setData("address", {
                                         ...data.address,
-                                        zip: e.target.value,
+                                        zip: e.target.value
+                                            .replace(/\D/g, "")
+                                            .slice(0, 5),
                                     })
                                 }
                                 placeholder="Kode Pos"
                             />
                         </div>
                     </div>
+                    <InputError className="mt-2" message={errors.address} />
+                    <InputError
+                        className="mt-2"
+                        message={
+                            errors["address.zip"] ||
+                            errors["address.province"] ||
+                            errors["address.city"] ||
+                            errors["address.street"]
+                        }
+                    />
 
                     <div className="mt-6 flex justify-end gap-3">
                         <SecondaryButton onClick={closeModal}>
                             Batal
                         </SecondaryButton>
-                        <PrimaryButton disabled={processing}>
-                            Lanjutkan
+                        <PrimaryButton
+                            className="!bg-yellow-400 !text-yellow-950 hover:!bg-yellow-300 focus:!bg-yellow-300 active:!bg-yellow-500"
+                            disabled={processing}
+                        >
+                            Simpan
                         </PrimaryButton>
                     </div>
                 </form>

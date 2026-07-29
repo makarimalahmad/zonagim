@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\SessionRevocationService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,10 +32,12 @@ class NewPasswordController extends Controller
     /**
      * Handle an incoming new password request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        SessionRevocationService $sessions,
+    ): RedirectResponse {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
@@ -43,17 +47,26 @@ class NewPasswordController extends Controller
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        $isCustomer = User::query()
+            ->where('email', $request->string('email'))
+            ->where('role', 'user')
+            ->exists();
 
-                event(new PasswordReset($user));
-            }
-        );
+        $status = $isCustomer
+            ? Password::reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function (User $user) use ($request, $sessions) {
+                    $user->forceFill([
+                        'password' => Hash::make($request->password),
+                        'remember_token' => Str::random(60),
+                    ])->save();
+
+                    $sessions->revokeAll($user);
+
+                    event(new PasswordReset($user));
+                }
+            )
+            : Password::INVALID_USER;
 
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can

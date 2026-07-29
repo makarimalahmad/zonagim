@@ -1,59 +1,370 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Zonagim
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/zonagim.png" alt="Zonagim" width="180">
 </p>
 
-## About Laravel
+<p align="center">
+  Marketplace akun game berbasis Laravel, React, Inertia, dan Filament.
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tentang Proyek
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Zonagim merupakan aplikasi marketplace untuk menampilkan dan mengelola akun game. Pengunjung dapat menelusuri katalog berdasarkan game, sedangkan pengguna terautentikasi dapat membuka detail produk dan mengelola profil.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Proyek ini juga menyediakan panel admin untuk pengelolaan kategori, produk, pengguna, dan statistik marketplace.
 
-## Learning Laravel
+## Fitur Utama
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Marketplace
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Landing page responsif
+- Daftar kategori game
+- Katalog akun berdasarkan kategori
+- Detail akun khusus pengguna terautentikasi
+- Pencarian dan navigasi produk
+- Dukungan tema terang dan gelap
+- Animasi antarmuka dan smooth scrolling
 
-## Laravel Sponsors
+### Autentikasi dan Keamanan
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Registrasi dengan verifikasi OTP melalui email
+- Login dan logout
+- Verifikasi alamat email
+- Lupa dan reset password
+- Konfirmasi dan pembaruan password
+- Pengelolaan serta penghapusan profil
+- Cloudflare Turnstile pada alur autentikasi
+- Pembatasan akses panel berdasarkan role
+- CSRF protection dan password hashing dari Laravel
 
-### Premium Partners
+### Panel Admin
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Autentikasi admin
+- Pengelolaan kategori game
+- Pengelolaan produk
+- Ringkasan statistik
+- Grafik pertumbuhan produk
+- Daftar pengguna terbaru
 
-## Contributing
+### Integrasi dan SEO
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- AI chatbot menggunakan Groq
+- Sitemap XML
+- `robots.txt`
+- Metadata dan structured data
+- Halaman kebijakan privasi
+- Halaman syarat dan ketentuan
 
-## Code of Conduct
+## Stack Teknologi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Backend
 
-## Security Vulnerabilities
+- PHP 8.2+
+- Laravel 12
+- Filament 5
+- Laravel Sanctum 4
+- Inertia Laravel 2
+- MySQL
+- PHPUnit 11
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Frontend
 
-## License
+- React 18
+- Inertia.js 2
+- Tailwind CSS 4
+- daisyUI 5
+- Vite 7
+- Headless UI
+- Framer Motion
+- GSAP
+- Lenis
+- Lucide React
+- SweetAlert2
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Arsitektur Singkat
+
+```text
+Browser
+  |
+  | HTTP / Inertia requests
+  v
+Laravel routes and controllers
+  |
+  +-- Authentication, OTP, profile, marketplace
+  +-- Groq AI service
+  +-- Mail and queue
+  +-- Eloquent models
+  |
+  +--> MySQL
+  |
+  v
+React pages and components
+
+Admin
+  |
+  v
+Filament panel
+  |
+  v
+Categories, products, users, and dashboard widgets
+```
+
+## Persyaratan
+
+Pastikan perangkat memiliki:
+
+- PHP 8.2 atau lebih baru
+- Composer
+- Node.js dan npm
+- MySQL
+- Ekstensi PHP yang dibutuhkan Laravel
+- SMTP account untuk pengiriman OTP dan reset password
+- Groq API key untuk AI chatbot
+- Cloudflare Turnstile keys untuk captcha
+
+## Instalasi Lokal
+
+1. Clone repository.
+
+   ```bash
+   git clone https://github.com/makarimalahmad/lapakakunid.git
+   cd lapakakunid
+   ```
+
+2. Instal dependency PHP.
+
+   ```bash
+   composer install
+   ```
+
+3. Salin konfigurasi environment lokal. Gunakan `.env.example` hanya untuk development; deployment produksi wajib dimulai dari `.env.production.example`.
+
+   Windows PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Linux atau macOS:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Buat application key.
+
+   ```bash
+   php artisan key:generate
+   ```
+
+5. Buat database MySQL, lalu sesuaikan bagian berikut di `.env`.
+
+   ```dotenv
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=lapakakunid_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+6. Jalankan migration.
+
+   ```bash
+   php artisan migrate
+   ```
+
+7. Buat symbolic link untuk storage.
+
+   ```bash
+   php artisan storage:link
+   ```
+
+8. Instal dependency frontend.
+
+   ```bash
+   npm install
+   ```
+
+9. Jalankan aplikasi untuk development.
+
+   ```bash
+   composer dev
+   ```
+
+   Perintah tersebut menjalankan server Laravel, queue worker, log viewer, dan Vite secara bersamaan.
+
+10. Buka aplikasi di `http://127.0.0.1:8000`.
+
+## Konfigurasi Layanan
+
+### Email
+
+Isi konfigurasi SMTP untuk OTP, verifikasi email, dan reset password.
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="no-reply@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+Jangan commit username atau password SMTP ke repository.
+
+### Groq AI
+
+```dotenv
+GROQ_API_KEY=
+```
+
+Buat API key melalui platform resmi Groq, lalu simpan hanya di `.env`.
+
+### Cloudflare Turnstile
+
+```dotenv
+TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
+```
+
+Gunakan test keys resmi Cloudflare untuk development bila diperlukan. Jangan masukkan secret key produksi ke source code.
+
+### Queue
+
+Konfigurasi default memakai database queue.
+
+```dotenv
+QUEUE_CONNECTION=database
+```
+
+Jalankan worker secara terpisah bila tidak menggunakan `composer dev`.
+
+```bash
+php artisan queue:work
+```
+
+## Membuat Administrator
+
+Repository tidak menyediakan credential admin bawaan. Buat akun secara interaktif agar tidak ada password publik.
+
+1. Buat user melalui perintah Filament.
+
+   ```bash
+   php artisan make:filament-user
+   ```
+
+2. Promosikan user tersebut menjadi admin.
+
+   ```bash
+   php artisan tinker
+   ```
+
+   Jalankan kode berikut di Tinker dengan alamat email yang sesuai:
+
+   ```php
+    $admin = App\Models\User::where('email', 'admin@example.com')->firstOrFail();
+    $admin->forceFill(['role' => 'admin'])->save();
+   ```
+
+3. Keluar dari Tinker dan buka `/admin`.
+
+Gunakan password unik dan kuat. Jangan menjalankan seeder yang membuat admin dengan credential tetap pada lingkungan produksi.
+
+## Build Produksi
+
+Buat `.env` produksi dari template aman sebelum mengisi credential melalui secret manager atau konfigurasi hosting.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.production.example .env
+```
+
+Linux atau macOS:
+
+```bash
+cp .env.production.example .env
+```
+
+Jangan menimpa `.env` produksi yang sudah berisi credential. Setelah konfigurasi selesai:
+
+```bash
+npm run build
+php artisan optimize
+```
+
+Konfigurasi produksi minimum:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://example.com
+LOG_LEVEL=warning
+```
+
+Pastikan web server mengarah ke direktori `public`, HTTPS aktif, queue worker berjalan, dan permission direktori `storage` serta `bootstrap/cache` benar.
+
+## Pengujian
+
+Jalankan test backend:
+
+```bash
+composer test
+```
+
+Jalankan build frontend:
+
+```bash
+npm run build
+```
+
+Audit dependency:
+
+```bash
+composer audit
+npm audit
+```
+
+Status verifikasi dapat berubah mengikuti pengembangan. Jalankan seluruh perintah audit di atas pada commit yang akan diterapkan dan jadikan hasil CI commit tersebut sebagai sumber kebenaran.
+
+## Struktur Direktori
+
+```text
+app/
+  Filament/        Resource dan widget panel admin
+  Http/            Controller, middleware, dan request
+  Models/          Model Eloquent
+  Services/        Integrasi layanan aplikasi
+database/
+  migrations/      Skema database
+  seeders/         Seeder tanpa credential bawaan
+resources/
+  css/             Stylesheet aplikasi
+  js/              React pages dan components
+routes/
+  web.php          Marketplace, profil, halaman statis, dan chatbot
+  auth.php         Rute autentikasi
+tests/
+  Feature/         Test alur aplikasi
+  Unit/            Unit test
+```
+
+## Praktik Keamanan Repository
+
+- `.env` tidak boleh masuk Git.
+- Gunakan `.env.example` hanya untuk nama variabel dan nilai contoh.
+- Jangan commit API key, token, password, database dump, log, atau data pengguna.
+- Rotasi credential bila pernah masuk riwayat Git.
+- Aktifkan GitHub Secret Scanning, Push Protection, dan Dependabot.
+- Jalankan `composer audit` dan `npm audit` secara berkala.
+- Periksa seluruh perubahan sebelum mengubah repository menjadi public.
+
+## Lisensi dan Aset Pihak Ketiga
+
+Kode sumber proyek dirilis menggunakan lisensi MIT yang tersedia di `LICENSE`.
+
+Nama game, logo, gambar, dan merek pihak ketiga tetap menjadi hak pemilik masing-masing. Pengguna repository wajib memastikan izin penggunaan aset untuk konteks dan wilayah penerapannya. Aset pihak ketiga tidak tercakup oleh lisensi MIT proyek dan tidak boleh dianggap sebagai dukungan resmi dari pemilik merek.

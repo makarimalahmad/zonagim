@@ -1,11 +1,10 @@
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { useRef, useEffect, useState } from "react";
 
 export default function VerifyOtp({ email, status, throttle, flash }) {
     // Receive throttle and flash
     const { data, setData, post, processing, errors } = useForm({
-        email: email || "",
         otp: "",
     });
 
@@ -102,7 +101,9 @@ export default function VerifyOtp({ email, status, throttle, flash }) {
                 </h1>
                 <p className="text-base-content/70 text-sm">
                     Masukkan 6 digit kode yang dikirim ke <br />{" "}
-                    <span className="text-base-content font-medium">{email}</span>
+                    <span className="text-base-content font-medium">
+                        {email}
+                    </span>
                 </p>
             </div>
 

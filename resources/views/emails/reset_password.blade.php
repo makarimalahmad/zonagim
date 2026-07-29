@@ -36,7 +36,7 @@
             </p>
         </div>
         <div class="footer">
-            &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+            &copy; {{ date('Y') }} {{ config('app.name') }}. Hak cipta dilindungi.
         </div>
     </div>
 </body>

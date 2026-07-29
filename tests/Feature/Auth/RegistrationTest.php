@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -15,6 +16,35 @@ class RegistrationTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+    }
+
+    public function test_registration_password_indicator_accepts_underscore_as_symbol(): void
+    {
+        $source = file_get_contents(
+            dirname(__DIR__, 3).DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Auth'.DIRECTORY_SEPARATOR.'Register.jsx',
+        );
+
+        $this->assertStringContainsString('<>_]', $source);
+        $this->assertStringContainsString('Simbol (!@#$_)', $source);
+    }
+
+    public function test_existing_email_receives_informative_indonesian_error(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'Test User',
+            'email' => $user->email,
+            'password' => 'Zx9k-Lm7Qw2pR!',
+            'password_confirmation' => 'Zx9k-Lm7Qw2pR!',
+            'cf_turnstile_response' => 'dummy-token',
+        ]);
+
+        $response
+            ->assertRedirect('/register')
+            ->assertSessionHasErrors([
+                'email' => 'Alamat email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
+            ]);
     }
 
     public function test_new_users_start_otp_flow_and_are_not_logged_in_yet(): void

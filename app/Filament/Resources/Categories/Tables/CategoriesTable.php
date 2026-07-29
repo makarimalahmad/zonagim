@@ -2,10 +2,15 @@
 
 namespace App\Filament\Resources\Categories\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Filament\Actions\PersistentBulkActionGroup;
+use App\Filament\Actions\PersistentDeleteBulkAction;
+use App\Models\Category;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CategoriesTable
@@ -14,56 +19,82 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                // 🏷️ Nama kategori
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->prefix('#')
+                    ->sortable()
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                ImageColumn::make('image')
+                    ->label('Sampul')
+                    ->disk('public')
+                    ->square()
+                    ->imageHeight(44),
+
                 TextColumn::make('name')
-                    ->label('Category Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('Nama Game')
+                    ->description(fn (Category $record): string => $record->slug)
+                    ->searchable(['name', 'slug'])
+                    ->sortable()
+                    ->weight('bold'),
 
-                // 🔗 Slug auto (badge)
-                TextColumn::make('slug')
-                    ->label('Slug')
-                    ->badge()
-                    ->color('gray')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                // 📦 Product Count (di-eager-count di CategoryResource::getEloquentQuery)
                 TextColumn::make('products_count')
-                    ->label('Total Products')
+                    ->label('Jumlah Akun')
+                    ->counts('products')
                     ->badge()
-                    ->color(fn(string $state): string => match (true) {
-                        $state > 10 => 'success',
-                        $state > 0 => 'primary',
-                        default => 'gray',
-                    })
+                    ->color(fn (int $state): string => $state > 0 ? 'primary' : 'gray')
                     ->sortable(),
 
-                // 🕒 Created
                 TextColumn::make('created_at')
-                    ->label('Created')
-                    ->dateTime('d M Y H:i')
+                    ->label('Dibuat')
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                // 🔄 Updated
                 TextColumn::make('updated_at')
-                    ->label('Updated')
-                    ->dateTime('d M Y H:i')
+                    ->label('Diperbarui')
+                    ->since()
+                    ->dateTimeTooltip('d M Y, H:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
             ])
-
+            ->filters([
+                SelectFilter::make('content')
+                    ->label('Isi Kategori')
+                    ->options([
+                        'with_products' => 'Memiliki akun',
+                        'empty' => 'Kosong',
+                    ])
+                    ->query(fn ($query, array $data) => match ($data['value'] ?? null) {
+                        'with_products' => $query->has('products'),
+                        'empty' => $query->doesntHave('products'),
+                        default => $query,
+                    }),
+            ])
             ->defaultSort('created_at', 'desc')
-
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->label('Ubah'),
+                DeleteAction::make()
+                    ->label('Hapus')
+                    ->disabled(fn (Category $record): bool => $record->products_count > 0)
+                    ->tooltip(fn (Category $record): ?string => $record->products_count > 0
+                        ? 'Kategori tidak dapat dihapus selama masih memiliki produk.'
+                        : 'Hapus kategori')
+                    ->extraAttributes(['class' => 'app-delete-action'])
+                    ->modalSubmitAction(fn (Action $action): Action => $action
+                        ->label('Hapus kategori')
+                        ->extraAttributes(['class' => 'app-delete-action'])),
             ])
-
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                PersistentBulkActionGroup::make([
+                    PersistentDeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
+                        ->modalSubmitAction(fn (Action $action): Action => $action
+                            ->extraAttributes(['class' => 'app-delete-action'])),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Belum ada kategori')
+            ->emptyStateDescription('Tambahkan game pertama untuk mulai membuat listing akun.');
     }
 }

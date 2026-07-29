@@ -1,213 +1,428 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { usePage, Link, Head } from "@inertiajs/react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import ProgressiveImage from "@/Components/ProgressiveImage";
+import { Head, Link, usePage } from "@inertiajs/react";
 import {
     ArrowLeft,
+    ChevronLeft,
+    ChevronRight,
+    Maximize2,
     MessageCircle,
     ShieldCheck,
     User,
+    X,
+    ZoomIn,
+    ZoomOut,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Show({ product }) {
-    // 🛡️ GUARD: JANGAN CRASH
+    const { auth } = usePage().props;
+    const Layout = auth?.user ? AuthenticatedLayout : GuestLayout;
+    const layoutProps = auth?.user ? {} : { withNavbar: true };
+    const images = product?.images ?? [];
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [zoom, setZoom] = useState(1);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const dragOriginRef = useRef({ x: 0, y: 0 });
+    const currentImage = images[currentIndex] ?? null;
+
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [product?.id]);
+
+    useEffect(() => {
+        if (!isPreviewOpen) {
+            return;
+        }
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                setIsPreviewOpen(false);
+            }
+
+            if (event.key === "ArrowLeft" && images.length > 1) {
+                setCurrentIndex((index) =>
+                    index === 0 ? images.length - 1 : index - 1,
+                );
+                setZoom(1);
+                setPosition({ x: 0, y: 0 });
+            }
+
+            if (event.key === "ArrowRight" && images.length > 1) {
+                setCurrentIndex((index) => (index + 1) % images.length);
+                setZoom(1);
+                setPosition({ x: 0, y: 0 });
+            }
+        };
+
+        document.body.style.overflow = "hidden";
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.body.style.overflow = "";
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [images.length, isPreviewOpen]);
+
     if (!product) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-base-content/50">
+            <div className="flex min-h-screen items-center justify-center text-base-content/50">
                 Produk tidak ditemukan.
             </div>
         );
     }
 
-    const { auth } = usePage().props;
-    const Layout = auth?.user ? AuthenticatedLayout : GuestLayout;
+    const showPrevious = () => {
+        setCurrentIndex((index) =>
+            index === 0 ? images.length - 1 : index - 1,
+        );
+        setZoom(1);
+        setPosition({ x: 0, y: 0 });
+    };
 
-    // Logic layoutProps sama seperti Game.jsx agar konsisten
-    const layoutProps = auth?.user ? {} : { withNavbar: true };
+    const showNext = () => {
+        setCurrentIndex((index) => (index + 1) % images.length);
+        setZoom(1);
+        setPosition({ x: 0, y: 0 });
+    };
 
-    const images = product.images ?? [];
-    const activeImage = images[0] || null;
-    const [currentImage, setCurrentImage] = useState(activeImage);
+    const openPreview = () => {
+        if (!currentImage) {
+            return;
+        }
+
+        setZoom(1);
+        setPosition({ x: 0, y: 0 });
+        setIsPreviewOpen(true);
+    };
+
+    const handlePreviewWheel = (event) => {
+        if (event.ctrlKey || event.metaKey) {
+            return;
+        }
+
+        event.preventDefault();
+        const direction = event.deltaY < 0 ? 0.25 : -0.25;
+        setZoom((value) => {
+            const nextZoom = Math.min(3, Math.max(1, value + direction));
+
+            if (nextZoom === 1) {
+                setPosition({ x: 0, y: 0 });
+            }
+
+            return nextZoom;
+        });
+    };
+
+    const handlePointerDown = (event) => {
+        if (zoom <= 1 || event.button !== 0) {
+            return;
+        }
+
+        event.currentTarget.setPointerCapture(event.pointerId);
+        dragOriginRef.current = {
+            x: event.clientX - position.x,
+            y: event.clientY - position.y,
+        };
+        setIsDragging(true);
+    };
+
+    const handlePointerMove = (event) => {
+        if (!isDragging) {
+            return;
+        }
+
+        setPosition({
+            x: event.clientX - dragOriginRef.current.x,
+            y: event.clientY - dragOriginRef.current.y,
+        });
+    };
+
+    const stopDragging = (event) => {
+        if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+
+        setIsDragging(false);
+    };
 
     return (
         <Layout {...layoutProps}>
-            <Head title={product.title} />
-            <div className="min-h-screen -mt-6 px-6 md:px-12 py-8 pt-4 md:pt-8 transition-colors duration-300 relative">
-                <div className="max-w-7xl mx-auto relative z-10">
-                    {/* BREADCRUMB / BACK BUTTON */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="mb-8"
+            <Head title={product.title || product.game_name} />
+
+            <main className="min-h-screen px-4 py-7 sm:px-6 lg:px-8 lg:py-9">
+                <div className="mx-auto max-w-6xl">
+                    <Link
+                        href={route("market.category", product.slug)}
+                        className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-base-content/60 transition-colors hover:text-yellow-500"
                     >
-                        <Link
-                            href={route("market.category", product.slug)}
-                            className="inline-flex items-center gap-2 text-base-content/60 hover:text-yellow-500 transition-colors font-medium group"
-                        >
-                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                            Kembali
-                        </Link>
-                    </motion.div>
+                        <ArrowLeft className="h-4 w-4" />
+                        Kembali ke {product.category}
+                    </Link>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                        {/* ================= GALLERY (Left - 7 cols) ================= */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="lg:col-span-7 flex flex-col gap-4"
+                    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,620px)_minmax(320px,1fr)] lg:justify-center lg:gap-8">
+                        <section
+                            aria-label="Galeri akun"
+                            className="min-w-0 lg:max-w-[620px]"
                         >
-                            {/* Main Image */}
-                            <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-base-200 border border-base-300 shadow-sm group">
-                                {currentImage ? (
-                                    <img
-                                        src={currentImage}
-                                        alt={product.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-base-content/20">
-                                        No Image
-                                    </div>
+                            <button
+                                type="button"
+                                onClick={openPreview}
+                                disabled={!currentImage}
+                                className="group relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-3 disabled:cursor-default sm:p-4"
+                                aria-label="Buka preview gambar"
+                            >
+                                <ProgressiveImage
+                                    src={currentImage}
+                                    alt={product.title || product.game_name}
+                                    width={16}
+                                    height={10}
+                                    loading="eager"
+                                    fetchPriority="high"
+                                    wrapperClassName="h-full w-full"
+                                    className="object-contain"
+                                    fallback={
+                                        <span className="text-sm text-base-content/40">
+                                            Gambar belum tersedia
+                                        </span>
+                                    }
+                                />
+                                {currentImage && (
+                                    <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-xs font-semibold text-base-content transition-colors group-hover:border-yellow-500 group-hover:text-yellow-500">
+                                        <Maximize2 className="h-4 w-4" />
+                                        Preview
+                                    </span>
                                 )}
-                            </div>
+                            </button>
 
-                            {/* Thumbnails */}
                             {images.length > 1 && (
-                                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                                    {images.map((img, i) => (
+                                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                                    {images.map((image, index) => (
                                         <button
-                                            key={i}
-                                            onClick={() => setCurrentImage(img)}
-                                            className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-                                                currentImage === img
-                                                    ? "border-yellow-500 scale-95 shadow-sm"
-                                                    : "border-transparent opacity-60 hover:opacity-100 hover:scale-105"
+                                            key={image}
+                                            type="button"
+                                            onClick={() => {
+                                                setCurrentIndex(index);
+                                                setZoom(1);
+                                            }}
+                                            className={`h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-base-100 transition-colors ${
+                                                currentIndex === index
+                                                    ? "border-yellow-500"
+                                                    : "border-base-300 hover:border-base-content/30"
                                             }`}
+                                            aria-label={`Tampilkan gambar ${index + 1}`}
+                                            aria-current={
+                                                currentIndex === index
+                                                    ? "true"
+                                                    : undefined
+                                            }
                                         >
-                                            <img
-                                                src={img}
-                                                className="w-full h-full object-cover"
+                                            <ProgressiveImage
+                                                src={image}
+                                                alt=""
+                                                width={6}
+                                                height={5}
+                                                wrapperClassName="h-full w-full"
+                                                className="object-cover"
                                             />
                                         </button>
                                     ))}
                                 </div>
                             )}
-                        </motion.div>
+                        </section>
 
-                        {/* ================= DETAIL INFO (Right - 5 cols) ================= */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className="lg:col-span-5 space-y-8 pl-0 lg:pl-6"
-                        >
-                            {/* HEADER: Title & Price */}
-                            <div className="">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="badge badge-lg border-base-content/10 bg-base-200/50 text-base-content/70">
-                                        {product.category}
-                                    </span>
-                                    <span className="badge badge-lg badge-warning text-yellow-950 font-bold border-none">
-                                        Terverifikasi
-                                    </span>
-                                </div>
-                                <div className="mb-1">
-                                    <span className="text-xs font-bold text-base-content/40 uppercase tracking-widest">
-                                        Nickname Akun
-                                    </span>
-                                </div>
-                                <h1 className="text-3xl md:text-5xl font-black text-base-content mb-4 leading-tight tracking-tight">
-                                    {product.title}
-                                </h1>
-                                <div className="flex items-baseline gap-2">
-                                    <h2 className="text-4xl md:text-5xl font-black text-yellow-500 tracking-tight">
-                                        Rp{" "}
-                                        {Number(product.price).toLocaleString(
-                                            "id-ID",
-                                        )}
-                                    </h2>
-                                </div>
-                            </div>
+                        <aside className="rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-6 lg:sticky lg:top-24">
+                            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-yellow-500">
+                                {product.category}
+                            </p>
+                            <h1 className="text-2xl font-extrabold leading-tight text-base-content sm:text-3xl">
+                                {product.title || product.game_name}
+                            </h1>
+                            <p className="mt-4 text-2xl font-extrabold text-yellow-500 sm:text-3xl">
+                                Rp {Number(product.price).toLocaleString("id-ID")}
+                            </p>
 
-                            <div className="divider my-0"></div>
+                            <div className="my-5 border-t border-base-300" />
 
-                            {/* DESCRIPTION */}
-                            <div>
-                                <h3 className="text-xs font-bold text-base-content/40 uppercase tracking-widest mb-3">
-                                    Deskripsi Akun
-                                </h3>
-                                <div className="prose prose-base max-w-none text-base-content/80 leading-relaxed whitespace-pre-line font-light">
-                                    {product.description}
-                                </div>
-                            </div>
+                            <section>
+                                <h2 className="text-sm font-bold text-base-content">
+                                    Deskripsi akun
+                                </h2>
+                                <p className="mt-3 whitespace-pre-line text-sm leading-6 text-base-content/65">
+                                    {product.description ||
+                                        "Penjual belum menambahkan deskripsi akun."}
+                                </p>
+                            </section>
 
-                            <div className="divider my-0"></div>
+                            <div className="my-5 border-t border-base-300" />
 
-                            {/* SELLER CARD */}
-                            <div className="">
-                                <h3 className="text-xs font-bold text-base-content/40 uppercase tracking-widest mb-3">
-                                    Penjual Akun
-                                </h3>
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center text-base-content/30 border border-base-content/5 overflow-hidden">
-                                        <User className="w-8 h-8" />
+                            <section>
+                                <h2 className="text-sm font-bold text-base-content">
+                                    Penjual
+                                </h2>
+                                <div className="mt-3 flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-base-300 bg-base-200 text-base-content/50">
+                                        <User className="h-5 w-5" />
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-xl text-base-content mb-1">
-                                            {product.seller_name}
-                                        </h3>
-                                    </div>
+                                    <span className="font-semibold text-base-content">
+                                        {product.seller_name || "Penjual Zonagim"}
+                                    </span>
                                 </div>
 
-                                <a
-                                    href={`https://wa.me/${product.seller_whatsapp}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn btn-lg bg-yellow-500 hover:bg-yellow-600 text-black w-full border-none shadow-sm transition-all transform hover:-translate-y-1 rounded-2xl font-bold mb-8"
-                                >
-                                    <MessageCircle className="w-6 h-6 mr-1" />
-                                    Chat Penjual Sekarang
-                                </a>
+                                {product.seller_whatsapp && (
+                                    <a
+                                        href={`https://wa.me/${product.seller_whatsapp}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <MessageCircle className="h-5 w-5" />
+                                        Chat Penjual
+                                    </a>
+                                )}
+                            </section>
 
-                                {/* REKBER ALERT */}
-                                <div className="bg-base-200 rounded-2xl p-5 border border-base-300">
-                                    <div className="flex items-start gap-4">
-                                        <div className="bg-info/10 p-2 rounded-xl text-info">
-                                            <ShieldCheck className="w-6 h-6" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-bold text-base-content mb-1">
-                                                Transaksi Lebih Aman
-                                            </h4>
-                                            <p className="text-sm text-base-content/60 leading-relaxed mb-4">
-                                                Disarankan menggunakan jasa{" "}
-                                                <b>
-                                                    Rekber (Rekening Bersama)
-                                                    Admin
-                                                </b>{" "}
-                                                untuk menjamin keamanan uang &
-                                                akun Anda 100%.
+                            {product.rekber_contact_url && (
+                                <section className="mt-5 rounded-xl border border-base-300 bg-base-200 p-4">
+                                    <div className="flex items-start gap-3">
+                                        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-info" />
+                                        <div>
+                                            <h2 className="text-sm font-bold text-base-content">
+                                                Opsi Rekber
+                                            </h2>
+                                            <p className="mt-1 text-xs leading-5 text-base-content/60">
+                                                Admin membantu alur pembayaran dan
+                                                penyerahan data selama transaksi.
                                             </p>
-                                            <a
-                                                href="https://wa.me/6281234567890" // Placeholder admin WA
-                                                target="_blank"
-                                                className="btn btn-md w-full bg-base-100 hover:bg-base-200 text-base-content border border-base-300 shadow-sm font-medium gap-2 rounded-xl"
-                                            >
-                                                <MessageCircle className="w-5 h-5 text-success" />
-                                                Hubungi Admin (Rekber)
-                                            </a>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            {/* SAFETY TIPS */}
-                        </motion.div>
+                                    <a
+                                        href={product.rekber_contact_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-base-300 bg-base-100 text-sm font-semibold text-base-content transition-colors hover:border-yellow-500 hover:text-yellow-500"
+                                    >
+                                        <MessageCircle className="h-4 w-4" />
+                                        Hubungi Admin Rekber
+                                    </a>
+                                </section>
+                            )}
+                        </aside>
                     </div>
                 </div>
-            </div>
+            </main>
+
+            {isPreviewOpen && currentImage && (
+                <div
+                    className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 p-4 sm:p-8"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Preview gambar akun"
+                    onClick={() => setIsPreviewOpen(false)}
+                >
+                    <div
+                        className="relative flex h-full w-full max-w-7xl items-center justify-center overflow-hidden"
+                        onClick={(event) => event.stopPropagation()}
+                        onWheel={handlePreviewWheel}
+                    >
+                        <ProgressiveImage
+                            src={currentImage}
+                            alt={product.title || product.game_name}
+                            width={16}
+                            height={10}
+                            loading="eager"
+                            wrapperClassName="max-h-full max-w-full bg-transparent"
+                            className={`max-h-full max-w-full select-none object-contain ${
+                                isDragging
+                                    ? "cursor-grabbing"
+                                    : zoom > 1
+                                      ? "cursor-grab"
+                                      : "cursor-default"
+                            }`}
+                            style={{
+                                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`,
+                                transition: isDragging
+                                    ? "none"
+                                    : "transform 200ms ease",
+                            }}
+                            onPointerDown={handlePointerDown}
+                            onPointerMove={handlePointerMove}
+                            onPointerUp={stopDragging}
+                            onPointerCancel={stopDragging}
+                            draggable="false"
+                        />
+
+                        <div className="absolute right-0 top-0 flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setZoom((value) => {
+                                        const nextZoom = Math.max(1, value - 0.25);
+
+                                        if (nextZoom === 1) {
+                                            setPosition({ x: 0, y: 0 });
+                                        }
+
+                                        return nextZoom;
+                                    })
+                                }
+                                disabled={zoom <= 1}
+                                className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/20 bg-black/60 text-white hover:bg-black/80 disabled:opacity-40"
+                                aria-label="Perkecil gambar"
+                            >
+                                <ZoomOut className="h-5 w-5" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setZoom((value) => Math.min(3, value + 0.25))
+                                }
+                                disabled={zoom >= 3}
+                                className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/20 bg-black/60 text-white hover:bg-black/80 disabled:opacity-40"
+                                aria-label="Perbesar gambar"
+                            >
+                                <ZoomIn className="h-5 w-5" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsPreviewOpen(false)}
+                                className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/20 bg-black/60 text-white hover:bg-black/80"
+                                aria-label="Tutup preview"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        {images.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={showPrevious}
+                                    className="absolute left-0 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white hover:bg-black/80"
+                                    aria-label="Gambar sebelumnya"
+                                >
+                                    <ChevronLeft className="h-6 w-6" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={showNext}
+                                    className="absolute right-0 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white hover:bg-black/80"
+                                    aria-label="Gambar berikutnya"
+                                >
+                                    <ChevronRight className="h-6 w-6" />
+                                </button>
+                            </>
+                        )}
+
+                        <span className="absolute bottom-0 rounded-lg bg-black/60 px-3 py-2 text-xs text-white">
+                            {currentIndex + 1} / {images.length} · {Math.round(zoom * 100)}% · Scroll untuk zoom{zoom > 1 ? " · Tahan klik kiri untuk geser" : ""}
+                        </span>
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 }

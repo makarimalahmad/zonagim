@@ -13,12 +13,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    protected static ?string $navigationLabel = 'Produk';
+
+    protected static ?string $modelLabel = 'Produk';
+
+    protected static ?string $pluralModelLabel = 'Produk';
+
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('category');
     }
@@ -26,6 +33,8 @@ class ProductResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'title';
+
+    protected static ?string $recordRouteKeyName = 'id';
 
     public static function form(Schema $schema): Schema
     {

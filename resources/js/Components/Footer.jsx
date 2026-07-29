@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import ProgressiveImage from "@/Components/ProgressiveImage";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -9,34 +10,37 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     {/* Logo & Brand */}
                     <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity">
-                        <img
-                            src="/images/lapakgimid.png"
-                            alt="Logo"
-                            className="w-8 h-8"
+                        <ProgressiveImage
+                            src="/images/zonagim.png"
+                            alt="Logo Zonagim"
+                            width={32}
+                            height={32}
+                            wrapperClassName="w-8 h-8 shrink-0"
+                            className="object-contain"
                         />
                         <span className="font-bold text-base-content">
-                            LapakGimID
+                            Zonagim
                         </span>
                     </div>
 
                     {/* Copyright & Links */}
                     <div className="text-base-content/60 text-center md:text-right">
                         <p>
-                            &copy; {currentYear} LapakGimID. All rights
-                            reserved.
+                            &copy; {currentYear} Zonagim. Hak cipta
+                            dilindungi.
                         </p>
                         <div className="flex gap-4 justify-center md:justify-end mt-2">
                             <Link
                                 href={route("privacy")}
                                 className="hover:text-yellow-500 transition-colors"
                             >
-                                Privacy Policy
+                                Kebijakan Privasi
                             </Link>
                             <Link
                                 href={route("terms")}
                                 className="hover:text-yellow-500 transition-colors"
                             >
-                                Terms of Service
+                                Syarat & Ketentuan
                             </Link>
                         </div>
                     </div>

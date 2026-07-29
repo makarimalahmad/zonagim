@@ -29,7 +29,7 @@ export default function Register() {
         length: data.password.length >= 8,
         mixedCase: /[a-z]/.test(data.password) && /[A-Z]/.test(data.password),
         number: /\d/.test(data.password),
-        symbol: /[!@#$%^&*(),.?":{}|<>]/.test(data.password),
+        symbol: /[!@#$%^&*(),.?":{}|<>_]/.test(data.password),
     };
 
     const handleTurnstileVerify = (token) => {
@@ -65,9 +65,9 @@ export default function Register() {
             className={`flex items-center gap-2 text-xs transition-colors ${met ? "text-success" : "text-base-content/50"}`}
         >
             {met ? (
-                <Check size={14} className="flex-shrink-0" />
+                <Check size={14} className="shrink-0" />
             ) : (
-                <div className="w-3.5 h-3.5 rounded-full border border-base-content/30 flex-shrink-0" />
+                <div className="w-3.5 h-3.5 rounded-full border border-base-content/30 shrink-0" />
             )}
             <span>{text}</span>
         </div>
@@ -75,7 +75,7 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Pendaftaran" />
 
             {/* TITLE */}
             <div className="mb-6 text-center">
@@ -83,7 +83,7 @@ export default function Register() {
                     Daftar Akun Baru
                 </h1>
                 <p className="text-sm text-base-content/60 mt-1">
-                    Buat akun untuk mulai jual & beli akun game
+                    Buat akun untuk mulai jual dan beli akun game
                 </p>
             </div>
 
@@ -115,7 +115,7 @@ export default function Register() {
                 <div>
                     <InputLabel
                         htmlFor="email"
-                        value="Email"
+                        value="Alamat Email"
                         className="text-base-content/80 mb-2 block"
                     />
 
@@ -138,7 +138,7 @@ export default function Register() {
                 <div>
                     <InputLabel
                         htmlFor="password"
-                        value="Password"
+                        value="Kata Sandi"
                         className="text-base-content/80 mb-2 block"
                     />
 
@@ -154,7 +154,7 @@ export default function Register() {
                                 setData("password", e.target.value);
                                 clearErrors("password");
                             }}
-                            placeholder="Masukan Password"
+                            placeholder="Masukkan kata sandi"
                             required
                         />
                         <button
@@ -178,7 +178,7 @@ export default function Register() {
                         />
                         <RequirementItem
                             met={strength.mixedCase}
-                            text="Huruf Besar & Kecil"
+                            text="Huruf besar dan kecil"
                         />
                         <RequirementItem
                             met={strength.number}
@@ -186,7 +186,7 @@ export default function Register() {
                         />
                         <RequirementItem
                             met={strength.symbol}
-                            text="Simbol (!@#$)"
+                            text="Simbol (!@#$_)"
                         />
                     </div>
 
@@ -197,7 +197,7 @@ export default function Register() {
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Konfirmasi Password"
+                        value="Konfirmasi Kata Sandi"
                         className="text-base-content/80 mb-2 block"
                     />
 
@@ -213,7 +213,7 @@ export default function Register() {
                                 setData("password_confirmation", e.target.value);
                                 clearErrors("password_confirmation");
                             }}
-                            placeholder="Ulangi password"
+                            placeholder="Ulangi kata sandi"
                             required
                         />
                         <button
@@ -247,14 +247,23 @@ export default function Register() {
                             disabled={processing}
                         />
                         <span className="ms-2 text-sm text-base-content/60">
-                            I agree to the{" "}
+                            Saya telah membaca dan menyetujui{" "}
                             <a
                                 target="_blank"
                                 href={route("terms")}
                                 className="underline text-sm text-yellow-500 hover:text-yellow-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
-                                LapakGimID Terms of Service
-                            </a>
+                                Syarat & Ketentuan
+                            </a>{" "}
+                            dan{" "}
+                            <a
+                                target="_blank"
+                                href={route("privacy")}
+                                className="underline text-sm text-yellow-500 hover:text-yellow-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                            >
+                                Kebijakan Privasi
+                            </a>{" "}
+                            yang berlaku.
                         </span>
                     </label>
                 </div>
@@ -281,7 +290,7 @@ export default function Register() {
                     disabled={!agreed || processing || !turnstileToken}
                     className="w-full mt-4 py-3 rounded-lg bg-yellow-500 text-black font-semibold tracking-wide hover:bg-yellow-600 transition disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                    {processing ? "Loading..." : "REGISTER"}
+                    {processing ? "Memproses..." : "DAFTAR"}
                 </button>
 
                 {/* LOGIN LINK */}
@@ -291,7 +300,7 @@ export default function Register() {
                         href={route("login")}
                         className="text-yellow-500 hover:underline"
                     >
-                        Login
+                        Masuk
                     </Link>
                 </p>
             </form>

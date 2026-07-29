@@ -1,5 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import GuestLayout from "@/Layouts/GuestLayout";
+import ProgressiveImage from "@/Components/ProgressiveImage";
 import { Link, usePage, Head } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Gamepad2, ArrowRight } from "lucide-react";
@@ -75,8 +76,8 @@ export default function Index({ games }) {
                         </span>
                     </h1>
                     <p className="relative text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto mb-8 font-light leading-relaxed transition-colors duration-300">
-                        Temukan akun game impianmu dengan harga terbaik dan transaksi aman.
-                        Legal, terpercaya, dan bergaransi.
+                        Jelajahi listing akun game dan pilih berdasarkan informasi
+                        yang tersedia.
                     </p>
 
                     {/* SEARCH BAR (Functional) */}
@@ -99,7 +100,7 @@ export default function Index({ games }) {
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
                 >
                     <AnimatePresence mode="popLayout">
                         {filteredGames.map((game) => (
@@ -113,32 +114,32 @@ export default function Index({ games }) {
                             >
                                 <Link
                                     href={`/market/${game.slug}`}
-                                    className="group relative block h-full rounded-2xl overflow-hidden bg-base-100 border border-base-300 hover:border-yellow-500/50 hover:shadow-md transition-all duration-300 transform"
+                                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 transition-colors duration-200 hover:border-yellow-500/70"
                                 >
-                                    {/* Image Container */}
-                                    <div className="aspect-[16/9] w-full overflow-hidden relative">
-                                        <div className="absolute inset-0 bg-black/30 z-10 group-hover:bg-black/20 transition-colors duration-300" />
-                                        {game.image ? (
-                                            <img
-                                                src={game.image}
-                                                alt={game.name}
-                                                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-base-300">
-                                                <Gamepad2 className="w-12 h-12 text-base-content/30" />
-                                            </div>
-                                        )}
-                                        
-                                        {/* Overlay Content */}
-                                        <div className="absolute bottom-4 left-4 z-20">
-                                            <h2 className="text-2xl font-bold text-white uppercase tracking-wider mb-1 group-hover:text-yellow-400 transition-colors drop-shadow-md">
-                                                {game.name}
-                                            </h2>
-                                            <div className="flex items-center gap-2 text-sm text-gray-200 group-hover:translate-x-2 transition-transform duration-300">
-                                                <span>Lihat Akun</span>
-                                                <ArrowRight className="w-4 h-4 text-yellow-500" />
-                                            </div>
+                                    <div className="aspect-square w-full overflow-hidden bg-base-200">
+                                        <ProgressiveImage
+                                            src={game.image}
+                                            alt={game.name}
+                                            width={1}
+                                            height={1}
+                                            wrapperClassName="w-full h-full"
+                                            className="object-cover"
+                                            fallback={
+                                                <Gamepad2
+                                                    className="w-12 h-12 text-base-content/30"
+                                                    aria-hidden="true"
+                                                />
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="flex min-h-24 flex-1 flex-col justify-between gap-3 p-4">
+                                        <h2 className="line-clamp-1 text-base font-bold text-base-content md:text-lg">
+                                            {game.name}
+                                        </h2>
+                                        <div className="flex items-center justify-between border-t border-base-300 pt-3 text-sm font-medium text-base-content/60 transition-colors duration-200 group-hover:text-yellow-500">
+                                            <span>Lihat Akun</span>
+                                            <ArrowRight className="h-4 w-4" />
                                         </div>
                                     </div>
                                 </Link>

@@ -1,8 +1,3 @@
-# robots.txt — LapakGimID (https://lapakgim.my.id)
-
-# ------------------------------------------------------------------
-# Semua crawler mesin pencari
-# ------------------------------------------------------------------
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -16,27 +11,22 @@ Disallow: /verify-otp
 Disallow: /verify-email
 Disallow: /confirm-password
 
-# ------------------------------------------------------------------
-# Crawler AI / LLM (GEO) — SENGAJA DIIZINKAN agar konten LapakGimID
-# bisa muncul & direkomendasikan di jawaban AI (ChatGPT, Perplexity,
-# Claude, Gemini, Copilot, dll).
-# PENTING: setelan Cloudflare "Block AI bots" harus DIMATIKAN, kalau
-# tidak bot ini diblokir di edge sebelum membaca file ini.
-# ------------------------------------------------------------------
-User-agent: GPTBot
 User-agent: OAI-SearchBot
 User-agent: ChatGPT-User
-User-agent: ClaudeBot
 User-agent: Claude-User
 User-agent: Claude-SearchBot
 User-agent: PerplexityBot
 User-agent: Perplexity-User
-User-agent: Google-Extended
-User-agent: Applebot-Extended
 User-agent: Bingbot
-User-agent: CCBot
 Allow: /
 Disallow: /admin
 Disallow: /profile
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-otp
+Disallow: /verify-email
+Disallow: /confirm-password
 
-Sitemap: https://lapakgim.my.id/sitemap.xml
+Sitemap: https://zonagim.my.id/sitemap.xml

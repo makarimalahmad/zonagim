@@ -1,96 +1,87 @@
 import LegalLayout from '@/Layouts/LegalLayout';
-import { Lock, Eye, Database, Cookie, Mail } from 'lucide-react';
 
 export default function Privacy() {
-    const Section = ({ title, icon: Icon, children }) => (
-        <div className="mb-12 relative pl-8 sm:pl-12">
-            <div className="absolute left-0 top-1 flex flex-col items-center h-full">
-                <div className="w-8 h-8 rounded-full bg-base-300 text-base-content/70 flex items-center justify-center border border-base-300">
-                    <Icon size={14} />
-                </div>
-                <div className="w-px h-full bg-base-300 my-2 last:hidden"></div>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-bold text-base-content mb-6 flex items-center gap-3">
+    const Section = ({ title, children }) => (
+        <section className="mb-10 last:mb-0">
+            <h2 className="mb-4 text-xl font-semibold text-base-content">
                 {title}
-            </h3>
-
-            <div className="text-base-content/70 leading-relaxed text-lg space-y-4">
+            </h2>
+            <div className="text-base-content/70 leading-8 space-y-4">
                 {children}
             </div>
-        </div>
+        </section>
     );
 
     return (
         <LegalLayout title="Kebijakan Privasi">
-            <div className="mt-8">
-                <Section title="Informasi yang Kami Kumpulkan" icon={Database}>
+            <div className="py-10 sm:py-12">
+                <p className="mb-8 text-2xl font-semibold text-base-content">Kebijakan Privasi Zonagim</p>
+
+                <Section title="Informasi yang Kami Kumpulkan">
                     <p>
-                        LapakGimID menghargai privasi Anda. Informasi yang kami kumpulkan terbatas pada data yang diperlukan untuk menyediakan layanan kami:
+                        Zonagim menghargai privasi Anda. Informasi yang kami kumpulkan terbatas pada data yang diperlukan untuk menyediakan layanan kami.
                     </p>
-                    <div className="grid gap-4 mt-4 sm:grid-cols-2">
-                        <div className="bg-base-200 p-5 rounded-xl border border-base-300">
-                            <h4 className="font-bold text-base-content mb-2 text-base">👤 Data Pendaftaran</h4>
-                            <p className="text-sm">Nama, alamat email, dan password (terenkripsi) saat Anda mendaftar.</p>
+                    <dl className="space-y-5">
+                        <div>
+                            <dt className="font-semibold text-base-content">Data Akun</dt>
+                            <dd>Nama, alamat email, dan password dalam bentuk hash saat Anda mendaftar.</dd>
                         </div>
-                        <div className="bg-base-200 p-5 rounded-xl border border-base-300">
-                            <h4 className="font-bold text-base-content mb-2 text-base">💳 Data Transaksi</h4>
-                            <p className="text-sm">Riwayat pembelian dan detail pesanan untuk keperluan arsip.</p>
+                        <div>
+                            <dt className="font-semibold text-base-content">Data Profil Opsional</dt>
+                            <dd>Nomor WhatsApp dan alamat yang Anda isi, termasuk provinsi, kota atau kabupaten, kecamatan, kelurahan, alamat jalan, serta kode pos.</dd>
                         </div>
-                        <div className="bg-base-200 p-5 rounded-xl border border-base-300 sm:col-span-2">
-                            <h4 className="font-bold text-base-content mb-2 text-base">💻 Log Teknis</h4>
-                            <p className="text-sm">Alamat IP dan jenis perangkat untuk keamanan sistem & pencegahan penipuan.</p>
+                        <div>
+                            <dt className="font-semibold text-base-content">Percakapan Asisten AI</dt>
+                            <dd>Pesan yang Anda kirim ke chatbot dan riwayat terbatas yang diperlukan untuk memberikan jawaban.</dd>
                         </div>
-                    </div>
+                        <div>
+                            <dt className="font-semibold text-base-content">Log Teknis</dt>
+                            <dd>Alamat IP, informasi sesi, dan data teknis permintaan untuk keamanan sistem, pembatasan penyalahgunaan, serta pemecahan masalah.</dd>
+                        </div>
+                    </dl>
                 </Section>
 
-                <Section title="Penggunaan Informasi" icon={Eye}>
-                    <p>
-                        Kami menggunakan data Anda hanya untuk kepentingan operasional, meliputi:
-                    </p>
-                    <ul className="space-y-3 mt-2 list-none">
-                        {[
-                            "Memproses transaksi dan mengelola akun Anda.",
-                            "Menyediakan layanan pelanggan dan dukungan teknis.",
-                            "Mengirimkan notifikasi penting (kode OTP, reset password).",
-                            "Meningkatkan kualitas layanan dan keamanan platform."
-                        ].map((item, i) => (
-                            <li key={i} className="flex items-start gap-3">
-                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-2.5 flex-shrink-0"/>
-                                <span>{item}</span>
-                            </li>
-                        ))}
+                <Section title="Penggunaan Informasi">
+                    <p>Kami menggunakan data Anda hanya untuk kepentingan operasional, meliputi:</p>
+                    <ul className="list-disc pl-5 space-y-2 marker:text-yellow-500">
+                        <li>Membuat, mengamankan, dan mengelola akun Anda.</li>
+                        <li>Menampilkan profil dan membantu komunikasi yang Anda pilih untuk isi.</li>
+                        <li>Memberikan jawaban melalui asisten AI.</li>
+                        <li>Mengirimkan notifikasi penting, termasuk kode OTP dan reset password.</li>
+                        <li>Mencegah penyalahgunaan serta menjaga keamanan dan kestabilan platform.</li>
                     </ul>
                 </Section>
 
-                <Section title="Perlindungan Data" icon={Lock}>
+                <Section title="Perlindungan Data">
                     <p>
-                        Kami menerapkan langkah-langkah keamanan standar industri untuk melindungi data pribadi Anda.
+                        Kami menerapkan langkah keamanan standar industri untuk melindungi data pribadi Anda. Password pengguna disimpan dalam bentuk hash dan tidak dapat dibaca oleh siapa pun, termasuk admin.
                     </p>
-                    <div className="bg-success/10 border border-success/20 p-5 rounded-xl flex items-start gap-4 my-4">
-                        <Lock className="w-6 h-6 text-success flex-shrink-0 mt-1" />
-                        <div>
-                            <strong className="text-success block mb-1">Enkripsi Tingkat Tinggi</strong>
-                            <p className="text-base-content/70 text-sm">Password pengguna disimpan dalam bentuk hash (terenkripsi) dan tidak dapat dibaca oleh siapa pun, termasuk admin.</p>
-                        </div>
-                    </div>
                     <p>
-                        Kami <strong className="text-base-content">TIDAK AKAN</strong> pernah menjual, menyewakan, atau memberikan data pribadi Anda kepada pihak ketiga untuk tujuan pemasaran tanpa persetujuan Anda.
+                        Kami <strong className="font-semibold text-base-content">tidak akan</strong> menjual, menyewakan, atau memberikan data pribadi Anda kepada pihak ketiga untuk tujuan pemasaran tanpa persetujuan Anda.
                     </p>
                 </Section>
 
-                <Section title="Cookies & Pihak Ketiga" icon={Cookie}>
+                <Section title="Cookies dan Penyedia Layanan">
                     <p>
-                        Website kami menggunakan cookies untuk menyimpan preferensi sesi login Anda agar Anda tidak perlu login berulang kali.
+                        Website menggunakan cookies sesi untuk autentikasi, keamanan, dan preferensi tampilan. Cookies ini diperlukan agar fungsi akun dapat berjalan.
                     </p>
                     <p>
-                        Kami juga mungkin menggunakan layanan pihak ketiga (seperti payment gateway atau analitik) yang memiliki kebijakan privasi mereka sendiri.
+                        Cloudflare Turnstile menerima token verifikasi dan dapat menerima alamat IP untuk membantu mencegah bot serta penyalahgunaan. Jika Anda menggunakan chatbot, isi pesan dan riwayat pengguna terbatas dikirim ke Groq untuk menghasilkan jawaban. Masing-masing penyedia memproses data sesuai kebijakan privasinya.
                     </p>
                 </Section>
 
-                <Section title="Hubungi Kami" icon={Mail}>
+                <Section title="Penyimpanan dan Hak Anda">
                     <p>
-                        Jika Anda memiliki pertanyaan tentang bagaimana kami mengelola data privasi Anda, jangan ragu untuk menghubungi kami melalui kontak yang tersedia di website.
+                        Data akun disimpan selama akun aktif atau selama diperlukan untuk keamanan dan kewajiban yang berlaku. Riwayat chatbot pengguna terautentikasi disimpan secara terbatas hingga 24 jam, sedangkan riwayat tamu hanya berada di perangkat selama sesi penggunaan.
+                    </p>
+                    <p>
+                        Anda dapat memperbarui data profil atau menghapus akun melalui menu profil. Permintaan lain terkait akses, koreksi, atau penghapusan data dapat disampaikan melalui kontak resmi yang tersedia di website.
+                    </p>
+                </Section>
+
+                <Section title="Hubungi Kami">
+                    <p>
+                        Jika memiliki pertanyaan tentang pengelolaan data pribadi, Anda dapat menghubungi kami melalui kontak yang tersedia di website.
                     </p>
                 </Section>
             </div>

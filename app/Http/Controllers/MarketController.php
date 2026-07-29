@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class MarketController extends Controller
@@ -20,11 +22,11 @@ class MarketController extends Controller
             ->whereHas('products')
             ->orderBy('name')
             ->get()
-            ->map(fn($game) => [
+            ->map(fn ($game) => [
                 'id' => $game->id,
                 'name' => $game->name,
                 'slug' => $game->slug,
-                'image' => $game->image ? asset('storage/' . $game->image) : null,
+                'image' => $game->image ? asset('storage/'.$game->image) : null,
             ]);
 
         return Inertia::render('Market/Index', [
@@ -38,48 +40,61 @@ class MarketController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function game(\Illuminate\Http\Request $request, Category $category)
+    public function game(Request $request, Category $category)
     {
-        $query = $category->products();
+        $filters = $request->validate([
+            'sort' => ['nullable', Rule::in(['latest', 'lowest', 'highest'])],
+            'min_price' => ['nullable', 'integer', 'min:0'],
+            'max_price' => ['nullable', 'integer', 'min:0', 'gte:min_price'],
+        ]);
 
-        // 1. Filter Rentang Harga
-        if ($request->filled('min_price')) {
-            $query->where('price', '>=', $request->min_price);
-        }
-        if ($request->filled('max_price')) {
-            $query->where('price', '<=', $request->max_price);
-        }
+        $query = $category->products()
+            ->select([
+                'id',
+                'slug',
+                'title',
+                'game_name',
+                'price',
+                'images',
+                'category_id',
+                'created_at',
+            ])
+            ->when(
+                isset($filters['min_price']),
+                fn ($query) => $query->where('price', '>=', $filters['min_price']),
+            )
+            ->when(
+                isset($filters['max_price']),
+                fn ($query) => $query->where('price', '<=', $filters['max_price']),
+            );
 
-        // 2. Sorting
-        if ($request->sort === 'lowest') {
-            $query->orderBy('price', 'asc');
-        } elseif ($request->sort === 'highest') {
-            $query->orderBy('price', 'desc');
-        } else {
-            $query->latest(); // Default: Terbaru
-        }
+        match ($filters['sort'] ?? 'latest') {
+            'lowest' => $query->orderBy('price')->orderByDesc('id'),
+            'highest' => $query->orderByDesc('price')->orderByDesc('id'),
+            default => $query->latest()->orderByDesc('id'),
+        };
 
-        $products = $query->select([
-            'id',
-            'game_name',
-            'price',
-            'images',
-            'category_id',
-        ])
-            ->get()
-            ->map(fn($product) => [
+        $products = $query
+            ->paginate(24)
+            ->withQueryString()
+            ->through(fn (Product $product): array => [
                 'id' => $product->id,
+                'slug' => $product->slug,
+                'title' => $product->title,
                 'game_name' => $product->game_name,
                 'price' => $product->price,
                 'category' => $category->name,
-                'image' => is_array($product->images) && count($product->images)
-                    ? asset('storage/' . $product->images[0])
+                'image' => filled($product->images)
+                    ? asset('storage/'.$product->images[0])
                     : null,
             ]);
 
         return Inertia::render('Market/Game', [
             'products' => $products,
-            'filters' => array_filter($request->only(['sort', 'min_price', 'max_price']), fn($value) => !is_null($value) && $value !== ''),
+            'filters' => array_filter(
+                $filters,
+                fn ($value): bool => $value !== null && $value !== '',
+            ),
             'activeGame' => $category->name,
             'activeGameSlug' => $category->slug,
         ]);
@@ -108,8 +123,11 @@ class MarketController extends Controller
                 'seller_whatsapp' => $product->seller_whatsapp,
                 'category' => $category->name,
                 'slug' => $category->slug,
+                'rekber_contact_url' => filled(config('seo.whatsapp'))
+                    ? 'https://wa.me/'.config('seo.whatsapp')
+                    : null,
                 'images' => collect($product->images ?? [])
-                    ->map(fn($img) => asset('storage/' . $img))
+                    ->map(fn ($img) => asset('storage/'.$img))
                     ->values(),
             ],
         ]);

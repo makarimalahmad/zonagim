@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use App\Models\Product; // Import Product model
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Filament\Actions\PersistentBulkActionGroup;
+use App\Filament\Actions\PersistentDeleteBulkAction;
+use App\Models\Product;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
-use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 class ProductsTable
 {
@@ -22,101 +23,121 @@ class ProductsTable
     {
         return $table
             ->columns([
-                // 🖼️ Image
-                ImageColumn::make('images')
-                    ->label('Image')
-                    ->disk('public') // Explicitly use public disk
-                    ->square()
-                    ->imageHeight(40)
-                    ->stacked()
-                    ->limit(1),
-
-                // 🏷️ Category
-                TextColumn::make('category.name')
-                    ->label('Category')
-                    ->badge()
-                    ->color('primary')
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->prefix('#')
                     ->sortable()
-                    ->searchable(),
-
-                // 📝 Nickname / Title (Searchable, Hidden by default)
-                TextColumn::make('title')
-                    ->label('Nickname / Title')
-                    ->searchable()
-                    ->wrap()
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                // 🎮 Game Info
-                TextColumn::make('game_name')
-                    ->label('Game')
-                    ->searchable()
-                    ->weight('bold')
-                    ->wrap()
-                    ->description(fn(Product $record): string => Str::limit($record->title ?? '', 40)),
+                ImageColumn::make('images')
+                    ->label('Foto')
+                    ->disk('public')
+                    ->square()
+                    ->imageHeight(48)
+                    ->limit(1),
 
-                // 💰 Price
+                TextColumn::make('category.name')
+                    ->label('Kategori Game')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('title')
+                    ->label('Judul Akun')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->wrap(),
+
                 TextColumn::make('price')
+                    ->label('Harga')
                     ->money('IDR', locale: 'id')
                     ->sortable()
                     ->weight('bold')
                     ->color('success'),
 
-                // 👤 Seller Info (Hidden by default for cleaner look)
                 TextColumn::make('seller_name')
-                    ->label('Seller')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Penjual')
+                    ->description(fn (Product $record): ?string => $record->seller_whatsapp)
+                    ->searchable(['seller_name', 'seller_whatsapp'])
+                    ->copyable(),
 
-                TextColumn::make('seller_whatsapp')
-                    ->label('WhatsApp')
+                TextColumn::make('slug')
+                    ->label('Slug Publik')
                     ->searchable()
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
-                    ->dateTime('d M Y')
+                    ->label('Dibuat')
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('updated_at')
+                    ->label('Diperbarui')
+                    ->since()
+                    ->dateTimeTooltip('d M Y, H:i')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('category')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload()
-                    ->label('Filter by Category'),
+                    ->label('Kategori'),
 
                 Filter::make('price_range')
+                    ->label('Rentang Harga')
                     ->schema([
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('min_price')
-                                    ->numeric()
-                                    ->label('Min Price'),
+                                    ->integer()
+                                    ->minValue(0)
+                                    ->label('Harga Minimum'),
                                 TextInput::make('max_price')
-                                    ->numeric()
-                                    ->label('Max Price'),
+                                    ->integer()
+                                    ->minValue(0)
+                                    ->label('Harga Maksimum'),
                             ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['min_price'],
-                                fn(Builder $query, $date): Builder => $query->where('price', '>=', $date),
+                                filled($data['min_price'] ?? null),
+                                fn (Builder $query): Builder => $query->where('price', '>=', $data['min_price']),
                             )
                             ->when(
-                                $data['max_price'],
-                                fn(Builder $query, $date): Builder => $query->where('price', '<=', $date),
+                                filled($data['max_price'] ?? null),
+                                fn (Builder $query): Builder => $query->where('price', '<=', $data['max_price']),
                             );
-                    })
+                    }),
             ])
+            ->groups([
+                Group::make('category.name')
+                    ->label('Kategori Game')
+                    ->titlePrefixedWithLabel(false)
+                    ->getTitleFromRecordUsing(fn (Product $record): string => $record->category?->name ?? 'Tanpa kategori')
+                    ->collapsible(),
+            ])
+            ->defaultGroup('category.name')
+            ->groupingSettingsHidden()
+            ->paginationPageOptions([10, 25, 50])
+            ->defaultPaginationPageOption(25)
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->label('Ubah'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                PersistentBulkActionGroup::make([
+                    PersistentDeleteBulkAction::make()
+                        ->modalSubmitAction(fn (Action $action): Action => $action
+                            ->extraAttributes(['class' => 'app-delete-action'])),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('Belum ada produk')
+            ->emptyStateDescription('Tambahkan listing akun pertama untuk mulai mengisi marketplace.');
     }
 }

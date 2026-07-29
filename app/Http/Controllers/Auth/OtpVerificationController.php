@@ -3,159 +3,149 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OtpMail;
 use App\Models\User;
+use App\Services\PendingRegistrationService;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response;
+use RuntimeException;
 
 class OtpVerificationController extends Controller
 {
-    public function create()
-    {
-        $email = session('auth.verification.email');
+    public function create(
+        Request $request,
+        PendingRegistrationService $pendingRegistrations,
+    ): Response|RedirectResponse {
+        $pendingId = $request->session()->get('auth.verification.pending_id');
+        $email = $request->session()->get('auth.verification.email');
+        $pending = is_string($pendingId) ? $pendingRegistrations->get($pendingId) : null;
 
-        if (! $email) {
+        if (! is_string($pendingId) || ! is_string($email) || ! $pending) {
+            $this->clearVerificationSession($request);
+
             return redirect()->route('register');
-        }
-
-        // Calculate throttle
-        $cacheKey = 'pending_registration_' . $email;
-        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
-        $seconds = 0;
-
-        if ($cachedData && isset($cachedData['otp_sent_at'])) {
-            $elapsed = time() - $cachedData['otp_sent_at'];
-            if ($elapsed < 60) {
-                $seconds = 60 - $elapsed;
-            }
-        } else {
-            $key = 'otp-resend:' . $email;
-            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
         }
 
         return Inertia::render('Auth/VerifyOtp', [
             'email' => $email,
             'status' => session('status'),
-            'throttle' => (int) $seconds,
+            'throttle' => RateLimiter::availableIn('otp-resend:'.$pendingId),
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|string|size:6',
+    public function store(
+        Request $request,
+        PendingRegistrationService $pendingRegistrations,
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'otp' => ['required', 'string', 'digits:6'],
         ]);
 
-        $cacheKey = 'pending_registration_' . $request->email;
-        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        $pendingId = $request->session()->get('auth.verification.pending_id');
 
-        // Check if cached data exists
-        if (!$cachedData) {
-            // Check if user already exists (maybe they verified already or it's a login attempt flow mixed up)
-            $existingUser = User::where('email', $request->email)->first();
-            if ($existingUser) {
-                // If user exists, fall back to DB OTP check (legacy/existing users)
-                if ($existingUser->otp_code !== $request->otp) {
-                    return back()->withErrors(['otp' => 'Kode OTP salah.']);
-                }
-                // Verify Email if not verified
-                if (! $existingUser->hasVerifiedEmail()) {
-                    $existingUser->markEmailAsVerified();
-                    event(new \Illuminate\Auth\Events\Verified($existingUser));
-                }
+        if (! is_string($pendingId)) {
+            throw ValidationException::withMessages([
+                'otp' => 'Sesi verifikasi telah berakhir. Silakan daftar ulang.',
+            ]);
+        }
 
-                // Clear OTP
-                $existingUser->forceFill([
-                    'otp_code' => null,
-                    'otp_expires_at' => null,
-                ])->save();
+        $verification = $pendingRegistrations->verifyAndConsume($pendingId, $validated['otp']);
+        $result = $verification['status'];
 
-                return redirect()->route('login')->with('status', 'Email berhasil diverifikasi. Silakan login untuk melanjutkan.');
+        if ($result !== 'valid') {
+            if (in_array($result, ['expired', 'locked'], true)) {
+                $this->clearVerificationSession($request);
             }
 
-            return back()->withErrors(['otp' => 'Sesi verifikasi habis atau tidak ditemukan. Silakan registrasi ulang.']);
+            throw ValidationException::withMessages([
+                'otp' => match ($result) {
+                    'locked' => 'Terlalu banyak percobaan. Silakan daftar ulang untuk memperoleh kode baru.',
+                    'expired' => 'Kode verifikasi telah kedaluwarsa. Silakan daftar ulang.',
+                    default => 'Kode verifikasi tidak sesuai.',
+                },
+            ]);
         }
 
-        // Verify OTP from Cache
-        if ($cachedData['otp_code'] != $request->otp) {
-            return back()->withErrors(['otp' => 'Kode OTP salah.']);
-        }
+        $pending = $verification['pending'];
 
-        // Create User
         $user = User::create([
-            'name' => $cachedData['name'],
-            'email' => $cachedData['email'],
-            'password' => $cachedData['password'], // Already hashed
-            'role' => $cachedData['role'],
-            'otp_code' => null, // Clear OTP immediately
-            'otp_expires_at' => null,
+            'name' => $pending['name'],
+            'email' => $pending['email'],
+            'password' => $pending['password'],
         ]);
-
-        // Mark Email Verified
+        $user->forceFill(['role' => 'user'])->save();
         $user->markEmailAsVerified();
-        event(new \Illuminate\Auth\Events\Registered($user));
-        event(new \Illuminate\Auth\Events\Verified($user));
 
-        // Clear Cache
-        \Illuminate\Support\Facades\Cache::forget($cacheKey);
+        event(new Registered($user));
+        event(new Verified($user));
 
-        // Jangan auto-login. Arahkan ke halaman login dengan pesan sukses
-        // supaya user login manual dulu (sesuai alur yang diinginkan).
-        return redirect()->route('login')->with('status', 'Registrasi berhasil! Akunmu sudah aktif. Silakan login untuk masuk.');
+        $this->clearVerificationSession($request);
+
+        return redirect()->route('login')->with(
+            'status',
+            'Registrasi berhasil! Akunmu sudah aktif. Silakan login untuk masuk.',
+        );
     }
 
-    public function resend(Request $request)
-    {
-        $email = session('auth.verification.email');
+    public function resend(
+        Request $request,
+        PendingRegistrationService $pendingRegistrations,
+    ): RedirectResponse {
+        $pendingId = $request->session()->get('auth.verification.pending_id');
+        $email = $request->session()->get('auth.verification.email');
 
-        if (! $email) {
+        if (! is_string($pendingId) || ! is_string($email)) {
             return redirect()->route('register');
         }
 
-        $cacheKey = 'pending_registration_' . $email;
-        $cachedData = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        $cooldownKey = 'otp-resend:'.$pendingId;
+        $hourlyKey = 'otp-resend-hour:'.$pendingId;
 
-        if ($cachedData) {
-            // Logic for pending user (Cache)
-            $otp = rand(100000, 999999);
-
-            // Update OTP in Cache
-            $cachedData['otp_code'] = $otp;
-            $cachedData['otp_expires_at'] = now()->addMinutes(10);
-            $cachedData['otp_sent_at'] = time(); // Store as Unix timestamp
-            \Illuminate\Support\Facades\Cache::put($cacheKey, $cachedData, 30 * 60);
-
-            try {
-                // Determine recipient - assuming OtpMail works with email string or address object
-                // If OtpMail STRICTLY needs a User object, we might need a dummy object. 
-                // However, Mail::to(string) works.
-                \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\OtpMail($otp));
-            } catch (\Exception $e) {
-                // Log error
-            }
-            return back()->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+        if (RateLimiter::tooManyAttempts($cooldownKey, 1)) {
+            throw ValidationException::withMessages([
+                'otp' => 'Tunggu '.RateLimiter::availableIn($cooldownKey).' detik sebelum mengirim ulang kode.',
+            ]);
         }
 
-        // Fallback for existing users (Database)
-        $user = User::where('email', $email)->first();
-
-        if (! $user) {
-            return redirect()->route('register');
+        if (RateLimiter::tooManyAttempts($hourlyKey, 5)) {
+            throw ValidationException::withMessages([
+                'otp' => 'Batas pengiriman ulang kode telah tercapai. Silakan coba kembali nanti.',
+            ]);
         }
-
-        $otp = rand(100000, 999999);
-
-        $user->forceFill([
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(10),
-        ])->save();
 
         try {
-            \Illuminate\Support\Facades\Mail::to($user)->send(new \App\Mail\OtpMail($otp));
-        } catch (\Exception $e) {
-            // Log error
+            $regenerated = $pendingRegistrations->regenerateOtp($pendingId);
+            Mail::to($email)->send(new OtpMail($regenerated['otp']));
+        } catch (RuntimeException) {
+            $this->clearVerificationSession($request);
+
+            return redirect()->route('register')->withErrors([
+                'email' => 'Sesi verifikasi telah berakhir. Silakan daftar ulang.',
+            ]);
+        } catch (\Throwable) {
+            throw ValidationException::withMessages([
+                'otp' => 'Kode verifikasi belum dapat dikirim. Silakan coba lagi nanti.',
+            ]);
         }
 
-        return back()->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+        RateLimiter::hit($cooldownKey, 60);
+        RateLimiter::hit($hourlyKey, 3600);
+
+        return back()->with('status', 'Kode verifikasi baru telah dikirim ke email Anda.');
+    }
+
+    private function clearVerificationSession(Request $request): void
+    {
+        $request->session()->forget([
+            'auth.verification.pending_id',
+            'auth.verification.email',
+        ]);
     }
 }

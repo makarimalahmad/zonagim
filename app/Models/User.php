@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
 {
-    use HasFactory, Notifiable;
+    use HasFactory, InteractsWithAppAuthentication, InteractsWithAppAuthenticationRecovery, Notifiable;
 
     protected $fillable = [
         'name',
@@ -18,9 +25,6 @@ class User extends Authenticatable implements FilamentUser
         'phone',
         'address',
         'password',
-        'role',
-        'otp_code',
-        'otp_expires_at',
     ];
 
     protected $hidden = [
@@ -34,22 +38,39 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'otp_expires_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'address' => 'array',
         ];
     }
 
-    // ✅ Cek apakah user adalah admin
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return hash_equals('admin', (string) $this->role);
     }
 
-    // 🔥 INI YANG PENTING - Method dari FilamentUser interface
-    // Ini yang mengontrol akses ke panel admin
+    public function isSuspended(): bool
+    {
+        return $this->role === 'user' && $this->suspended_at !== null;
+    }
+
+    public function isActiveCustomer(): bool
+    {
+        return $this->role === 'user' && ! $this->isSuspended();
+    }
+
+    public function suspendedBy(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'suspended_by');
+    }
+
+    public function totpDevices(): HasMany
+    {
+        return $this->hasMany(AdminTotpDevice::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
-        // Hanya user dengan role 'admin' yang bisa akses panel
-        return $this->isAdmin();
+        return $panel->getId() === 'admin' && $this->isAdmin();
     }
 
     /**
@@ -60,6 +81,6 @@ class User extends Authenticatable implements FilamentUser
      */
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

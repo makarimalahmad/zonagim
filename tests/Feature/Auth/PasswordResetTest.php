@@ -31,6 +31,37 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPasswordNotification::class);
     }
 
+    public function test_public_reset_does_not_send_link_to_admin_account(): void
+    {
+        Notification::fake();
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->post('/forgot-password', ['email' => $admin->email]);
+
+        Notification::assertNothingSent();
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas(
+                'status',
+                'Jika email terdaftar sebagai akun pengguna, tautan reset telah dikirim.',
+            );
+    }
+
+    public function test_public_reset_uses_same_response_for_unknown_email(): void
+    {
+        Notification::fake();
+
+        $response = $this->post('/forgot-password', [
+            'email' => 'tidak-ada@example.com',
+        ]);
+
+        Notification::assertNothingSent();
+        $response->assertSessionHas(
+            'status',
+            'Jika email terdaftar sebagai akun pengguna, tautan reset telah dikirim.',
+        );
+    }
+
     public function test_reset_password_screen_can_be_rendered(): void
     {
         Notification::fake();
