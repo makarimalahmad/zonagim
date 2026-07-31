@@ -298,8 +298,24 @@ input:disabled {
         background-color 300ms ease;
 }
 
-.game-logo-tile .progressive-image__skeleton {
+[data-theme="light"] .game-logo-tile {
+    border-color: #ca8a04;
+    background: #eab308;
+}
+
+[data-theme="light"] .game-logo-tile:hover,
+[data-theme="light"] .game-logo-tile:focus-visible {
+    border-color: #a16207;
+    background: #ca8a04;
+}
+
+.game-logo-tile .progressive-image,
+.game-logo-tile .progressive-image__skeleton,
+.game-logo-tile .progressive-image__fallback {
     background: transparent;
+}
+
+.game-logo-tile .progressive-image__skeleton {
     animation: none;
 }
 
@@ -307,6 +323,10 @@ input:disabled {
     opacity: 1;
     filter: none;
     transition: transform 200ms ease;
+}
+
+[data-theme="dark"] .game-logo-image--invert {
+    filter: invert(1) grayscale(1) brightness(2);
 }
 
 .game-logo-tile:hover,

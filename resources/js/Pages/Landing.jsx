@@ -138,6 +138,9 @@ export default function Landing({ contactUrl = null }) {
     ].map(([name, file]) => ({
         name,
         src: `/images/games/${file}`,
+        invertOnDarkTile: ["fortnite.svg", "minecraft.svg", "roblox.png"].includes(
+            file,
+        ),
     }));
 
     const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
@@ -352,7 +355,11 @@ export default function Landing({ contactUrl = null }) {
                                                                 loading="eager"
                                                                 fetchPriority="low"
                                                                 wrapperClassName="h-12 w-full bg-transparent"
-                                                                className="game-logo-image object-contain p-1"
+                                                                className={`game-logo-image object-contain p-1 ${
+                                                                    game.invertOnDarkTile
+                                                                        ? "game-logo-image--invert"
+                                                                        : ""
+                                                                }`}
                                                                 fallback={
                                                                     <Gamepad2
                                                                         className="h-6 w-6"

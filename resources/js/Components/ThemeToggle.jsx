@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
 export default function ThemeToggle({ className = "" }) {
     const [theme, setTheme] = useState("dark");
-    const btnRef = useRef(null);
 
     useEffect(() => {
         const savedTheme = localStorage.getItem("user-theme") || "dark";
@@ -17,7 +16,7 @@ export default function ThemeToggle({ className = "" }) {
         document.documentElement.setAttribute("data-theme", newTheme);
     };
 
-    const toggleTheme = () => {
+    const toggleTheme = (event) => {
         const newTheme = theme === "dark" ? "light" : "dark";
 
         const prefersReduced = window.matchMedia(
@@ -29,12 +28,15 @@ export default function ThemeToggle({ className = "" }) {
             return;
         }
 
-        const rect = btnRef.current?.getBoundingClientRect();
-        const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
-        const y = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+        const rect = event.currentTarget.getBoundingClientRect();
+        const transitionScale = window.devicePixelRatio || 1;
+        const viewportWidth = window.innerWidth * transitionScale;
+        const viewportHeight = window.innerHeight * transitionScale;
+        const x = (rect.left + rect.width / 2) * transitionScale;
+        const y = (rect.top + rect.height / 2) * transitionScale;
         const radius = Math.hypot(
-            Math.max(x, window.innerWidth - x),
-            Math.max(y, window.innerHeight - y)
+            Math.max(x, viewportWidth - x),
+            Math.max(y, viewportHeight - y)
         );
 
         const root = document.documentElement;
@@ -72,7 +74,6 @@ export default function ThemeToggle({ className = "" }) {
 
     return (
         <button
-            ref={btnRef}
             type="button"
             onClick={toggleTheme}
             aria-label="Ganti tema"
