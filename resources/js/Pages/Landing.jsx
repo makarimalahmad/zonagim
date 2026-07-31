@@ -111,31 +111,34 @@ export default function Landing({ contactUrl = null }) {
     }, []);
 
     const popularGames = [
-        "Counter-Strike 2",
-        "PUBG: Battlegrounds",
-        "Dota 2",
-        "Apex Legends",
-        "Grand Theft Auto V",
-        "War Thunder",
-        "Rainbow Six Siege",
-        "ARC Raiders",
-        "Delta Force",
-        "Overwatch 2",
-        "Marvel Rivals",
-        "Rust",
-        "Dead by Daylight",
-        "Deadlock",
-        "Warframe",
-        "Valorant",
-        "Fortnite",
-        "League of Legends",
-        "Minecraft",
-        "Roblox",
-        "Mobile Legends",
-        "Free Fire",
-        "Genshin Impact",
-        "Call of Duty: Warzone",
-    ].map((name) => ({ name }));
+        ["Counter-Strike 2", "counter-strike-2.png"],
+        ["PUBG: Battlegrounds", "pubg-battlegrounds.png"],
+        ["Dota 2", "dota-2.png"],
+        ["Apex Legends", "apex-legends.png"],
+        ["Grand Theft Auto V", "grand-theft-auto-v.png"],
+        ["War Thunder", "war-thunder.png"],
+        ["Rainbow Six Siege", "rainbow-six-siege.png"],
+        ["ARC Raiders", "arc-raiders.png"],
+        ["Delta Force", "delta-force.png"],
+        ["Overwatch 2", "overwatch-2.png"],
+        ["Marvel Rivals", "marvel-rivals.png"],
+        ["Rust", "rust.png"],
+        ["Dead by Daylight", "dead-by-daylight.png"],
+        ["Deadlock", "deadlock.png"],
+        ["Warframe", "warframe.png"],
+        ["Valorant", "valorant.png"],
+        ["Fortnite", "fortnite.svg"],
+        ["League of Legends", "league-of-legends.svg"],
+        ["Minecraft", "minecraft.svg"],
+        ["Roblox", "roblox.png"],
+        ["Mobile Legends", "mobile-legends.svg"],
+        ["Free Fire", "free-fire.png"],
+        ["Genshin Impact", "genshin-impact.png"],
+        ["Call of Duty: Warzone", "call-of-duty-warzone.png"],
+    ].map(([name, file]) => ({
+        name,
+        src: `/images/games/${file}`,
+    }));
 
     const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
         popularGames.slice(rowIndex * 6, rowIndex * 6 + 6),
@@ -341,15 +344,22 @@ export default function Landing({ contactUrl = null }) {
                                                             aria-label={`Lihat akun ${game.name}`}
                                                             className="game-logo-tile group relative mr-3 flex h-[4.35rem] w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border px-3 outline-none"
                                                         >
-                                                            <div className="flex w-full items-center justify-center gap-2 text-center text-xs font-semibold text-base-content/75 transition-colors group-hover:text-yellow-500">
-                                                                <Gamepad2
-                                                                    className="h-5 w-5 shrink-0"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span className="line-clamp-2">
-                                                                    {game.name}
-                                                                </span>
-                                                            </div>
+                                                            <ProgressiveImage
+                                                                src={game.src}
+                                                                alt=""
+                                                                width={96}
+                                                                height={48}
+                                                                loading="eager"
+                                                                fetchPriority="low"
+                                                                wrapperClassName="h-12 w-full bg-transparent"
+                                                                className="game-logo-image object-contain p-1"
+                                                                fallback={
+                                                                    <Gamepad2
+                                                                        className="h-6 w-6"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                }
+                                                            />
                                                         </Link>
                                                     ),
                                                 )}

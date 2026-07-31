@@ -81,19 +81,22 @@ class FrontendImagePerformanceTest extends TestCase
         );
     }
 
-    public function test_landing_game_wall_uses_text_and_generic_icons_without_third_party_assets(): void
+    public function test_landing_game_wall_uses_local_game_logos(): void
     {
         $root = dirname(__DIR__, 2);
         $landing = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Landing.jsx');
-        $controller = file_get_contents($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR.'PageController.php');
+        $logoDirectory = $root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'games';
 
-        $this->assertStringContainsString('{game.name}', $landing);
-        $this->assertStringContainsString('<Gamepad2', $landing);
-        $this->assertStringNotContainsString('images/games', $landing);
+        $this->assertStringContainsString('src: `/images/games/${file}`', $landing);
+        $this->assertStringContainsString('src={game.src}', $landing);
+        $this->assertStringNotContainsString('cdn.cloudflare.steamstatic.com', $landing);
         $this->assertStringNotContainsString('cdn.simpleicons.org', $landing);
         $this->assertStringNotContainsString('api.iconify.design', $landing);
-        $this->assertStringNotContainsString('gameLogos', $controller);
-        $this->assertDirectoryDoesNotExist($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'games');
+        $this->assertDirectoryExists($logoDirectory);
+        $this->assertCount(24, array_values(array_filter(
+            scandir($logoDirectory),
+            fn (string $file): bool => preg_match('/\.(?:png|svg)$/i', $file) === 1,
+        )));
     }
 
     public function test_auth_scroll_container_ignores_landing_smooth_scroll_and_landing_cleans_up(): void
