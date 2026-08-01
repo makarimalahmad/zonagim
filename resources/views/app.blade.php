@@ -166,8 +166,9 @@
         @endif
 
         {{-- Favicon --}}
-        <link rel="icon" href="/images/zonagim.png" type="image/png">
-        <link rel="apple-touch-icon" href="/images/zonagim.png">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 
         {{-- Open Graph --}}
         <meta property="og:type" content="website">

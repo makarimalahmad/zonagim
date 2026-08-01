@@ -45,6 +45,19 @@ class SeoAeoGeoTest extends TestCase
         }
     }
 
+    public function test_public_pages_declare_google_compatible_favicons(): void
+    {
+        $content = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('<link rel="icon" href="/favicon.ico" sizes="any">', $content);
+        $this->assertStringContainsString(
+            '<link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48">',
+            $content,
+        );
+        $this->assertFileExists(public_path('favicon-48x48.png'));
+        $this->assertSame([48, 48], array_slice(getimagesize(public_path('favicon-48x48.png')), 0, 2));
+    }
+
     public function test_private_page_is_noindex(): void
     {
         $user = User::factory()->create();
