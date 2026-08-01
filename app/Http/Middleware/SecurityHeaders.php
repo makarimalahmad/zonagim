@@ -34,7 +34,7 @@ class SecurityHeaders
         if (
             $request->is('admin', 'admin/*', 'profile', 'profile/*', 'login', 'register',
                 'forgot-password', 'reset-password', 'reset-password/*', 'verify-otp',
-                'verify-email', 'confirm-password')
+                'verify-email', 'verify-email/*', 'confirm-password')
         ) {
             $response->headers->set('Cache-Control', 'no-store, private');
             $response->headers->set('Pragma', 'no-cache');

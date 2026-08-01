@@ -5,18 +5,18 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 import { toastOptions } from "@/utils/notificationTheme";
-import { useForm, usePage } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { ChevronRight, X } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
 export default function UpdateProfileInformation({
+    user,
     mustVerifyEmail,
     status,
     className = "",
 }) {
-    const user = usePage().props.auth.user;
     const [editingField, setEditingField] = useState(null);
     const [regions, setRegions] = useState({
         provinces: [],

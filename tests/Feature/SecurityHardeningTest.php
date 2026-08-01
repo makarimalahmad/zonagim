@@ -33,6 +33,51 @@ class SecurityHardeningTest extends TestCase
             ->assertHeader('X-Frame-Options', 'DENY')
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
             ->assertHeader('Cache-Control', 'no-store, private');
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get('/verify-email/'.$user->id.'/hash')
+            ->assertHeader('Cache-Control', 'no-store, private');
+    }
+
+    public function test_shared_user_props_exclude_private_profile_and_security_fields(): void
+    {
+        $user = User::factory()->create([
+            'phone' => '81234567890',
+            'address' => ['street' => 'Jalan Rahasia'],
+        ]);
+
+        $this->actingAs($user)
+            ->get('/market')
+            ->assertInertia(fn ($page) => $page
+                ->where('auth.user.name', $user->name)
+                ->where('auth.user.email', $user->email)
+                ->missing('auth.user.id')
+                ->missing('auth.user.phone')
+                ->missing('auth.user.address')
+                ->missing('auth.user.created_at')
+            );
+    }
+
+    public function test_user_serialization_hides_security_fields(): void
+    {
+        $user = User::factory()->create();
+        $serialized = $user->toArray();
+
+        foreach ([
+            'password',
+            'remember_token',
+            'otp_code',
+            'otp_expires_at',
+            'suspended_by',
+            'suspension_reason',
+            'suspended_at',
+            'app_authentication_secret',
+            'app_authentication_recovery_codes',
+        ] as $field) {
+            $this->assertArrayNotHasKey($field, $serialized);
+        }
     }
 
     public function test_trusted_host_middleware_is_enabled_in_application_bootstrap(): void

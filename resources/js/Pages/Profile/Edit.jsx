@@ -6,7 +6,7 @@ import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 
-export default function Edit({ mustVerifyEmail, status }) {
+export default function Edit({ profile, mustVerifyEmail, status }) {
     const [activeTab, setActiveTab] = useState("profile");
 
     const tabs = [
@@ -95,6 +95,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                             {activeTab === "profile" && (
                                 <div className="rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-7">
                                     <UpdateProfileInformationForm
+                                        user={profile}
                                         mustVerifyEmail={mustVerifyEmail}
                                         status={status}
                                         className="w-full"

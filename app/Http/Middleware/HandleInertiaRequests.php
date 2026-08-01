@@ -34,12 +34,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => fn (): ?array => $request->user()?->only([
-                    'id',
                     'name',
                     'email',
-                    'phone',
-                    'address',
-                    'created_at',
                 ]),
             ],
             // Site key Turnstile diambil dari config (env), bukan di-hardcode di frontend.

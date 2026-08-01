@@ -43,15 +43,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                         type="button"
                                         className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-full text-base-content hover:bg-base-200 focus:outline-none transition ease-in-out duration-150"
                                     >
-                                        <ProgressiveImage
-                                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(auth.user.name)}&background=random&color=fff`}
-                                            alt={auth.user.name}
-                                            width={32}
-                                            height={32}
-                                            loading="eager"
-                                            wrapperClassName="h-8 w-8 shrink-0 rounded-full sm:mr-2"
-                                            className="object-cover"
-                                        />
+                                        <span
+                                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-yellow-500 text-sm font-bold text-[#0b1221] sm:mr-2"
+                                            aria-hidden="true"
+                                        >
+                                            {auth.user.name
+                                                .trim()
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                        </span>
                                         <span className="hidden sm:inline font-semibold">
                                             {auth.user.name}
                                         </span>
@@ -95,11 +95,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route("logout")}
                                     method="post"
                                     as="button"
-                                    onClick={() =>
-                                        localStorage.removeItem(
-                                            `chat_history_user_${auth.user.id}`,
-                                        )
-                                    }
                                     className="text-error hover:bg-error/10 w-full text-left flex items-center gap-2"
                                 >
                                     Keluar

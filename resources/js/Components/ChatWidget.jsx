@@ -1,11 +1,9 @@
 import { lazy, Suspense, useState } from "react";
 import { Bot, Loader2, X } from "lucide-react";
-import { usePage } from "@inertiajs/react";
 
 const ChatPanel = lazy(() => import("./ChatPanel"));
 
 export default function ChatWidget() {
-    const { auth } = usePage().props;
     const [isOpen, setIsOpen] = useState(false);
     const [hasOpened, setHasOpened] = useState(false);
 
@@ -45,7 +43,6 @@ export default function ChatWidget() {
                     <ChatPanel
                         isOpen={isOpen}
                         onClose={() => setIsOpen(false)}
-                        userId={auth?.user?.id ?? null}
                     />
                 </Suspense>
             )}

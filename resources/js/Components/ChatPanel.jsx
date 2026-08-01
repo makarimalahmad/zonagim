@@ -27,110 +27,12 @@ const QUICK_REPLIES = [
     "Saya mau titip jual akun",
 ];
 
-const CHAT_HISTORY_VERSION = 1;
-const CHAT_HISTORY_TTL_MS = 24 * 60 * 60 * 1000;
-const MAX_STORED_MESSAGES = 20;
-
-function storageKey(userId) {
-    return `chat_history_user_${userId}`;
-}
-
-function removeStoredHistory(key) {
-    try {
-        localStorage.removeItem(key);
-    } catch {
-        return;
-    }
-}
-
-function sanitizeMessages(messages) {
-    if (!Array.isArray(messages)) {
-        return [];
-    }
-
-    return messages
-        .filter(
-            (message) =>
-                message &&
-                ["user", "assistant"].includes(message.role) &&
-                typeof message.content === "string" &&
-                message.content.trim().length > 0,
-        )
-        .slice(-MAX_STORED_MESSAGES)
-        .map((message) => ({
-            role: message.role,
-            content: message.content.slice(0, 2000),
-        }));
-}
-
-function loadMessages(userId) {
-    if (!userId) {
-        return [WELCOME];
-    }
-
-    const key = storageKey(userId);
-
-    try {
-        const saved = localStorage.getItem(key);
-
-        if (!saved) {
-            return [WELCOME];
-        }
-
-        const parsed = JSON.parse(saved);
-        const isValid =
-            parsed?.version === CHAT_HISTORY_VERSION &&
-            Number.isFinite(parsed.savedAt) &&
-            parsed.savedAt <= Date.now() &&
-            Date.now() - parsed.savedAt < CHAT_HISTORY_TTL_MS;
-        const storedMessages = sanitizeMessages(parsed?.messages);
-
-        if (!isValid || storedMessages.length === 0) {
-            removeStoredHistory(key);
-
-            return [WELCOME];
-        }
-
-        return storedMessages;
-    } catch {
-        removeStoredHistory(key);
-
-        return [WELCOME];
-    }
-}
-
-export default function ChatPanel({ isOpen, onClose, userId }) {
+export default function ChatPanel({ isOpen, onClose }) {
     const [isLoading, setIsLoading] = useState(false);
-    const [messages, setMessages] = useState(() => loadMessages(userId));
+    const [messages, setMessages] = useState([WELCOME]);
     const [input, setInput] = useState("");
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
-    const hasLoadedHistoryRef = useRef(false);
-
-    useEffect(() => {
-        removeStoredHistory("chat_history");
-    }, []);
-
-    useEffect(() => {
-        if (!userId || !hasLoadedHistoryRef.current) {
-            hasLoadedHistoryRef.current = true;
-
-            return;
-        }
-
-        try {
-            localStorage.setItem(
-                storageKey(userId),
-                JSON.stringify({
-                    version: CHAT_HISTORY_VERSION,
-                    savedAt: Date.now(),
-                    messages: sanitizeMessages(messages),
-                }),
-            );
-        } catch {
-            removeStoredHistory(storageKey(userId));
-        }
-    }, [messages, userId]);
 
     useEffect(() => {
         if (isOpen) {
@@ -266,10 +168,6 @@ export default function ChatPanel({ isOpen, onClose, userId }) {
         }
 
         setMessages([WELCOME]);
-
-        if (userId) {
-            removeStoredHistory(storageKey(userId));
-        }
 
         Swal.fire({
             ...toastOptions("success", "Chat berhasil dihapus"),

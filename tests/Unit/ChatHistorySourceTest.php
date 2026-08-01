@@ -17,21 +17,13 @@ class ChatHistorySourceTest extends TestCase
         );
     }
 
-    public function test_authenticated_history_is_user_scoped_and_expires_after_twenty_four_hours(): void
+    public function test_chat_history_is_memory_only_and_not_persisted(): void
     {
-        $this->assertStringContainsString('const CHAT_HISTORY_TTL_MS = 24 * 60 * 60 * 1000;', $this->chatPanel);
-        $this->assertStringContainsString('`chat_history_user_${userId}`', $this->chatPanel);
-        $this->assertStringContainsString('savedAt: Date.now()', $this->chatPanel);
-        $this->assertStringContainsString('Date.now() - parsed.savedAt < CHAT_HISTORY_TTL_MS', $this->chatPanel);
-        $this->assertStringContainsString('removeStoredHistory(key)', $this->chatPanel);
-    }
-
-    public function test_guest_history_is_memory_only_and_not_persisted(): void
-    {
-        $this->assertStringContainsString('if (!userId) {', $this->chatPanel);
-        $this->assertStringContainsString('return [WELCOME];', $this->chatPanel);
-        $this->assertStringNotContainsString('sessionStorage', $this->chatPanel);
-        $this->assertStringNotContainsString('localStorage.setItem("chat_history"', $this->chatPanel);
+        $this->assertStringContainsString('useState([WELCOME])', $this->chatPanel);
+        $this->assertStringNotContainsString('localStorage.setItem', $this->chatPanel);
+        $this->assertStringNotContainsString('sessionStorage.setItem', $this->chatPanel);
+        $this->assertStringNotContainsString('chat_history_user_', $this->chatPanel);
+        $this->assertStringNotContainsString('userId', $this->chatPanel);
     }
 
     public function test_provider_history_only_contains_user_messages(): void
@@ -45,10 +37,8 @@ class ChatHistorySourceTest extends TestCase
         $this->assertStringNotContainsString('Maaf, terjadi kesalahan atau jaringan tidak stabil.', $this->chatPanel);
     }
 
-    public function test_chat_output_is_rendered_as_text_and_storage_is_validated(): void
+    public function test_chat_output_is_rendered_as_text(): void
     {
-        $this->assertStringContainsString('sanitizeMessages', $this->chatPanel);
-        $this->assertStringContainsString('JSON.parse(saved)', $this->chatPanel);
         $this->assertStringContainsString('{message.content}', $this->chatPanel);
         $this->assertStringNotContainsString('dangerouslySetInnerHTML', $this->chatPanel);
         $this->assertStringNotContainsString('innerHTML', $this->chatPanel);

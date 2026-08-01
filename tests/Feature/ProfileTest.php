@@ -29,7 +29,10 @@ class ProfileTest extends TestCase
             ->get('/profile')
             ->assertOk()
             ->assertInertia(fn ($page) => $page
-                ->where('auth.user.created_at', $user->created_at->toJSON())
+                ->where('profile.created_at', $user->created_at->toJSON())
+                ->missing('auth.user.phone')
+                ->missing('auth.user.address')
+                ->missing('auth.user.created_at')
             );
     }
 
