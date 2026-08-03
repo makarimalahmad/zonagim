@@ -6,11 +6,12 @@ import Turnstile from "@/Components/Turnstile";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { CircleX, Eye, EyeOff } from "lucide-react";
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
-export default function Login({ canResetPassword }) {
+export default function Login({ canResetPassword, lockoutSeconds: initialLockout = 0 }) {
     const { turnstileSiteKey } = usePage().props;
     const [showPassword, setShowPassword] = useState(false);
+    const [lockoutSeconds, setLockoutSeconds] = useState(initialLockout);
 
     const [turnstileToken, setTurnstileToken] = useState(null);
     const turnstileRef = useRef(null);
@@ -21,6 +22,20 @@ export default function Login({ canResetPassword }) {
         remember: false,
         cf_turnstile_response: "",
     });
+
+    const isLockedOut = lockoutSeconds > 0;
+
+    useEffect(() => {
+        if (!isLockedOut) {
+            return undefined;
+        }
+
+        const timer = window.setInterval(() => {
+            setLockoutSeconds((seconds) => Math.max(0, seconds - 1));
+        }, 1000);
+
+        return () => window.clearInterval(timer);
+    }, [isLockedOut]);
 
     const handleTurnstileVerify = (token) => {
         setTurnstileToken(token);
@@ -40,9 +55,21 @@ export default function Login({ canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
 
+        if (isLockedOut) {
+            return;
+        }
+
         post(route("login"), {
-            onError: () => {
-                // Token Turnstile sekali pakai; reset widget agar dapat token baru.
+            onError: (responseErrors) => {
+                const seconds = Number.parseInt(
+                    responseErrors.throttle_seconds,
+                    10,
+                );
+
+                if (Number.isFinite(seconds) && seconds > 0) {
+                    setLockoutSeconds(seconds);
+                }
+
                 setTurnstileToken(null);
                 setData("cf_turnstile_response", "");
                 turnstileRef.current?.reset();
@@ -67,18 +94,24 @@ export default function Login({ canResetPassword }) {
                 </p>
             </div>
 
-            {errors.suspended && (
+            {(errors.suspended || isLockedOut) && (
                 <div
                     role="alert"
                     aria-live="polite"
-                    className="mb-5 flex items-center gap-3 rounded-xl border border-red-500/35 bg-red-500/10 px-4 py-3.5 shadow-sm shadow-red-950/10"
+                    className="mb-5 flex items-center gap-3 rounded-xl border-2 border-red-600 bg-red-600 px-4 py-3.5 text-white"
                 >
                     <CircleX
-                        className="h-6 w-6 shrink-0 text-red-500"
+                        className="h-6 w-6 shrink-0 text-white"
                         aria-hidden="true"
                     />
-                    <p className="text-sm font-medium leading-6 text-red-600 dark:text-red-400">
-                        {errors.suspended}
+                    <p className="text-sm font-medium leading-6 text-white">
+                        {isLockedOut
+                            ? `Login diblokir sementara. Coba lagi dalam ${String(
+                                  Math.floor(lockoutSeconds / 60),
+                              ).padStart(2, "0")}:${String(
+                                  lockoutSeconds % 60,
+                              ).padStart(2, "0")}.`
+                            : errors.suspended}
                     </p>
                 </div>
             )}
@@ -100,6 +133,7 @@ export default function Login({ canResetPassword }) {
                         className="!mt-0"
                         autoComplete="username"
                         isFocused={true}
+                        disabled={isLockedOut}
                         onChange={(e) => setData("email", e.target.value)}
                         placeholder="email@example.com"
                     />
@@ -123,6 +157,7 @@ export default function Login({ canResetPassword }) {
                             value={data.password}
                             className="pr-12 !mt-0"
                             autoComplete="current-password"
+                            disabled={isLockedOut}
                             onChange={(e) =>
                                 setData("password", e.target.value)
                             }
@@ -130,6 +165,7 @@ export default function Login({ canResetPassword }) {
                         />
                         <button
                             type="button"
+                            disabled={isLockedOut}
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute inset-y-0 right-0 flex items-center pr-4 text-base-content/40 hover:text-base-content/70 transition"
                         >
@@ -150,6 +186,7 @@ export default function Login({ canResetPassword }) {
                         <Checkbox
                             name="remember"
                             checked={data.remember}
+                            disabled={isLockedOut}
                             onChange={(e) =>
                                 setData("remember", e.target.checked)
                             }
@@ -170,7 +207,10 @@ export default function Login({ canResetPassword }) {
                 </div>
 
                 {/* TURNSTILE CAPTCHA */}
-                <div className="mt-4">
+                <div
+                    className={`mt-4 ${isLockedOut ? "pointer-events-none opacity-50" : ""}`}
+                    aria-disabled={isLockedOut}
+                >
                     <Turnstile
                         ref={turnstileRef}
                         siteKey={turnstileSiteKey}
@@ -190,6 +230,7 @@ export default function Login({ canResetPassword }) {
                     type="submit"
                     disabled={
                         processing ||
+                        isLockedOut ||
                         !data.email.trim() ||
                         !data.password ||
                         !turnstileToken

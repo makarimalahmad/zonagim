@@ -9,14 +9,13 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication as BaseAppAuthentication;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\OneTimeCodeInput;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -85,16 +84,22 @@ class AppAuthentication extends BaseAppAuthentication
         $isRecoverable = $this->isRecoverable();
 
         return [
-            OneTimeCodeInput::make('code')
-                ->label('Kode autentikasi 6 digit')
-                ->belowContent(fn (Get $get): Action => Action::make('useRecoveryCode')
-                    ->label('Gunakan kode pemulihan')
-                    ->link()
-                    ->action(fn (Set $set) => $set('useRecoveryCode', true))
-                    ->visible(fn (): bool => $isRecoverable && ! $get('useRecoveryCode')))
-                ->required(fn (Get $get): bool => ! $isRecoverable || ! $get('useRecoveryCode') || blank($get('recoveryCode')))
+            Hidden::make('useRecoveryCode')
+                ->default(false),
+            TextInput::make('code')
+                ->label('Kode MFA')
+                ->placeholder('Masukkan kode 6 digit')
+                ->autocomplete('one-time-code')
+                ->inputMode('numeric')
+                ->maxLength(6)
+                ->required(fn (Get $get): bool => ! $isRecoverable || ! $get('useRecoveryCode'))
+                ->visible(fn (Get $get): bool => ! $isRecoverable || ! $get('useRecoveryCode'))
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
+                        if (blank($value)) {
+                            return;
+                        }
+
                         if (
                             $user instanceof User
                             && is_string($value)
@@ -108,8 +113,9 @@ class AppAuthentication extends BaseAppAuthentication
                 }),
             TextInput::make('recoveryCode')
                 ->label('Kode pemulihan')
-                ->password()
-                ->revealable(Filament::arePasswordsRevealable())
+                ->placeholder('Masukkan kode pemulihan')
+                ->autocomplete('one-time-code')
+                ->required(fn (Get $get): bool => $isRecoverable && $get('useRecoveryCode'))
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
                         if (blank($value)) {
@@ -123,8 +129,7 @@ class AppAuthentication extends BaseAppAuthentication
                         $fail('Kode pemulihan tidak valid atau sudah digunakan.');
                     };
                 })
-                ->visible(fn (Get $get): bool => $isRecoverable && $get('useRecoveryCode'))
-                ->live(onBlur: true),
+                ->visible(fn (Get $get): bool => $isRecoverable && $get('useRecoveryCode')),
         ];
     }
 

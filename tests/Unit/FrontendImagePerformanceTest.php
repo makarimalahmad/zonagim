@@ -142,6 +142,14 @@ class FrontendImagePerformanceTest extends TestCase
         $this->assertStringContainsString('color: #ffffff;', $styles);
     }
 
+    public function test_account_preview_reserves_full_modal_space_for_absolute_image(): void
+    {
+        $accountDetail = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'akun'.DIRECTORY_SEPARATOR.'Show.jsx');
+
+        $this->assertStringContainsString('wrapperClassName="h-full w-full bg-transparent"', $accountDetail);
+        $this->assertStringNotContainsString('wrapperClassName="max-h-full max-w-full bg-transparent"', $accountDetail);
+    }
+
     public function test_progressive_image_defaults_to_non_blocking_image_loading(): void
     {
         $component = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Components'.DIRECTORY_SEPARATOR.'ProgressiveImage.jsx');

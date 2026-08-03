@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Auth\Login as AdminLogin;
 use App\Filament\Auth\MultiFactor\AppAuthentication;
 use App\Filament\Auth\MultiFactor\SetUpAppAuthenticationAction;
 use App\Filament\Auth\MultiFactor\SetUpRequiredMultiFactorAuthentication;
@@ -104,16 +105,53 @@ class AdminMfaFlowTest extends TestCase
         $this->assertStringContainsString(".admin-mfa-aws-modal .fi-modal-content {\n    min-height: 0;\n    flex: 1 1 auto;", $theme);
         $this->assertStringContainsString('overflow-y: auto;', $theme);
         $this->assertStringNotContainsString('.admin-mfa-aws-modal:has(.admin-mfa-reveal-panel)', $theme);
-        $this->assertStringNotContainsString('function authenticate(', $login);
+        $this->assertStringContainsString('$response = parent::authenticate();', $login);
+        $this->assertStringContainsString('filled($this->userUndertakingMultiFactorAuthentication)', $login);
 
         $provider = AppAuthentication::make()->recoverable();
         $admin = User::factory()->create(['role' => 'admin']);
         $this->createDevice($admin, 'Ponsel utama', 'JBSWY3DPEHPK3PXP');
         $challengeComponents = $provider->getChallengeFormComponents($admin);
 
-        $this->assertCount(2, $challengeComponents);
-        $this->assertSame('code', $challengeComponents[0]->getName());
-        $this->assertSame('recoveryCode', $challengeComponents[1]->getName());
+        $this->assertCount(3, $challengeComponents);
+        $this->assertSame('useRecoveryCode', $challengeComponents[0]->getName());
+        $this->assertSame('code', $challengeComponents[1]->getName());
+        $this->assertSame('recoveryCode', $challengeComponents[2]->getName());
+        $this->assertStringContainsString("'Gunakan kode pemulihan'", $login);
+        $this->assertStringContainsString("'Gunakan kode autentikator'", $login);
+        $this->assertStringContainsString("->label('Login dengan akun lain')", $login);
+        $this->assertStringContainsString("->label('Masuk')", $login);
+        $this->assertStringContainsString('blank($this->userUndertakingMultiFactorAuthentication', file_get_contents(resource_path('views/filament/admin/login-theme-switcher.blade.php')));
+    }
+
+    public function test_mfa_challenge_switches_between_authenticator_and_recovery_screens(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->createDevice($admin, 'Ponsel utama', 'JBSWY3DPEHPK3PXP');
+
+        $component = Livewire::test(AdminLogin::class)
+            ->fillForm([
+                'email' => $admin->email,
+                'password' => 'password',
+                'remember' => false,
+            ])
+            ->call('authenticate')
+            ->assertSet('usingRecoveryCode', false)
+            ->assertSee('Verifikasi tambahan diperlukan')
+            ->assertSee('Kode MFA')
+            ->assertDontSee('Masukkan salah satu kode pemulihan');
+
+        $component
+            ->call('toggleRecoveryCode')
+            ->assertSet('usingRecoveryCode', true)
+            ->assertSee('Gunakan kode pemulihan')
+            ->assertSee('Masukkan salah satu kode pemulihan')
+            ->assertDontSee('Kode MFA');
+
+        $component
+            ->call('toggleRecoveryCode')
+            ->assertSet('usingRecoveryCode', false)
+            ->assertSee('Kode MFA');
     }
 
     public function test_enrolled_admin_can_open_mfa_security_management_page(): void

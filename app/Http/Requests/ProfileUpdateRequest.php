@@ -41,9 +41,6 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.max' => 'Nama lengkap maksimal 255 karakter.',
-            'email.required' => 'Alamat email wajib diisi.',
-            'email.email' => 'Format alamat email tidak valid.',
-            'email.unique' => 'Alamat email sudah digunakan.',
             'phone.regex' => 'Nomor WhatsApp harus diawali angka 8 dan berisi 9–14 digit.',
             'address.array' => 'Format alamat tidak valid.',
             'address.country.max' => 'Nama negara maksimal 100 karakter.',

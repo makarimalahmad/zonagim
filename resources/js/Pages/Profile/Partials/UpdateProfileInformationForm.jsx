@@ -13,8 +13,6 @@ import Swal from "sweetalert2";
 
 export default function UpdateProfileInformation({
     user,
-    mustVerifyEmail,
-    status,
     className = "",
 }) {
     const [editingField, setEditingField] = useState(null);

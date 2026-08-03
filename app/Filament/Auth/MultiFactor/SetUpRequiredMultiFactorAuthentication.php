@@ -35,12 +35,6 @@ class SetUpRequiredMultiFactorAuthentication extends BasePage
         return false;
     }
 
-    public function getFooterActionsContentComponent(): Component
-    {
-        return parent::getFooterActionsContentComponent()
-            ->extraAttributes(['class' => 'admin-mfa-setup-actions']);
-    }
-
     public function getExtraBodyAttributes(): array
     {
         return [

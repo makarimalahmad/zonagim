@@ -12,6 +12,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -30,6 +31,93 @@ class AdminAuthorizationTest extends TestCase
     {
         $this->get('/admin')
             ->assertRedirect('/admin/login');
+    }
+
+    public function test_admin_login_is_minimal_and_has_no_public_password_reset(): void
+    {
+        $content = $this->get('/admin/login')->assertOk()->getContent();
+        $provider = file_get_contents(app_path('Providers/Filament/AdminPanelProvider.php'));
+        $lockout = file_get_contents(resource_path('views/filament/admin/login-lockout.blade.php'));
+
+        $brandLogo = file_get_contents(resource_path('views/filament/admin/brand-logo.blade.php'));
+
+        $this->assertStringContainsString('/images/zonagim-nobg.png', $content);
+        $this->assertStringContainsString('images/zonagim-nobg.png', $brandLogo);
+        $this->assertStringNotContainsString('images/zonagim.png', $brandLogo);
+        $this->assertStringContainsString('AUTH_LOGIN_FORM_BEFORE', $provider);
+        $this->assertStringContainsString('heroicon-o-x-circle', $lockout);
+        $this->assertStringNotContainsString('Tema tampilan', $content);
+        $this->assertStringNotContainsString('Selamat datang kembali', $content);
+        $this->assertStringNotContainsString('Lupa kata sandi?', $content);
+        $this->assertStringNotContainsString('->passwordReset()', $provider);
+        $this->assertFalse(app('router')->has('filament.admin.auth.password-reset.request'));
+    }
+
+    public function test_admin_login_locks_matching_email_and_ip_after_three_failures_for_five_minutes(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $component = Livewire::test(AdminLogin::class)->fillForm([
+            'email' => $admin->email,
+            'password' => 'wrong-password',
+            'remember' => false,
+        ]);
+
+        for ($attempt = 1; $attempt <= 2; $attempt++) {
+            $component
+                ->call('authenticate')
+                ->assertHasFormErrors(['email']);
+        }
+
+        $component
+            ->call('authenticate')
+            ->assertHasFormErrors([
+                'email' => 'Terlalu banyak percobaan gagal. Coba lagi dalam 5 menit.',
+            ])
+            ->assertSet('lockedUntil', fn (int $timestamp): bool => $timestamp >= now()->addMinutes(4)->timestamp)
+            ->assertFormFieldDisabled('email')
+            ->assertFormFieldDisabled('password');
+
+        $attemptsBeforeBlockedRequest = RateLimiter::attempts($this->adminLoginRateLimitKey($admin->email));
+
+        $component
+            ->set('data.password', 'password')
+            ->call('authenticate')
+            ->assertHasFormErrors([
+                'email' => 'Terlalu banyak percobaan gagal. Coba lagi dalam 5 menit.',
+            ]);
+
+        $this->assertSame(
+            $attemptsBeforeBlockedRequest,
+            RateLimiter::attempts($this->adminLoginRateLimitKey($admin->email)),
+        );
+        $this->assertGuest();
+    }
+
+    public function test_admin_login_lockout_is_scoped_to_email_and_ip(): void
+    {
+        $firstAdmin = User::factory()->create(['role' => 'admin']);
+        $secondAdmin = User::factory()->create(['role' => 'admin']);
+
+        for ($attempt = 1; $attempt <= 3; $attempt++) {
+            Livewire::test(AdminLogin::class)
+                ->fillForm([
+                    'email' => $firstAdmin->email,
+                    'password' => 'wrong-password',
+                    'remember' => false,
+                ])
+                ->call('authenticate');
+        }
+
+        Livewire::test(AdminLogin::class)
+            ->fillForm([
+                'email' => $secondAdmin->email,
+                'password' => 'password',
+                'remember' => false,
+            ])
+            ->call('authenticate')
+            ->assertHasNoFormErrors();
+
+        $this->assertAuthenticatedAs($secondAdmin);
     }
 
     public function test_admin_login_rejects_normal_user_and_accepts_admin(): void
@@ -206,6 +294,11 @@ class AdminAuthorizationTest extends TestCase
         $this->actingAs($user);
         $this->assertFalse(ProductResource::canAccess());
         $this->assertFalse(CategoryResource::canAccess());
+    }
+
+    private function adminLoginRateLimitKey(string $email): string
+    {
+        return 'admin-login:'.hash('sha256', strtolower(trim($email)).'|127.0.0.1');
     }
 
     public function test_privileged_fields_are_not_mass_assignable(): void

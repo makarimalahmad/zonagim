@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
 use App\Services\UserSuspensionService;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class UserSuspensionTest extends TestCase
@@ -181,6 +184,28 @@ class UserSuspensionTest extends TestCase
             $this->assertArrayHasKey('password', $exception->errors());
             $this->assertTrue($target->fresh()->isSuspended());
         }
+    }
+
+    public function test_reactivation_modal_shows_wrong_admin_password_error(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $target = User::factory()->create(['role' => 'user']);
+        $target->forceFill(['suspended_at' => now()])->save();
+
+        $this->actingAs($admin);
+
+        Livewire::test(ListUsers::class)
+            ->callTableAction('reactivate', $target, [
+                'password' => 'wrong-password',
+            ])
+            ->assertTableActionHalted([
+                TestAction::make('reactivate')->table($target),
+            ])
+            ->assertHasTableActionErrors([
+                'password' => 'Kata sandi admin tidak sesuai.',
+            ]);
+
+        $this->assertTrue($target->fresh()->isSuspended());
     }
 
     public function test_policy_only_allows_narrow_status_actions_for_customer_targets(): void

@@ -15,6 +15,10 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    public const LOCKOUT_SECONDS = 120;
+
+    public const MAX_FAILED_ATTEMPTS = 3;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -107,7 +111,11 @@ class LoginRequest extends FormRequest
             fn (User $user): bool => $user->isActiveCustomer(),
             $this->boolean('remember'),
         )) {
-            RateLimiter::hit($this->throttleKey());
+            RateLimiter::hit($this->throttleKey(), self::LOCKOUT_SECONDS);
+
+            if (RateLimiter::tooManyAttempts($this->throttleKey(), self::MAX_FAILED_ATTEMPTS)) {
+                $this->throwRateLimitValidationException();
+            }
 
             throw ValidationException::withMessages([
                 'email' => 'Email atau kata sandi yang Anda masukkan tidak sesuai. Silakan periksa kembali.',
@@ -115,6 +123,7 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+        $this->session()->forget('user-login-rate-limit-key');
     }
 
     /**
@@ -124,19 +133,22 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), self::MAX_FAILED_ATTEMPTS)) {
             return;
         }
 
+        $this->throwRateLimitValidationException();
+    }
+
+    private function throwRateLimitValidationException(): never
+    {
         event(new Lockout($this));
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'throttle' => 'Terlalu banyak percobaan login gagal. Coba lagi dalam 2 menit.',
+            'throttle_seconds' => (string) $seconds,
         ]);
     }
 
@@ -145,6 +157,9 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $key = Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $this->session()->put('user-login-rate-limit-key', $key);
+
+        return $key;
     }
 }

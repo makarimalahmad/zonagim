@@ -1,4 +1,13 @@
-export function getNotificationTheme() {
+function getNotificationTheme(icon) {
+    if (icon === "success") {
+        return {
+            background: "#16a34a",
+            color: "#ffffff",
+            iconColor: "#ffffff",
+            timerProgressBarColor: "rgba(255,255,255,0.5)",
+        };
+    }
+
     return {
         background: "#facc15",
         color: "#422006",

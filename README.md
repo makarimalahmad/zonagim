@@ -60,10 +60,9 @@ Proyek ini juga menyediakan panel admin untuk pengelolaan kategori, produk, peng
 
 ### Backend
 
-- PHP 8.2+
+- PHP 8.3+
 - Laravel 12
 - Filament 5
-- Laravel Sanctum 4
 - Inertia Laravel 2
 - MySQL
 - PHPUnit 11

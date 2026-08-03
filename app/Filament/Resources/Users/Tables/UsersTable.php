@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use App\Models\User;
 use App\Services\UserSuspensionService;
 use Filament\Actions\Action;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -12,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 class UsersTable
 {
@@ -111,12 +113,20 @@ class UsersTable
                     ->modalHeading('Aktifkan kembali akun pengguna')
                     ->modalDescription('Masukkan kata sandi admin untuk mengonfirmasi. Pengguna harus masuk kembali dan sesi lama tetap tidak dapat digunakan.')
                     ->modalSubmitActionLabel('Aktifkan akun')
-                    ->action(function (User $record, array $data): void {
-                        app(UserSuspensionService::class)->reactivate(
-                            $record,
-                            auth()->user(),
-                            $data['password'],
-                        );
+                    ->action(function (Action $action, User $record, array $data, HasActions $livewire): void {
+                        try {
+                            app(UserSuspensionService::class)->reactivate(
+                                $record,
+                                auth()->user(),
+                                $data['password'],
+                            );
+                        } catch (ValidationException $exception) {
+                            $livewire->addError(
+                                'mountedActions.'.($action->getNestingIndex() ?? 0).'.data.password',
+                                $exception->errors()['password'][0] ?? 'Kata sandi admin tidak sesuai.',
+                            );
+                            $action->halt();
+                        }
 
                         Notification::make()
                             ->title('Akun pengguna berhasil diaktifkan')

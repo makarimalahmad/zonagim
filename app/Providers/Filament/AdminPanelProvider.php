@@ -37,7 +37,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->passwordReset()
             ->multiFactorAuthentication(
                 [
                     AppAuthentication::make()
@@ -50,6 +49,9 @@ class AdminPanelProvider extends PanelProvider
             )
             ->strictAuthorization()
             ->brandName('Zonagim')
+            ->brandLogo(fn (): View => view('filament.admin.brand-logo'))
+            ->darkModeBrandLogo(fn (): View => view('filament.admin.brand-logo'))
+            ->brandLogoHeight('7rem')
             ->font('Outfit')
             ->colors([
                 'primary' => Color::Yellow,
@@ -97,6 +99,10 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
                 EnsureAdmin::class,
             ], isPersistent: true)
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): View => view('filament.admin.login-lockout'),
+            )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                 fn (): View => view('filament.admin.login-theme-switcher'),

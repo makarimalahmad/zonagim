@@ -334,8 +334,8 @@ export default function Show({ product }) {
                             width={16}
                             height={10}
                             loading="eager"
-                            wrapperClassName="max-h-full max-w-full bg-transparent"
-                            className={`max-h-full max-w-full select-none object-contain ${
+                            wrapperClassName="h-full w-full bg-transparent"
+                            className={`select-none object-contain ${
                                 isDragging
                                     ? "cursor-grabbing"
                                     : zoom > 1
@@ -418,7 +418,7 @@ export default function Show({ product }) {
                         )}
 
                         <span className="absolute bottom-0 rounded-lg bg-black/60 px-3 py-2 text-xs text-white">
-                            {currentIndex + 1} / {images.length} · {Math.round(zoom * 100)}% · Scroll untuk zoom{zoom > 1 ? " · Tahan klik kiri untuk geser" : ""}
+                            {currentIndex + 1} / {images.length} · {Math.round(zoom * 100)}% · Scroll untuk zoom
                         </span>
                     </div>
                 </div>

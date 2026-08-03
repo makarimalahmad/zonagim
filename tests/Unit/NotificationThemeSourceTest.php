@@ -13,24 +13,28 @@ class NotificationThemeSourceTest extends TestCase
             $root.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'utils'.DIRECTORY_SEPARATOR.'notificationTheme.js',
         );
 
+        $this->assertStringContainsString('if (icon === "success")', $theme);
+        $this->assertStringContainsString('background: "#16a34a"', $theme);
+        $this->assertStringContainsString('color: "#ffffff"', $theme);
+        $this->assertStringContainsString('iconColor: "#ffffff"', $theme);
         $this->assertStringContainsString('background: "#facc15"', $theme);
-        $this->assertStringContainsString('color: "#422006"', $theme);
-        $this->assertStringContainsString('iconColor: "#713f12"', $theme);
         $this->assertStringNotContainsString('#dc2626', $theme);
         $this->assertStringNotContainsString('#172033', $theme);
     }
 
-    public function test_filament_notifications_use_the_same_zonagim_yellow_theme(): void
+    public function test_filament_success_notifications_use_full_green_with_aligned_white_content(): void
     {
         $root = dirname(__DIR__, 2);
         $theme = file_get_contents(
             $root.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'filament'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'theme.css',
         );
 
-        $this->assertStringContainsString('.fi-body .fi-no-notification:not(.fi-inline)', $theme);
-        $this->assertStringContainsString('background-color: #facc15', $theme);
-        $this->assertStringContainsString('color: #422006', $theme);
-        $this->assertStringContainsString('--color-400: #713f12', $theme);
+        $this->assertStringContainsString('.fi-body .fi-no-notification.fi-status-success:not(.fi-inline)', $theme);
+        $this->assertStringContainsString('background-color: #16a34a', $theme);
+        $this->assertStringContainsString('color: #ffffff', $theme);
+        $this->assertStringContainsString('align-items: center', $theme);
+        $this->assertStringContainsString('.fi-no-notification-main {', $theme);
+        $this->assertStringContainsString('margin-top: 0', $theme);
     }
 
     public function test_all_toasts_use_shared_notification_theme(): void

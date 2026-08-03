@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,10 +17,21 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        $rateLimitKey = $request->session()->get('user-login-rate-limit-key');
+        $lockoutSeconds = is_string($rateLimitKey)
+            && RateLimiter::tooManyAttempts($rateLimitKey, LoginRequest::MAX_FAILED_ATTEMPTS)
+                ? RateLimiter::availableIn($rateLimitKey)
+                : 0;
+
+        if ($lockoutSeconds === 0) {
+            $request->session()->forget('user-login-rate-limit-key');
+        }
+
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
+            'lockoutSeconds' => $lockoutSeconds,
         ]);
     }
 

@@ -97,8 +97,6 @@
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
 
-    --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-
     --breakpoint-xs: 475px;
 }
 
@@ -126,17 +124,6 @@
 
 ::view-transition-new(root) {
     z-index: 9999;
-}
-
-@keyframes theme-reveal {
-    from {
-        clip-path: circle(0% at var(--theme-x, 50%) var(--theme-y, 50%));
-    }
-    to {
-        clip-path: circle(
-            var(--theme-r, 150%) at var(--theme-x, 50%) var(--theme-y, 50%)
-        );
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {

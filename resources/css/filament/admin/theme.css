@@ -16,7 +16,6 @@
     --admin-text: #0f172a;
     --admin-text-muted: #64748b;
     --admin-accent: #eab308;
-    --admin-accent-hover: #ca8a04;
     --admin-focus: rgba(234, 179, 8, 0.2);
 }
 
@@ -33,7 +32,6 @@ html.dark {
     --admin-text: #f8fafc;
     --admin-text-muted: #94a3b8;
     --admin-accent: #facc15;
-    --admin-accent-hover: #eab308;
     --admin-focus: rgba(250, 204, 21, 0.18);
 }
 
@@ -71,6 +69,29 @@ input:disabled {
     letter-spacing: -0.025em;
 }
 
+.fi-logo img {
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Branding panel */
+.fi-topbar-start .fi-logo,
+.fi-sidebar-header .fi-logo {
+    width: auto !important;
+    height: 2rem !important;
+    max-height: 2rem !important;
+}
+
+.fi-topbar-start .fi-logo .admin-brand-logo,
+.fi-sidebar-header .fi-logo .admin-brand-logo {
+    display: block;
+    width: auto !important;
+    height: 2rem !important;
+    max-height: 2rem !important;
+    object-fit: contain;
+}
+
 /* Halaman autentikasi */
 .fi-simple-layout {
     background: var(--admin-page);
@@ -95,6 +116,10 @@ input:disabled {
 
 .fi-simple-page-content {
     gap: 1.75rem;
+}
+
+.fi-simple-main:has(.admin-login-theme) .fi-simple-page-content {
+    gap: 1.25rem;
 }
 
 .fi-simple-header {
@@ -168,21 +193,57 @@ input:disabled {
     box-shadow: none;
 }
 
-/* Pemilih tema pada form login */
+/* Status lockout dan pemilih tema pada form login */
+.admin-login-lockout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem;
+    color: #16191f;
+    background: #fff7f7;
+    border: 2px solid #d91515;
+    border-radius: 0.75rem;
+}
+
+.admin-login-lockout-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+    margin-top: 0.05rem;
+    color: #d91515;
+    stroke-width: 2.5;
+}
+
+.admin-login-lockout-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.admin-login-lockout-message {
+    margin-top: 0.125rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+}
+
+html.dark .admin-login-lockout {
+    color: #ffffff;
+    background: #d91515;
+    border-color: #d91515;
+}
+
+html.dark .admin-login-lockout-icon {
+    color: #ffffff;
+}
+
 .admin-login-theme {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 1rem;
+    justify-content: center;
+    padding-top: 1.25rem;
     margin-top: 0.25rem;
     border-top: 1px solid var(--admin-border);
-}
-
-.admin-login-theme-label {
-    color: var(--admin-text-muted);
-    font-size: 0.8125rem;
-    font-weight: 550;
 }
 
 .admin-login-theme .fi-theme-switcher {
@@ -500,6 +561,15 @@ input:disabled {
     --color-600: #713f12;
 }
 
+.fi-body .fi-no-notification:not(.fi-inline) {
+    align-items: center;
+}
+
+.fi-body .fi-no-notification:not(.fi-inline) .fi-no-notification-main {
+    margin-top: 0;
+    align-self: center;
+}
+
 .fi-body .fi-no-notification .fi-no-notification-title,
 .fi-body .fi-no-notification .fi-no-notification-date,
 .fi-body .fi-no-notification .fi-no-notification-body,
@@ -518,6 +588,31 @@ input:disabled {
     background-color: rgba(113, 63, 18, 0.12);
 }
 
+.fi-body .fi-no-notification.fi-status-success:not(.fi-inline),
+.fi-body .fi-no-notification.fi-status-success.fi-color:not(.fi-inline) {
+    color: #ffffff;
+    background-color: #16a34a;
+    border-color: #15803d;
+    box-shadow: 0 12px 30px rgba(21, 128, 61, 0.2);
+    --color-400: #ffffff;
+    --color-600: #ffffff;
+}
+
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-title,
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-date,
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-body,
+.fi-body .fi-no-notification.fi-status-success.fi-color .fi-no-notification-body,
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-icon,
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-close-btn,
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-close-btn .fi-icon {
+    color: #ffffff;
+}
+
+.fi-body .fi-no-notification.fi-status-success .fi-no-notification-close-btn:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
 /* Autentikasi dua faktor admin */
 .admin-mfa-setup-page .fi-simple-main {
     max-width: 32rem;
@@ -528,20 +623,7 @@ input:disabled {
     gap: 1.5rem;
 }
 
-.admin-mfa-challenge::before {
-    content: '';
-    display: block;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin-inline: auto;
-    margin-bottom: 0.75rem;
-    border: 1px solid color-mix(in srgb, var(--admin-accent) 45%, transparent);
-    border-radius: 0.75rem;
-    background-color: color-mix(in srgb, var(--admin-accent) 10%, transparent);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23eab308' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
-    background-position: center;
-    background-repeat: no-repeat;
-}
+
 
 .admin-mfa-brand {
     display: flex;
@@ -638,105 +720,115 @@ input:disabled {
 }
 
 
+.fi-simple-main:has(.admin-mfa-challenge) {
+    max-width: 30rem;
+    padding: 2.25rem 2rem;
+}
+
+.fi-simple-main:has(.admin-mfa-challenge) .fi-simple-page-content {
+    gap: 1.25rem;
+}
+
+.fi-simple-main:has(.admin-mfa-challenge) .fi-simple-header {
+    width: 100%;
+    align-items: stretch;
+}
+
+.fi-simple-main:has(.admin-mfa-challenge) .fi-logo {
+    align-self: center;
+    margin-bottom: 0.5rem;
+}
+
+.fi-simple-main:has(.admin-mfa-challenge) .fi-header-heading {
+    width: 100%;
+    font-size: 1.65rem;
+    line-height: 1.25;
+    text-align: left;
+}
+
+.fi-simple-main:has(.admin-mfa-challenge) .fi-header-subheading {
+    width: 100%;
+    margin-top: 0.5rem;
+    color: var(--admin-text);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    text-align: left;
+}
+
 .admin-mfa-challenge {
     padding-top: 0.25rem;
 }
 
-.admin-mfa-challenge::before {
-    margin-bottom: 1.25rem;
+.admin-mfa-challenge .fi-fo-field-wrp-label {
+    text-align: left;
 }
 
-.admin-mfa-challenge .fi-fo-field,
-.admin-mfa-challenge .fi-fo-field-wrp,
-.admin-mfa-challenge .fi-fo-field-wrp-label,
-.admin-mfa-challenge .fi-fo-field-wrp-helper-text {
-    text-align: center;
+.admin-mfa-challenge .fi-input-wrp {
+    border-color: var(--admin-border-strong);
 }
 
-.admin-mfa-challenge .fi-one-time-code-input-ctn {
-    display: flex;
-    width: fit-content;
-    margin-inline: auto;
-    justify-content: center;
-    gap: 0.5rem;
+.admin-mfa-challenge .fi-input {
+    min-height: 2.9rem;
+    font-size: 1rem;
 }
 
-.admin-mfa-challenge .fi-one-time-code-input-digit {
-    width: 2.75rem;
-    height: 3.25rem;
-    text-align: center;
-    color: var(--admin-text);
-    background: var(--admin-surface-subtle);
-    border: 1px solid var(--admin-border-strong);
-    border-radius: 0.625rem;
-    box-shadow: none;
+.admin-mfa-challenge .fi-input::placeholder {
+    font-style: italic;
 }
 
-.admin-mfa-challenge .fi-one-time-code-input-digit:focus {
-    border-color: var(--admin-accent);
-    outline: 3px solid var(--admin-focus);
-}
-
-.admin-mfa-setup-modal.fi-modal-window {
-    width: min(100% - 2rem, 35rem);
-    border: 1px solid var(--admin-border);
-    border-radius: 1rem;
-    box-shadow: 0 24px 70px rgba(2, 6, 23, 0.28);
-}
-
-.admin-mfa-setup-modal .fi-modal-header {
-    padding: 1.5rem 1.5rem 1.25rem;
-    border-bottom: 1px solid var(--admin-border);
-}
-
-.admin-mfa-setup-modal .fi-modal-content {
-    padding: 1.5rem;
-}
-
-.admin-mfa-setup-modal .fi-sc-group > .fi-sc,
-.admin-mfa-setup-modal .fi-sc-group > .fi-sc > .fi-sc {
-    align-items: center;
-    text-align: center;
-}
-
-.admin-mfa-setup-modal .fi-sc-image {
-    margin-inline: auto;
-}
-
-.admin-mfa-setup-modal .fi-sc-flex {
+.admin-mfa-challenge .fi-ac:has(.admin-mfa-submit-action) {
+    display: flex !important;
     width: 100%;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    gap: 0.75rem;
+}
+
+.admin-mfa-challenge .fi-ac:has(.admin-mfa-submit-action) > * {
+    width: 100% !important;
+    min-width: 0;
+    flex: none !important;
+}
+
+.admin-mfa-challenge .admin-mfa-submit-action,
+.admin-mfa-challenge .admin-mfa-recovery-action {
+    width: 100% !important;
+    min-height: 2.625rem;
+    padding-block: 0.625rem;
     justify-content: center;
 }
 
-.admin-mfa-setup-modal .fi-fo-field-wrp-label,
-.admin-mfa-setup-modal .fi-fo-field-wrp-helper-text {
-    display: block;
-    text-align: center;
+.admin-mfa-challenge .admin-mfa-recovery-action,
+html.dark .admin-mfa-challenge .admin-mfa-recovery-action {
+    color: var(--admin-accent) !important;
+    background: transparent !important;
+    border: 2px solid var(--admin-accent) !important;
 }
 
-.admin-mfa-setup-modal .fi-one-time-code-input-ctn {
-    display: flex;
-    width: fit-content;
+.admin-mfa-challenge .admin-mfa-recovery-action:hover,
+html.dark .admin-mfa-challenge .admin-mfa-recovery-action:hover {
+    color: #0b1221 !important;
+    background: var(--admin-accent) !important;
+}
+
+.admin-mfa-challenge .fi-ac:has(.admin-mfa-submit-action) > *:has(.admin-mfa-different-account-action) {
+    width: fit-content !important;
     margin-inline: auto;
-    justify-content: center;
-    gap: 0.55rem;
 }
 
-.admin-mfa-setup-modal .fi-one-time-code-input-digit {
-    width: 2.8rem;
-    height: 3.25rem;
+.admin-mfa-challenge .admin-mfa-different-account-action {
+    display: inline-flex !important;
+    width: auto !important;
+    min-height: auto;
+    margin-inline: auto;
+    padding: 0.25rem 0.5rem;
+    color: var(--admin-accent) !important;
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 0.875rem;
+    font-weight: 650;
     text-align: center;
-    border: 1px solid var(--admin-border-strong);
-    border-radius: 0.625rem;
-}
-
-.admin-mfa-setup-modal .fi-modal-footer-actions {
-    width: 100%;
-    justify-content: space-between;
-}
-
-.admin-mfa-setup-modal .fi-modal-footer .fi-btn {
-    min-width: 7rem;
 }
 
 .admin-mfa-aws-modal.fi-modal-window {
@@ -942,11 +1034,6 @@ input:disabled {
         font-size: 1.5rem;
     }
 
-    .admin-mfa-challenge .fi-one-time-code-input-digit {
-        width: 2.35rem;
-        height: 3rem;
-    }
-
     .admin-mfa-inline-step.fi-sc-flex {
         gap: 0.75rem;
     }
@@ -1030,7 +1117,6 @@ input:disabled {
 
 .admin-account-security-card > .fi-section > .fi-section-header {
     padding: 1.75rem;
-    background: color-mix(in srgb, var(--admin-success) 7%, var(--admin-surface));
 }
 
 .admin-account-security-card .fi-section-header-heading {
