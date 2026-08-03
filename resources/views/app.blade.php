@@ -195,10 +195,6 @@
         {{-- Structured Data (SEO / AEO / GEO) --}}
         <script type="application/ld+json">{!! $jsonLd !!}</script>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @routes
         @viteReactRefresh

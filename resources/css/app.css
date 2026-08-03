@@ -93,22 +93,11 @@
 
 /* Kustomisasi tema (migrasi dari tailwind.config.js) */
 @theme {
-    --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
 
     --breakpoint-xs: 475px;
-}
-
-/* Transisi halus saat ganti tema (fallback bila View Transitions tidak ada) */
-:root:not([data-theme-vt]) :where(*, *::before, *::after) {
-    transition:
-        background-color 400ms ease,
-        border-color 400ms ease,
-        color 400ms ease,
-        fill 400ms ease,
-        stroke 400ms ease,
-        box-shadow 400ms ease;
 }
 
 /* Circular reveal via View Transitions API */
@@ -127,9 +116,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    :root:not([data-theme-vt]) :where(*, *::before, *::after) {
-        transition: none;
-    }
     ::view-transition-old(root),
     ::view-transition-new(root) {
         animation: none;

@@ -18,7 +18,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         className="flex items-center gap-3 group"
                     >
                         <ProgressiveImage
-                            src="/images/zonagim.png"
+                            src="/images/zonagim-96.webp"
                             alt="Logo Zonagim"
                             width={40}
                             height={40}

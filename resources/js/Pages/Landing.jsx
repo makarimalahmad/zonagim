@@ -1,8 +1,5 @@
 import { Link, Head } from "@inertiajs/react";
-import { useLayoutEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
+import { useEffect, useState } from "react";
 import {
     ShieldCheck,
     Zap,
@@ -18,96 +15,19 @@ import ThemeToggle from "@/Components/ThemeToggle";
 import ProgressiveImage from "@/Components/ProgressiveImage";
 import Footer from "@/Components/Footer";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Landing({ contactUrl = null }) {
-    const containerRef = useRef(null);
-    const heroRef = useRef(null);
-    const featuresRef = useRef(null);
-    const stepsRef = useRef(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showLogoWall, setShowLogoWall] = useState(
+        () => window.matchMedia("(min-width: 1024px)").matches,
+    );
 
-    useLayoutEffect(() => {
-        // Smooth scrolling
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smoothWheel: true,
-        });
+    useEffect(() => {
+        const media = window.matchMedia("(min-width: 1024px)");
+        const updateLogoWall = () => setShowLogoWall(media.matches);
 
-        const updateLenis = (time) => lenis.raf(time * 1000);
+        media.addEventListener("change", updateLogoWall);
 
-        lenis.on("scroll", ScrollTrigger.update);
-        gsap.ticker.add(updateLenis);
-        gsap.ticker.lagSmoothing(0);
-
-        const ctx = gsap.context(() => {
-            // Hero subtle parallax
-            gsap.to(".hero-text", {
-                yPercent: -10,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: heroRef.current,
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: 1,
-                },
-            });
-            gsap.to(".hero-image", {
-                yPercent: -5,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: heroRef.current,
-                    start: "top top",
-                    end: "bottom top",
-                    scrub: 1,
-                },
-            });
-
-            // Features: clean stagger reveal (no pinning)
-            gsap.from(".feature-card", {
-                y: 40,
-                autoAlpha: 0,
-                duration: 0.7,
-                stagger: 0.15,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: featuresRef.current,
-                    start: "top 78%",
-                },
-            });
-
-            // Steps: clean stagger reveal (no pinning)
-            gsap.from(".step-item", {
-                y: 40,
-                autoAlpha: 0,
-                duration: 0.7,
-                stagger: 0.18,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: stepsRef.current,
-                    start: "top 78%",
-                },
-            });
-
-            // CTA reveal
-            gsap.from(".cta-card", {
-                scale: 0.96,
-                autoAlpha: 0,
-                duration: 0.7,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: ".cta-card",
-                    start: "top 85%",
-                },
-            });
-        }, containerRef);
-
-        return () => {
-            ctx.revert();
-            gsap.ticker.remove(updateLenis);
-            lenis.destroy();
-        };
+        return () => media.removeEventListener("change", updateLogoWall);
     }, []);
 
     const popularGames = [
@@ -137,7 +57,11 @@ export default function Landing({ contactUrl = null }) {
         ["Call of Duty: Warzone", "call-of-duty-warzone.png"],
     ].map(([name, file]) => ({
         name,
-        src: `/images/games/${file}`,
+        src: `/images/games/${
+            file.endsWith(".png")
+                ? file.replace(".png", "-192.webp")
+                : file
+        }`,
         invertOnDarkTile: ["fortnite.svg", "minecraft.svg", "roblox.png"].includes(
             file,
         ),
@@ -190,10 +114,7 @@ export default function Landing({ contactUrl = null }) {
     ];
 
     return (
-        <div
-            ref={containerRef}
-            className="bg-base-200 text-base-content font-sans overflow-x-hidden"
-        >
+        <div className="bg-base-200 text-base-content font-sans overflow-x-hidden">
             <Head title="Marketplace Jual Beli Akun Game" />
 
             {/* Navbar */}
@@ -206,7 +127,7 @@ export default function Landing({ contactUrl = null }) {
                             className="group flex shrink-0 items-center gap-3"
                         >
                             <ProgressiveImage
-                                src="/images/zonagim.png"
+                                src="/images/zonagim-96.webp"
                                 alt="Logo Zonagim"
                                 width={40}
                                 height={40}
@@ -279,10 +200,7 @@ export default function Landing({ contactUrl = null }) {
             </nav>
 
             {/* Hero Section */}
-            <section
-                ref={heroRef}
-                className="relative min-h-screen flex items-center pt-28 pb-12 lg:pt-20 lg:pb-10 w-full"
-            >
+            <section className="relative min-h-screen flex items-center pt-28 pb-12 lg:pt-20 lg:pb-10 w-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
                         <div className="hero-text text-center lg:text-left w-full">
@@ -318,8 +236,9 @@ export default function Landing({ contactUrl = null }) {
                         </div>
 
                         {/* Animated game logo wall */}
-                        <div className="hero-image relative hidden lg:block">
-                            <div className="game-logo-wall relative w-full overflow-hidden rounded-4xl border border-base-300 py-7">
+                        {showLogoWall && (
+                            <div className="hero-image relative">
+                                <div className="game-logo-wall relative w-full overflow-hidden rounded-4xl border border-base-300 py-7">
                                 <div className="game-logo-fade space-y-3.5">
                                     {logoRows.map((row, rowIndex) => (
                                         <div
@@ -352,7 +271,7 @@ export default function Landing({ contactUrl = null }) {
                                                                 alt=""
                                                                 width={96}
                                                                 height={48}
-                                                                loading="eager"
+                                                                loading="lazy"
                                                                 fetchPriority="low"
                                                                 wrapperClassName="h-12 w-full bg-transparent"
                                                                 className={`game-logo-image object-contain p-1 ${
@@ -374,17 +293,15 @@ export default function Landing({ contactUrl = null }) {
                                         </div>
                                     ))}
                                 </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </section>
 
             {/* Features Section */}
-            <section
-                ref={featuresRef}
-                className="py-20 lg:py-28 border-t border-base-300"
-            >
+            <section className="py-20 lg:py-28 border-t border-base-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="text-center max-w-2xl mx-auto mb-14">
                         <h2 className="text-3xl sm:text-4xl font-bold text-base-content mb-4">
@@ -420,10 +337,7 @@ export default function Landing({ contactUrl = null }) {
             </section>
 
             {/* How It Works Section */}
-            <section
-                ref={stepsRef}
-                className="py-20 lg:py-28 border-t border-base-300"
-            >
+            <section className="py-20 lg:py-28 border-t border-base-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="text-center max-w-2xl mx-auto mb-14">
                         <h2 className="text-3xl sm:text-4xl font-bold text-base-content mb-4">

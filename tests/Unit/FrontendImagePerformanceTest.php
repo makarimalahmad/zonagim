@@ -81,34 +81,38 @@ class FrontendImagePerformanceTest extends TestCase
         );
     }
 
-    public function test_landing_game_wall_uses_local_game_logos(): void
+    public function test_landing_uses_small_local_images_and_skips_desktop_wall_on_mobile(): void
     {
         $root = dirname(__DIR__, 2);
         $landing = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Landing.jsx');
         $logoDirectory = $root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'games';
+        $brandLogo = $root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'zonagim-96.webp';
 
-        $this->assertStringContainsString('src: `/images/games/${file}`', $landing);
+        $this->assertStringContainsString('file.replace(".png", "-192.webp")', $landing);
         $this->assertStringContainsString('src={game.src}', $landing);
+        $this->assertStringContainsString('showLogoWall &&', $landing);
+        $this->assertStringContainsString('window.matchMedia("(min-width: 1024px)")', $landing);
+        $this->assertStringContainsString('loading="lazy"', $landing);
+        $this->assertStringNotContainsString('src="/images/zonagim.png"', $landing);
         $this->assertStringNotContainsString('cdn.cloudflare.steamstatic.com', $landing);
         $this->assertStringNotContainsString('cdn.simpleicons.org', $landing);
         $this->assertStringNotContainsString('api.iconify.design', $landing);
         $this->assertDirectoryExists($logoDirectory);
-        $this->assertCount(24, array_values(array_filter(
-            scandir($logoDirectory),
-            fn (string $file): bool => preg_match('/\.(?:png|svg)$/i', $file) === 1,
-        )));
+        $this->assertFileExists($brandLogo);
+        $this->assertLessThan(10000, filesize($brandLogo));
+        $this->assertCount(20, glob($logoDirectory.DIRECTORY_SEPARATOR.'*-192.webp'));
     }
 
-    public function test_auth_scroll_container_ignores_landing_smooth_scroll_and_landing_cleans_up(): void
+    public function test_landing_has_no_blocking_animation_engine(): void
     {
-        $guestLayout = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Layouts'.DIRECTORY_SEPARATOR.'GuestLayout.jsx');
+        $root = dirname(__DIR__, 2);
         $landing = file_get_contents($this->javascriptPath.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Landing.jsx');
+        $package = file_get_contents($root.DIRECTORY_SEPARATOR.'package.json');
 
-        $this->assertStringContainsString('data-lenis-prevent', $guestLayout);
-        $this->assertStringContainsString('overflow-y-auto', $guestLayout);
-        $this->assertStringContainsString('overscroll-contain', $guestLayout);
-        $this->assertStringContainsString('gsap.ticker.remove(updateLenis)', $landing);
-        $this->assertStringContainsString('lenis.destroy()', $landing);
+        $this->assertStringNotContainsString('from "gsap"', $landing);
+        $this->assertStringNotContainsString('from "lenis"', $landing);
+        $this->assertStringNotContainsString('"gsap"', $package);
+        $this->assertStringNotContainsString('"lenis"', $package);
     }
 
     public function test_interactive_controls_use_consistent_cursor_feedback(): void
@@ -160,6 +164,16 @@ class FrontendImagePerformanceTest extends TestCase
         $this->assertStringContainsString('height={height}', $component);
         $this->assertStringContainsString('progressive-image__skeleton', $component);
         $this->assertStringContainsString('progressive-image__fallback', $component);
+    }
+
+    public function test_landing_does_not_prefetch_every_page_or_load_external_fonts(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $provider = file_get_contents($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR.'AppServiceProvider.php');
+        $blade = file_get_contents($root.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'app.blade.php');
+
+        $this->assertStringNotContainsString('Vite::prefetch', $provider);
+        $this->assertStringNotContainsString('fonts.bunny.net', $blade);
     }
 
     /**

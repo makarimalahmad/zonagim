@@ -1,6 +1,6 @@
 <span class="admin-mfa-brand" aria-label="Zonagim">
     <img
-        src="{{ asset('images/zonagim.png') }}"
+        src="{{ asset('images/zonagim-96.webp') }}"
         alt="Logo Zonagim"
         width="112"
         height="112"

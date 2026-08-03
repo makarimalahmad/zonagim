@@ -11,7 +11,7 @@ export default function Footer() {
                     {/* Logo & Brand */}
                     <div className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity">
                         <ProgressiveImage
-                            src="/images/zonagim.png"
+                            src="/images/zonagim-96.webp"
                             alt="Logo Zonagim"
                             width={32}
                             height={32}

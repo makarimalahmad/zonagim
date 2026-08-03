@@ -20,7 +20,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                                 className="group flex items-center gap-2 sm:gap-3 shrink-0"
                             >
                                 <ProgressiveImage
-                                    src="/images/zonagim.png"
+                                    src="/images/zonagim-96.webp"
                                     alt="Logo Zonagim"
                                     width={40}
                                     height={40}
@@ -74,7 +74,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                     <div className="flex flex-col items-center text-center px-10">
                         <Link href="/">
                             <ProgressiveImage
-                                src="/images/zonagim.png"
+                                src="/images/zonagim-96.webp"
                                 alt="Logo Zonagim"
                                 width={208}
                                 height={208}
@@ -111,7 +111,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                         <div className="flex flex-col items-center mb-6 lg:hidden">
                             <Link href="/">
                                 <ProgressiveImage
-                                    src="/images/zonagim.png"
+                                    src="/images/zonagim-96.webp"
                                     alt="Logo Zonagim"
                                     width={128}
                                     height={128}
