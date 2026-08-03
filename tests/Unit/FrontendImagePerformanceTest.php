@@ -172,8 +172,12 @@ class FrontendImagePerformanceTest extends TestCase
         $provider = file_get_contents($root.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR.'AppServiceProvider.php');
         $blade = file_get_contents($root.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'app.blade.php');
 
+        $styles = file_get_contents($root.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+
         $this->assertStringNotContainsString('Vite::prefetch', $provider);
         $this->assertStringNotContainsString('fonts.bunny.net', $blade);
+        $this->assertStringContainsString('font-family: "Figtree"', $styles);
+        $this->assertStringContainsString('/fonts/figtree/figtree-latin-800-normal.woff2', $styles);
     }
 
     /**
