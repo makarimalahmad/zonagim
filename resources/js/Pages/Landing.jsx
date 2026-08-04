@@ -200,7 +200,7 @@ export default function Landing({ contactUrl = null }) {
             </nav>
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center pt-28 pb-12 lg:pt-20 lg:pb-10 w-full">
+            <section className="relative min-h-screen flex items-start pt-28 pb-12 lg:items-center lg:pt-20 lg:pb-10 w-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
                         <div className="hero-text text-center lg:text-left w-full">
