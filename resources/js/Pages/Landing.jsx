@@ -70,6 +70,7 @@ export default function Landing({ contactUrl = null }) {
     const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
         popularGames.slice(rowIndex * 6, rowIndex * 6 + 6),
     );
+    const mobileLogoGames = popularGames.slice(0, 6);
 
     const features = [
         {
@@ -233,6 +234,48 @@ export default function Landing({ contactUrl = null }) {
                                 </Link>
                             </div>
 
+                        </div>
+
+                        <div className="game-logo-wall relative w-full overflow-hidden rounded-2xl border border-base-300 py-3 lg:hidden">
+                            <div
+                                className="marquee-track flex"
+                                style={{
+                                    animation: "marquee-ltr 24s linear infinite",
+                                }}
+                            >
+                                {[...mobileLogoGames, ...mobileLogoGames].map(
+                                    (game, gameIndex) => (
+                                        <Link
+                                            key={`mobile-${gameIndex}`}
+                                            href="/market"
+                                            title={game.name}
+                                            aria-label={`Lihat akun ${game.name}`}
+                                            className="game-logo-tile group relative mr-3 flex h-14 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border px-3 outline-none"
+                                        >
+                                            <ProgressiveImage
+                                                src={game.src}
+                                                alt=""
+                                                width={80}
+                                                height={40}
+                                                loading="lazy"
+                                                fetchPriority="low"
+                                                wrapperClassName="h-10 w-full bg-transparent"
+                                                className={`game-logo-image object-contain p-1 ${
+                                                    game.invertOnDarkTile
+                                                        ? "game-logo-image--invert"
+                                                        : ""
+                                                }`}
+                                                fallback={
+                                                    <Gamepad2
+                                                        className="h-5 w-5"
+                                                        aria-hidden="true"
+                                                    />
+                                                }
+                                            />
+                                        </Link>
+                                    ),
+                                )}
+                            </div>
                         </div>
 
                         {/* Animated game logo wall */}
