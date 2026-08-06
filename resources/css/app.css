@@ -283,7 +283,6 @@ input:disabled {
 
 .marquee-track {
     width: max-content;
-    will-change: transform;
 }
 
 .game-logo-wall {

@@ -1,7 +1,6 @@
 import { toastOptions } from "@/utils/notificationTheme";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useRef } from "react";
-import Swal from "sweetalert2";
 
 /**
  * Menampilkan flash message (status/success/error) sebagai toast/notif,
@@ -27,7 +26,9 @@ export default function FlashToaster() {
         if (lastShown.current === key) return;
         lastShown.current = key;
 
-        Swal.fire(toastOptions(icon, message));
+        import("sweetalert2").then(({ default: Swal }) => {
+            Swal.fire(toastOptions(icon, message));
+        });
     }, [flash?.id, flash?.success, flash?.status, flash?.error]);
 
     return null;

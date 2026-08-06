@@ -15,6 +15,90 @@ import ThemeToggle from "@/Components/ThemeToggle";
 import ProgressiveImage from "@/Components/ProgressiveImage";
 import Footer from "@/Components/Footer";
 
+const popularGames = [
+    ["Counter-Strike 2", "counter-strike-2.png"],
+    ["PUBG: Battlegrounds", "pubg-battlegrounds.png"],
+    ["Dota 2", "dota-2.png"],
+    ["Apex Legends", "apex-legends.png"],
+    ["Grand Theft Auto V", "grand-theft-auto-v.png"],
+    ["War Thunder", "war-thunder.png"],
+    ["Rainbow Six Siege", "rainbow-six-siege.png"],
+    ["ARC Raiders", "arc-raiders.png"],
+    ["Delta Force", "delta-force.png"],
+    ["Overwatch 2", "overwatch-2.png"],
+    ["Marvel Rivals", "marvel-rivals.png"],
+    ["Rust", "rust.png"],
+    ["Dead by Daylight", "dead-by-daylight.png"],
+    ["Deadlock", "deadlock.png"],
+    ["Warframe", "warframe.png"],
+    ["Valorant", "valorant.png"],
+    ["Fortnite", "fortnite.svg"],
+    ["League of Legends", "league-of-legends.svg"],
+    ["Minecraft", "minecraft.svg"],
+    ["Roblox", "roblox.png"],
+    ["Mobile Legends", "mobile-legends.svg"],
+    ["Free Fire", "free-fire.png"],
+    ["Genshin Impact", "genshin-impact.png"],
+    ["Call of Duty: Warzone", "call-of-duty-warzone.png"],
+].map(([name, file]) => ({
+    name,
+    src: `/images/games/${
+        file.endsWith(".png")
+            ? file.replace(".png", "-192.webp")
+            : file
+    }`,
+    invertOnDarkTile: ["fortnite.svg", "minecraft.svg", "roblox.png"].includes(
+        file,
+    ),
+}));
+
+const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
+    popularGames.slice(rowIndex * 6, rowIndex * 6 + 6),
+);
+const mobileLogoGames = popularGames.slice(0, 6);
+
+const features = [
+    {
+        icon: ShieldCheck,
+        title: "Opsi Rekber",
+        desc: "Zonagim membantu alur serah terima dana dan data akun selama transaksi berlangsung.",
+        accent: "text-warning bg-warning/10",
+    },
+    {
+        icon: Zap,
+        title: "Marketplace P2P",
+        desc: "Penjual menawarkan akun dan pembeli memilih listing berdasarkan informasi yang tersedia.",
+        accent: "text-info bg-info/10",
+    },
+    {
+        icon: Users,
+        title: "Penjual Asli",
+        desc: "Kredensial akun dikirim langsung oleh penjual kepada pembeli, bukan disimpan oleh Zonagim.",
+        accent: "text-secondary bg-secondary/10",
+    },
+];
+
+const steps = [
+    {
+        num: "1",
+        title: "Daftar Akun",
+        desc: "Buat akun dengan menggunakan email aktif.",
+        active: false,
+    },
+    {
+        num: "2",
+        title: "Pilih Akun",
+        desc: "Cari akun berdasarkan game dan informasi listing yang tersedia.",
+        active: true,
+    },
+    {
+        num: "3",
+        title: "Bayar & Terima Akun",
+        desc: "Lakukan pembayaran, lalu ikuti tahapan penyerahan data akun.",
+        active: false,
+    },
+];
+
 export default function Landing({ contactUrl = null }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showLogoWall, setShowLogoWall] = useState(
@@ -29,90 +113,6 @@ export default function Landing({ contactUrl = null }) {
 
         return () => media.removeEventListener("change", updateLogoWall);
     }, []);
-
-    const popularGames = [
-        ["Counter-Strike 2", "counter-strike-2.png"],
-        ["PUBG: Battlegrounds", "pubg-battlegrounds.png"],
-        ["Dota 2", "dota-2.png"],
-        ["Apex Legends", "apex-legends.png"],
-        ["Grand Theft Auto V", "grand-theft-auto-v.png"],
-        ["War Thunder", "war-thunder.png"],
-        ["Rainbow Six Siege", "rainbow-six-siege.png"],
-        ["ARC Raiders", "arc-raiders.png"],
-        ["Delta Force", "delta-force.png"],
-        ["Overwatch 2", "overwatch-2.png"],
-        ["Marvel Rivals", "marvel-rivals.png"],
-        ["Rust", "rust.png"],
-        ["Dead by Daylight", "dead-by-daylight.png"],
-        ["Deadlock", "deadlock.png"],
-        ["Warframe", "warframe.png"],
-        ["Valorant", "valorant.png"],
-        ["Fortnite", "fortnite.svg"],
-        ["League of Legends", "league-of-legends.svg"],
-        ["Minecraft", "minecraft.svg"],
-        ["Roblox", "roblox.png"],
-        ["Mobile Legends", "mobile-legends.svg"],
-        ["Free Fire", "free-fire.png"],
-        ["Genshin Impact", "genshin-impact.png"],
-        ["Call of Duty: Warzone", "call-of-duty-warzone.png"],
-    ].map(([name, file]) => ({
-        name,
-        src: `/images/games/${
-            file.endsWith(".png")
-                ? file.replace(".png", "-192.webp")
-                : file
-        }`,
-        invertOnDarkTile: ["fortnite.svg", "minecraft.svg", "roblox.png"].includes(
-            file,
-        ),
-    }));
-
-    const logoRows = Array.from({ length: 4 }, (_, rowIndex) =>
-        popularGames.slice(rowIndex * 6, rowIndex * 6 + 6),
-    );
-    const mobileLogoGames = popularGames.slice(0, 6);
-
-    const features = [
-        {
-            icon: ShieldCheck,
-            title: "Opsi Rekber",
-            desc: "Zonagim membantu alur serah terima dana dan data akun selama transaksi berlangsung.",
-            accent: "text-warning bg-warning/10",
-        },
-        {
-            icon: Zap,
-            title: "Marketplace P2P",
-            desc: "Penjual menawarkan akun dan pembeli memilih listing berdasarkan informasi yang tersedia.",
-            accent: "text-info bg-info/10",
-        },
-        {
-            icon: Users,
-            title: "Penjual Asli",
-            desc: "Kredensial akun dikirim langsung oleh penjual kepada pembeli, bukan disimpan oleh Zonagim.",
-            accent: "text-secondary bg-secondary/10",
-        },
-    ];
-
-    const steps = [
-        {
-            num: "1",
-            title: "Daftar Akun",
-            desc: "Buat akun dengan menggunakan email aktif.",
-            active: false,
-        },
-        {
-            num: "2",
-            title: "Pilih Akun",
-            desc: "Cari akun berdasarkan game dan informasi listing yang tersedia.",
-            active: true,
-        },
-        {
-            num: "3",
-            title: "Bayar & Terima Akun",
-            desc: "Lakukan pembayaran, lalu ikuti tahapan penyerahan data akun.",
-            active: false,
-        },
-    ];
 
     return (
         <div className="bg-base-200 text-base-content font-sans overflow-x-hidden">
