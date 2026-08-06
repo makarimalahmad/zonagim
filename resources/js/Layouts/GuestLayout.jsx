@@ -76,20 +76,16 @@ export default function GuestLayout({ children, withNavbar = false }) {
                             <ProgressiveImage
                                 src="/images/zonagim-nobg.png"
                                 alt="Logo Zonagim"
-                                width={208}
-                                height={208}
+                                width={288}
+                                height={288}
                                 loading="eager"
                                 fetchPriority="high"
-                                wrapperClassName="w-52 h-52 mb-8 mx-auto"
+                                wrapperClassName="auth-logo-image w-72 h-72 mx-auto"
                                 className="object-contain"
                             />
-
-                            <h1 className="text-3xl font-extrabold text-yellow-500 tracking-wide mb-3">
-                                Zonagim
-                            </h1>
                         </Link>
 
-                        <p className="text-base-content/70 max-w-sm leading-relaxed">
+                        <p className="-mt-3 max-w-md text-lg leading-relaxed text-base-content/70">
                             Marketplace jual beli akun game dengan opsi jasa
                             rekber.
                         </p>
@@ -117,7 +113,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                                     height={128}
                                     loading="eager"
                                     fetchPriority="high"
-                                    wrapperClassName="w-32 h-32 mb-3 mx-auto"
+                                    wrapperClassName="auth-logo-image w-32 h-32 mb-3 mx-auto"
                                     className="object-contain"
                                 />
                                 <h1 className="text-xl font-bold text-yellow-500 text-center">

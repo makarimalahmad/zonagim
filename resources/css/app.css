@@ -211,6 +211,10 @@ input:disabled {
     isolation: isolate;
 }
 
+.auth-logo-image.progressive-image {
+    background: transparent;
+}
+
 .progressive-image__media,
 .progressive-image__skeleton,
 .progressive-image__fallback {
