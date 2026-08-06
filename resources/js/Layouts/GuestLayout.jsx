@@ -74,7 +74,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                     <div className="flex flex-col items-center text-center px-10">
                         <Link href="/">
                             <ProgressiveImage
-                                src="/images/zonagim-96.webp"
+                                src="/images/zonagim-nobg.png"
                                 alt="Logo Zonagim"
                                 width={208}
                                 height={208}
@@ -111,7 +111,7 @@ export default function GuestLayout({ children, withNavbar = false }) {
                         <div className="flex flex-col items-center mb-6 lg:hidden">
                             <Link href="/">
                                 <ProgressiveImage
-                                    src="/images/zonagim-96.webp"
+                                    src="/images/zonagim-nobg.png"
                                     alt="Logo Zonagim"
                                     width={128}
                                     height={128}
