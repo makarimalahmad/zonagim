@@ -30,6 +30,7 @@ services:
       FILESYSTEM_DISK: local
       AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
     volumes:
+      - ./.env:/var/www/.env
       - app_storage:/var/www/storage/app
       - app_logs:/var/www/storage/logs
       - app_public_storage:/var/www/public/storage
@@ -121,6 +122,7 @@ services:
       DB_HOST: db
       REDIS_HOST: redis
     volumes:
+      - ./.env:/var/www/.env
       - app_storage:/var/www/storage/app
       - app_logs:/var/www/storage/logs
     depends_on:
