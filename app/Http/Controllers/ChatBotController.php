@@ -109,6 +109,7 @@ INVENTORY_DATA_END";
 
         $apiKey = config('services.groq.key');
         $model = config('services.groq.model');
+        $url = (string) config('services.groq.url', 'https://api.groq.com/openai/v1/chat/completions');
 
         if (! is_string($apiKey) || $apiKey === '' || ! is_string($model) || $model === '') {
             Log::warning('Chatbot tidak tersedia karena konfigurasi layanan belum lengkap.');
@@ -122,7 +123,7 @@ INVENTORY_DATA_END";
                 ->withToken($apiKey)
                 ->connectTimeout(3)
                 ->timeout(15)
-                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                ->post($url, [
                     'model' => $model,
                     'messages' => $messages,
                     'temperature' => 0.2,
