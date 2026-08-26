@@ -121,8 +121,8 @@ INVENTORY_DATA_END";
             /** @var Response $response */
             $response = Http::acceptJson()
                 ->withToken($apiKey)
-                ->connectTimeout(3)
-                ->timeout(15)
+                ->connectTimeout(10)
+                ->timeout(30)
                 ->post($url, [
                     'model' => $model,
                     'messages' => $messages,
@@ -134,8 +134,8 @@ INVENTORY_DATA_END";
                 Log::info("Model {$model} gagal ({$response->status()}), mencoba fallback otomatis ke llama-3.1-8b-instant.");
                 $response = Http::acceptJson()
                     ->withToken($apiKey)
-                    ->connectTimeout(3)
-                    ->timeout(15)
+                    ->connectTimeout(10)
+                    ->timeout(30)
                     ->post($url, [
                         'model' => 'llama-3.1-8b-instant',
                         'messages' => $messages,
@@ -156,7 +156,9 @@ INVENTORY_DATA_END";
             $reply = $response->json('choices.0.message.content');
 
             if (! is_string($reply) || trim($reply) === '') {
-                Log::warning('Layanan chatbot mengembalikan format respons tidak valid.');
+                Log::warning('Layanan chatbot mengembalikan format respons tidak valid.', [
+                    'json' => $response->json(),
+                ]);
 
                 return response()->json(['reply' => self::UNAVAILABLE_REPLY]);
             }
@@ -176,8 +178,8 @@ INVENTORY_DATA_END";
             }
 
             return response()->json(['reply' => $reply]);
-        } catch (Throwable) {
-            Log::warning('Layanan chatbot tidak dapat dihubungi.');
+        } catch (Throwable $e) {
+            Log::error('Layanan chatbot tidak dapat dihubungi: '.$e->getMessage());
 
             return response()->json(['reply' => self::UNAVAILABLE_REPLY]);
         }
