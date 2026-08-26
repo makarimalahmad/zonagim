@@ -37,8 +37,9 @@ sudo ufw enable
 ### A. Clone Project
 ```bash
 sudo mkdir -p /var/www
+sudo chown -R $USER:$USER /var/www
 cd /var/www
-git clone <URL_REPO_GITHUB_KAMU> zonagim
+git clone https://github.com/makarimalahmad/zonagim.git zonagim
 cd zonagim
 ```
 
