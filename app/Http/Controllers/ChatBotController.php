@@ -130,14 +130,14 @@ INVENTORY_DATA_END";
                     'max_tokens' => 300,
                 ]);
 
-            if ($response->failed() && $model !== 'llama-3.1-8b-instant') {
-                Log::info("Model {$model} gagal ({$response->status()}), mencoba fallback otomatis ke llama-3.1-8b-instant.");
+            if ($response->failed() && $model !== 'openai/gpt-oss-20b') {
+                Log::info("Model {$model} gagal ({$response->status()}), mencoba fallback otomatis ke openai/gpt-oss-20b.");
                 $response = Http::acceptJson()
                     ->withToken($apiKey)
                     ->connectTimeout(10)
                     ->timeout(30)
                     ->post($url, [
-                        'model' => 'llama-3.1-8b-instant',
+                        'model' => 'openai/gpt-oss-20b',
                         'messages' => $messages,
                         'temperature' => 0.2,
                         'max_tokens' => 300,
