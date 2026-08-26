@@ -130,9 +130,24 @@ INVENTORY_DATA_END";
                     'max_tokens' => 300,
                 ]);
 
+            if ($response->failed() && $model !== 'llama-3.1-8b-instant') {
+                Log::info("Model {$model} gagal ({$response->status()}), mencoba fallback otomatis ke llama-3.1-8b-instant.");
+                $response = Http::acceptJson()
+                    ->withToken($apiKey)
+                    ->connectTimeout(3)
+                    ->timeout(15)
+                    ->post($url, [
+                        'model' => 'llama-3.1-8b-instant',
+                        'messages' => $messages,
+                        'temperature' => 0.2,
+                        'max_tokens' => 300,
+                    ]);
+            }
+
             if ($response->failed()) {
                 Log::warning('Layanan chatbot mengembalikan respons gagal.', [
                     'status' => $response->status(),
+                    'body' => $response->body(),
                 ]);
 
                 return response()->json(['reply' => self::UNAVAILABLE_REPLY]);
