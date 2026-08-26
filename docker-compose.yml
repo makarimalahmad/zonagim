@@ -107,6 +107,9 @@ services:
   # Background Queue Worker (Processes Async Jobs & Mail Notifications)
   # ----------------------------------------------------------------------------
   worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: zonagim-app:latest
     container_name: zonagim_worker
     restart: unless-stopped

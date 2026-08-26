@@ -1,24 +1,5 @@
 # ==============================================================================
-# Stage 1: Frontend Asset Builder (Node.js & Vite)
-# ==============================================================================
-FROM node:22-alpine AS frontend-builder
-
-WORKDIR /app
-
-# Install npm dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --prefer-offline --no-audit
-
-# Copy source assets & build configs
-COPY resources resources/
-COPY public public/
-COPY vite.config.js ./
-
-# Compile production assets via Vite
-RUN npm run build
-
-# ==============================================================================
-# Stage 2: Composer Dependency Builder (PHP Vendor)
+# Stage 1: Composer Dependency Builder (PHP Vendor)
 # ==============================================================================
 FROM composer:2 AS vendor-builder
 
@@ -42,6 +23,29 @@ RUN composer dump-autoload \
     --optimize \
     --no-dev \
     --classmap-authoritative
+
+# ==============================================================================
+# Stage 2: Frontend Asset Builder (Node.js & Vite)
+# ==============================================================================
+FROM node:22-alpine AS frontend-builder
+
+WORKDIR /app
+
+# Install npm dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --prefer-offline --no-audit
+
+# Copy source assets & build configs
+COPY resources resources/
+COPY public public/
+COPY app app/
+COPY vite.config.js ./
+
+# Copy vendor from vendor-builder (Required by Filament CSS @import & Tailwind @source)
+COPY --from=vendor-builder /app/vendor vendor/
+
+# Compile production assets via Vite
+RUN npm run build
 
 # ==============================================================================
 # Stage 3: Production PHP-FPM Runtime Image
