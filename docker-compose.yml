@@ -8,6 +8,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
     image: zonagim-app:latest
     container_name: zonagim_app
     restart: unless-stopped
@@ -46,7 +47,11 @@ services:
   # Web Server (Nginx Reverse Proxy & Static Asset Engine)
   # ----------------------------------------------------------------------------
   web:
-    image: nginx:1.27-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    image: zonagim-web:latest
     container_name: zonagim_web
     restart: unless-stopped
     ports:
@@ -55,8 +60,6 @@ services:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - app_public_storage:/var/www/public/storage:ro
-    volumes_from:
-      - app:ro
     depends_on:
       - app
     networks:
@@ -111,6 +114,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
     image: zonagim-app:latest
     container_name: zonagim_worker
     restart: unless-stopped

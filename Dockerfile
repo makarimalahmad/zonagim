@@ -48,7 +48,7 @@ COPY --from=vendor-builder /app/vendor vendor/
 RUN npm run build
 
 # ==============================================================================
-# Stage 3: Production PHP-FPM Runtime Image
+# Stage 3: Production PHP-FPM Runtime Image (App & Worker)
 # ==============================================================================
 FROM php:8.3-fpm-alpine AS runner
 
@@ -112,3 +112,23 @@ EXPOSE 9000
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["php-fpm"]
+
+# ==============================================================================
+# Stage 4: Production Nginx Web Server
+# ==============================================================================
+FROM nginx:1.27-alpine AS web
+
+LABEL maintainer="Zonagim Development Team"
+LABEL description="Production Nginx Web Server for Zonagim Marketplace"
+
+# Copy custom Nginx configuration
+COPY docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy public assets and Vite build outputs
+COPY --from=vendor-builder /app/public /var/www/public
+COPY --from=frontend-builder /app/public/build /var/www/public/build
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
