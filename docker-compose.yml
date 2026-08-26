@@ -77,11 +77,11 @@ services:
       - db_data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} > /dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} > /dev/null 2>&1 || mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} > /dev/null 2>&1 || exit 1"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 15s
+      retries: 12
+      start_period: 30s
     networks:
       - zonagim-net
 
