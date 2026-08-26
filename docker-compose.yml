@@ -1,0 +1,153 @@
+name: zonagim
+
+services:
+  # ----------------------------------------------------------------------------
+  # Application Service (PHP 8.3-FPM + Laravel 12 + Filament 5)
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zonagim-app:latest
+    container_name: zonagim_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-zonagim_db}
+      DB_USERNAME: ${DB_USERNAME:-zonagim_app}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CACHE_STORE: redis
+      SESSION_DRIVER: database
+      QUEUE_CONNECTION: redis
+      FILESYSTEM_DISK: local
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+    volumes:
+      - app_storage:/var/www/storage/app
+      - app_logs:/var/www/storage/logs
+      - app_public_storage:/var/www/public/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zonagim-net
+
+  # ----------------------------------------------------------------------------
+  # Web Server (Nginx Reverse Proxy & Static Asset Engine)
+  # ----------------------------------------------------------------------------
+  web:
+    image: nginx:1.27-alpine
+    container_name: zonagim_web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-80}:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - app_public_storage:/var/www/public/storage:ro
+    volumes_from:
+      - app:ro
+    depends_on:
+      - app
+    networks:
+      - zonagim-net
+
+  # ----------------------------------------------------------------------------
+  # Database Service (MySQL 8.4 LTS)
+  # ----------------------------------------------------------------------------
+  db:
+    image: mysql:8.4
+    container_name: zonagim_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-zonagim_db}
+      MYSQL_USER: ${DB_USERNAME:-zonagim_app}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-${DB_PASSWORD}}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} > /dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - zonagim-net
+
+  # ----------------------------------------------------------------------------
+  # In-Memory Cache & Queue Broker (Redis 7)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: zonagim_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - zonagim-net
+
+  # ----------------------------------------------------------------------------
+  # Background Queue Worker (Processes Async Jobs & Mail Notifications)
+  # ----------------------------------------------------------------------------
+  worker:
+    image: zonagim-app:latest
+    container_name: zonagim_worker
+    restart: unless-stopped
+    entrypoint: ["php", "artisan", "queue:work", "--tries=3", "--timeout=90", "--sleep=3"]
+    env_file:
+      - .env
+    environment:
+      AUTO_MIGRATE: "false"
+      DB_HOST: db
+      REDIS_HOST: redis
+    volumes:
+      - app_storage:/var/www/storage/app
+      - app_logs:/var/www/storage/logs
+    depends_on:
+      app:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zonagim-net
+
+# ------------------------------------------------------------------------------
+# Persistent Storage Volumes
+# ------------------------------------------------------------------------------
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_storage:
+    driver: local
+  app_logs:
+    driver: local
+  app_public_storage:
+    driver: local
+
+# ------------------------------------------------------------------------------
+# Isolated Bridge Network
+# ------------------------------------------------------------------------------
+networks:
+  zonagim-net:
+    driver: bridge

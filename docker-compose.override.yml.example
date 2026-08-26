@@ -1,0 +1,21 @@
+# ==============================================================================
+# Docker Compose Override Example (Development Only)
+# To use this, copy to `docker-compose.override.yml`:
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+# ==============================================================================
+
+services:
+  app:
+    volumes:
+      - .:/var/www
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+
+  db:
+    ports:
+      - "127.0.0.1:3306:3306"
+
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"
