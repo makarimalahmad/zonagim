@@ -51,19 +51,17 @@ return Application::configure(basePath: dirname(__DIR__))
             subdomains: false,
         );
 
-        $trustedProxies = array_values(array_filter(array_map(
-            'trim',
-            explode(',', (string) env('TRUSTED_PROXIES', '')),
-        )));
+        $trustedProxies = env('TRUSTED_PROXIES', '*');
 
-        if ($trustedProxies !== []) {
-            $middleware->trustProxies(
-                at: $trustedProxies,
-                headers: Request::HEADER_X_FORWARDED_FOR
-                    | Request::HEADER_X_FORWARDED_PORT
-                    | Request::HEADER_X_FORWARDED_PROTO,
-            );
-        }
+        $middleware->trustProxies(
+            at: (is_string($trustedProxies) && trim($trustedProxies) === '*')
+                ? '*'
+                : array_values(array_filter(array_map('trim', explode(',', (string) $trustedProxies)))),
+            headers: Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO
+                | Request::HEADER_X_FORWARDED_HOST,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (
