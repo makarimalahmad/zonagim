@@ -91,13 +91,13 @@ class SecurityHardeningTest extends TestCase
 
     public function test_reset_link_always_uses_canonical_app_url(): void
     {
-        config(['app.url' => 'https://zonagim.my.id']);
+        config(['app.url' => 'https://zonagim.com']);
 
         $user = User::factory()->create();
         $mail = (new ResetPasswordNotification('secure-token'))->toMail($user);
         $viewData = $mail->viewData;
 
-        $this->assertStringStartsWith('https://zonagim.my.id/reset-password/', $viewData['url']);
+        $this->assertStringStartsWith('https://zonagim.com/reset-password/', $viewData['url']);
         $this->assertStringNotContainsString('attacker.example', $viewData['url']);
     }
 

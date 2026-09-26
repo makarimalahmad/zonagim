@@ -8,4 +8,4 @@ Kode ini berlaku selama 10 menit. Demi keamanan, jangan bagikan kode ini kepada 
 
 Jika kamu tidak merasa mendaftar di Zonagim, abaikan email ini.
 
-(c) {{ date('Y') }} Zonagim - zonagim.my.id
+(c) {{ date('Y') }} Zonagim - zonagim.com

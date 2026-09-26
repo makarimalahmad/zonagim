@@ -10,7 +10,7 @@ return [
     */
     'brand' => env('APP_NAME', 'Zonagim'),
 
-    'url' => rtrim(env('SEO_URL', 'https://zonagim.my.id'), '/'),
+    'url' => rtrim(env('SEO_URL', 'https://zonagim.com'), '/'),
 
     'title' => 'Zonagim - Marketplace Jual Beli Akun Game',
 

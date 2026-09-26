@@ -52,7 +52,7 @@ nano .env
 ```
 
 Sesuaikan nilai-nilai penting berikut:
-- `APP_URL=https://zonagim.my.id` (atau domain VPS kamu)
+- `APP_URL=https://zonagim.com` (atau domain VPS kamu)
 - `DB_HOST=db` (nama service di docker-compose)
 - `DB_DATABASE=zonagim_db`
 - `DB_USERNAME=zonagim_app`
@@ -109,7 +109,7 @@ Lalu ketikkan di dalam tinker:
 ```php
 \App\Models\User::create([
     'name' => 'Super Admin',
-    'email' => 'admin@zonagim.my.id',
+    'email' => 'admin@zonagim.com',
     'password' => bcrypt('PasswordAdminSangatKuat123!'),
     'email_verified_at' => now(),
     'role' => 'admin',

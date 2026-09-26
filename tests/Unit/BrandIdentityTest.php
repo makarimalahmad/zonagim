@@ -26,8 +26,8 @@ class BrandIdentityTest extends TestCase
         $this->assertSame([], $violations, 'Brand lama masih ditemukan: '.implode(', ', $violations));
         $this->assertFileExists($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'zonagim.png');
         $this->assertStringContainsString("'brand' => env('APP_NAME', 'Zonagim')", file_get_contents($root.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'seo.php'));
-        $this->assertStringContainsString('https://zonagim.my.id', file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'llms.txt'));
-        $this->assertStringContainsString('https://zonagim.my.id/sitemap.xml', file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'robots.txt'));
+        $this->assertStringContainsString('https://zonagim.com', file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'llms.txt'));
+        $this->assertStringContainsString('https://zonagim.com/sitemap.xml', file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'robots.txt'));
     }
 
     /**

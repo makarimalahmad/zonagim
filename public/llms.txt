@@ -1,10 +1,10 @@
 # Zonagim
 
-> Zonagim (zonagim.my.id) adalah marketplace P2P akun game yang mempertemukan penjual dan pembeli. Zonagim menampilkan listing seller dan menyediakan opsi Rekber sebagai perantara alur transaksi. Listing dapat tersedia untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game lainnya.
+> Zonagim (zonagim.com) adalah marketplace P2P akun game yang mempertemukan penjual dan pembeli. Zonagim menampilkan listing seller dan menyediakan opsi Rekber sebagai perantara alur transaksi. Listing dapat tersedia untuk Mobile Legends, Free Fire, Valorant, PUBG Mobile, Genshin Impact, dan game lainnya.
 
 ## Halaman Utama
-- [Beranda](https://zonagim.my.id/): Ringkasan layanan, keunggulan, dan cara kerja Zonagim.
-- [Market Akun Game](https://zonagim.my.id/market): Katalog game yang tersedia untuk dibeli akunnya.
+- [Beranda](https://zonagim.com/): Ringkasan layanan, keunggulan, dan cara kerja Zonagim.
+- [Market Akun Game](https://zonagim.com/market): Katalog game yang tersedia untuk dibeli akunnya.
 
 ## Cara Kerja
 - Daftar akun menggunakan email aktif.
@@ -24,8 +24,8 @@
 - Segala risiko pasca-transaksi sepenuhnya menjadi tanggung jawab pembeli.
 
 ## Legal
-- [Syarat & Ketentuan](https://zonagim.my.id/terms-of-service)
-- [Kebijakan Privasi](https://zonagim.my.id/privacy-policy)
+- [Syarat & Ketentuan](https://zonagim.com/terms-of-service)
+- [Kebijakan Privasi](https://zonagim.com/privacy-policy)
 
 ## Kontak
 - Transaksi & Rekber: hubungi Admin via WhatsApp yang tertera di situs.

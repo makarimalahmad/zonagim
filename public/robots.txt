@@ -29,4 +29,4 @@ Disallow: /verify-otp
 Disallow: /verify-email
 Disallow: /confirm-password
 
-Sitemap: https://zonagim.my.id/sitemap.xml
+Sitemap: https://zonagim.com/sitemap.xml

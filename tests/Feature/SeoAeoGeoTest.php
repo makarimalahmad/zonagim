@@ -16,7 +16,7 @@ class SeoAeoGeoTest extends TestCase
     {
         parent::setUp();
 
-        config(['seo.url' => 'https://zonagim.my.id']);
+        config(['seo.url' => 'https://zonagim.com']);
     }
 
     public function test_public_pages_use_production_canonical_and_indexable_robots(): void
@@ -29,11 +29,11 @@ class SeoAeoGeoTest extends TestCase
         ]);
 
         foreach ([
-            '/' => 'https://zonagim.my.id/',
-            '/market' => 'https://zonagim.my.id/market',
-            '/market/'.$category->slug.'?sort=lowest' => 'https://zonagim.my.id/market/'.$category->slug,
-            '/terms-of-service' => 'https://zonagim.my.id/terms-of-service',
-            '/privacy-policy' => 'https://zonagim.my.id/privacy-policy',
+            '/' => 'https://zonagim.com/',
+            '/market' => 'https://zonagim.com/market',
+            '/market/'.$category->slug.'?sort=lowest' => 'https://zonagim.com/market/'.$category->slug,
+            '/terms-of-service' => 'https://zonagim.com/terms-of-service',
+            '/privacy-policy' => 'https://zonagim.com/privacy-policy',
         ] as $path => $canonical) {
             $content = $this->get($path)->assertOk()->getContent();
 
@@ -95,7 +95,7 @@ class SeoAeoGeoTest extends TestCase
 
         $response->assertHeader('Content-Type', 'application/xml; charset=UTF-8');
         $response->assertHeader('X-Robots-Tag', 'noindex, follow');
-        $this->assertStringContainsString('https://zonagim.my.id/market/'.$category->slug, $content);
+        $this->assertStringContainsString('https://zonagim.com/market/'.$category->slug, $content);
         $this->assertStringContainsString('<lastmod>', $content);
         $this->assertStringNotContainsString('<priority>', $content);
         $this->assertStringNotContainsString('<changefreq>', $content);
@@ -109,7 +109,7 @@ class SeoAeoGeoTest extends TestCase
         $robots = file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'robots.txt');
         $llms = file_get_contents($root.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'llms.txt');
 
-        $this->assertStringContainsString('Sitemap: https://zonagim.my.id/sitemap.xml', $robots);
+        $this->assertStringContainsString('Sitemap: https://zonagim.com/sitemap.xml', $robots);
         $this->assertStringContainsString('User-agent: OAI-SearchBot', $robots);
         $this->assertStringNotContainsString('User-agent: GPTBot', $robots);
         $this->assertStringNotContainsString('User-agent: CCBot', $robots);

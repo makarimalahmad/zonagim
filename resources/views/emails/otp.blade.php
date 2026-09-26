@@ -70,7 +70,7 @@
                     {{-- Footer --}}
                     <tr>
                         <td style="padding:18px 32px; background-color:#fafbfc; border-top:1px solid #eef0f3; text-align:center;">
-                            <p style="margin:0; font-size:12px; color:#94a3b8;">&copy; {{ date('Y') }} Zonagim &middot; zonagim.my.id</p>
+                            <p style="margin:0; font-size:12px; color:#94a3b8;">&copy; {{ date('Y') }} Zonagim &middot; zonagim.com</p>
                         </td>
                     </tr>
 
